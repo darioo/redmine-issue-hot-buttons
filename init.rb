@@ -2,9 +2,9 @@ require 'redmine'
 
 Redmine::Plugin.register :redmine_issue_hot_buttons do
   name 'Redmine Issue Hot Buttons plugin'
-  author 'Author name'
-  description 'This is a plugin for Redmine'
+  author 'Mike Kolganov'
+  description 'Plugin for Redmine that add some often used actions to issue page'
   version '0.0.1'
-  url 'http://example.com/path/to/plugin'
-  author_url 'http://example.com/about'
+  url 'https://github.com/mikekolganov/redmine-issue-hot-buttons'
+  author_url 'mailto:mike.kolganov@gmail.com'
 end
