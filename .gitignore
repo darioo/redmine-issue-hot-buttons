@@ -1,0 +1,4 @@
+# Ignore symbolic links to assets folder.
+# Very helpful in development
+stylesheets
+javascripts
