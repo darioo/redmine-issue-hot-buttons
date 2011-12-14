@@ -1,0 +1,43 @@
+<%
+  available_methods = {
+	 l(:assign_to_me) => :assign_to_me,
+	 l(:change_status_and_assign_to) => :change_status_and_assign_to
+  }
+  
+%>
+<%=@settings.inspect%>
+
+<% content_for :header_tags do %>
+  <%= javascript_include_tag 'settings.js', :plugin => 'redmine_issue_hot_buttons' %>
+  <%= stylesheet_link_tag 'settings.css', :plugin => 'redmine_issue_hot_buttons' %>
+<% end %>
+<p>
+  <label><%= l(:select_hot_button) %>:</label>
+  <%= select('hot_button', 'select', available_methods, {:include_blank => true}) %>
+  <%= image_tag('add.png', :id => 'add_hot_button',:style => 'vertical-align: middle; cursor: pointer') %>
+</p>
+
+<ul id="buttons_list">
+</ul>
+<ul id="buttons_repository">
+   <li button_id="assign_to_me" class="unique">
+	  <div class="header">
+		 <%= image_tag('delete.png', :class => 'delete_hot_button') %>
+		 <div class="title"><%= l(:assign_to_me) %></div>
+		 <div class="description"><%= l(:assign_to_me_desc) %></div>
+		 <div class="config">
+			<input name_suffix="[enabled]" type="hidden" value="1" />
+		 </div>
+	  </div>
+	</li>
+	<li button_id="change_status_and_assign_to">
+	  <div class="header">
+		 <%= image_tag('delete.png', :class => 'delete_hot_button') %>
+		 <div class="title"><%= l(:change_status_and_assign_to) %></div>
+		 <div class="description"><%= l(:change_status_and_assign_to_desc) %></div>
+		 <div class="config">
+			<input name_suffix="[enabled]" type="hidden" value="1" />
+		 </div>
+	  </div>
+	</li>
+</ul>

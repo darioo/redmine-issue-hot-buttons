@@ -1,0 +1,27 @@
+#buttons_list {
+	
+}
+	#buttons_list #add_hot_button {
+		cursor: pointer;
+		vertical-align: text-bottom;
+	}
+	#buttons_list li {
+		margin-bottom: 5px;
+		border: 1px solid #E4E4E4;
+		list-style: none;
+		background: white;
+	}
+		#buttons_list li div.header {
+			cursor: move;
+		}
+			#buttons_list li div.header div.title {
+				font-weight: bold;
+			}
+			#buttons_list li div.header .delete_hot_button {
+				float: right;
+				vertical-align: text-bottom;
+				cursor: pointer;
+			}
+#buttons_repository {
+	display: none;
+}
