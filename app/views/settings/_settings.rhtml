@@ -1,11 +1,12 @@
 <%
   available_methods = {
 	 l(:assign_to_me) => :assign_to_me,
-	 l(:change_status_and_assign_to) => :change_status_and_assign_to
+	 l(:change_status_and_assign_to) => :change_status_and_assign_to,
+     l(:issue_time_tracking) => :issue_time_tracking
   }
   
 %>
-<%=@settings.inspect%>
+<%=javascript_tag 'var settings=' + @settings.to_json + ';' %>
 
 <% content_for :header_tags do %>
   <%= javascript_include_tag 'settings.js', :plugin => 'redmine_issue_hot_buttons' %>
@@ -26,7 +27,11 @@
 		 <div class="title"><%= l(:assign_to_me) %></div>
 		 <div class="description"><%= l(:assign_to_me_desc) %></div>
 		 <div class="config">
-			<input name_suffix="[enabled]" type="hidden" value="1" />
+			<input sname="enabled" type="hidden" value="1" />
+            <div>
+              <label><%= l(:hot_button_title) %></label>
+              <input sname="hot_button_title" type="text" />
+            </div>
 		 </div>
 	  </div>
 	</li>
@@ -36,7 +41,45 @@
 		 <div class="title"><%= l(:change_status_and_assign_to) %></div>
 		 <div class="description"><%= l(:change_status_and_assign_to_desc) %></div>
 		 <div class="config">
-			<input name_suffix="[enabled]" type="hidden" value="1" />
+			<input sname="enabled" type="hidden" value="1" />
+            <div>
+              <label><%= l(:hot_button_title) %></label>
+              <input sname="hot_button_title" type="text" />
+            </div>
+            <div>
+              <label><%= l(:change_status_for_issues) %></label>
+              <textarea sname="for_issues"></textarea>
+            </div>
+            <div>
+              <label><%= l(:change_status_to_roles) %></label>
+              <textarea sname="for_issues"></textarea>
+            </div>
+            <div>
+              <label><%= l(:change_status_set_percent) %></label>
+              <input sname="set_percent" type="text" />
+            </div>
+		 </div>
+	  </div>
+	</li>
+   <li button_id="issue_time_tracking" class="unique">
+	  <div class="header">
+		 <%= image_tag('delete.png', :class => 'delete_hot_button') %>
+		 <div class="title"><%= l(:issue_time_tracking) %></div>
+		 <div class="description"><%= l(:issue_time_tracking_desc) %></div>
+		 <div class="config">
+			<input sname="enabled" type="hidden" value="1" />
+            <div>
+              <label><%= l(:issue_time_tracking_start) %></label>
+              <input sname="issue_time_tracking_start" type="text" />
+            </div>
+            <div>
+              <label><%= l(:issue_time_tracking_pause) %></label>
+              <input sname="issue_time_tracking_pause" type="text" />
+            </div>
+            <div>
+              <label><%= l(:issue_time_tracking_stop) %></label>
+              <input sname="issue_time_tracking_stop" type="text" />
+            </div>
 		 </div>
 	  </div>
 	</li>

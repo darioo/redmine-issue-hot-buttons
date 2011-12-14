@@ -1,5 +1,2 @@
-select_hot_button: "Select hot button to add"
-assign_to_me: "Assign to me"
-assign_to_me_desc: "Assign selected issue to current user"
-change_status_and_assign_to: "Change status to other user"
-change_status_and_assign_to_desc: "Change issue status and assing to other user"
+# Please, remember to copy here contents of config/locales/en.yml before release
+# (without en key)
