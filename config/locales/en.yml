@@ -12,6 +12,7 @@ en:
   change_status_set_percent: "Set done %"
 
   issue_time_tracking: "Time tracking"
+  issue_time_tracking_desc: "Start/pause/stop button for issue worktime tracking"
   issue_time_tracking_start: "Start button title"
   issue_time_tracking_pause: "Pause button title"
   issue_time_tracking_stop: "Stop button title"
