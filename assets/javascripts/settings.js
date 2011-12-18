@@ -29,7 +29,12 @@ document.observe("dom:loaded", function() {
      * @return "Assign to" me Hot Button settings section
      */
     button_assign_to_me: function(params) {
-      return new Element('input', {type: 'hidden', xname: 'enabled'});
+      return [
+        new Element('input', {type: 'hidden', xname: 'enabled', value:1}),
+        new Element('label', {for: 'assign_to_me_caption'})
+          .insert(this._('caption')),
+        new Element('input', {id: 'assign_to_me_caption', type: 'text', xname: 'caption'})
+      ];
     },
 
     /**
@@ -39,11 +44,7 @@ document.observe("dom:loaded", function() {
      * @return "Time tracker" Hot Button settings section
      */
     button_time_tracker: function(params) {
-      return {
-        options: {
-          unique: true
-        }
-      };
+      return new Element('input', {type: 'hidden', xname: 'enabled', value:1});
     },
 
     /**
@@ -53,9 +54,7 @@ document.observe("dom:loaded", function() {
      * @return "Reassign to" Hot Button settings section
      */
     button_reassign_to: function(params) {
-      return {
-        options: {}
-      };
+      return new Element('input', {type: 'hidden', xname: 'enabled', value:1});
     },
 
     /**
@@ -67,15 +66,36 @@ document.observe("dom:loaded", function() {
      * @return Complete Hot Button settings section
      */
     wrap_button: function(button_name, button) {
+      var t = this;
+
+      var delete_button = new Element('a', {
+        class: 'icon-del icon',
+        href: 'javascript:void(0)'
+      }).insert(this._('delete'));
+
+      Event.observe(delete_button, 'click', function(event){
+        if (! confirm(t._('confirm'))) return false;
+        Event.element(event).up(1).remove();
+      })
+
+      button = Object.isArray(button)
+        ? button
+        : [button];
+
+      var button_fields = new Element('div', {class: 'fields'});
+      button.each(function(item){
+        button_fields.insert(item)
+      });
+
       var elements = [
         new Element('p', {class: 'title'})
-          .insert(this._([button_name, 'title'])),
+          .insert(this._(button_name))
+          .insert(delete_button),
 
         new Element('p', {class: 'description'})
           .insert(this._([button_name, 'description'])),
 
-        new Element('div', {class: 'fields'})
-          .insert(button)
+        button_fields
       ];
 
       var wrapper = new Element('li')
@@ -150,26 +170,64 @@ document.observe("dom:loaded", function() {
      */
     initialize: function() {
       this.buttons_factory = new ButtonSettingsFactory();
+
+      // Assign custom fields to ButtonSettingsFactory
+      this.buttons_factory.custom_fields = this.custom_fields;
+      this.buttons_factory.issue_statuses = this.issue_statuses;
+      this.buttons_factory.user_roles = this.user_roles;
+
       this.translator = this.buttons_factory.translator = new Translator(this.i18n_strings);
 
       this.render_selector();
       this.load_saved_buttons();
+
+      $$('input[name="commit"]').first().observe('click', this.attach_input_names);
     },
 
     /**
      * Render to page exists configured Hot Buttons
+     *
+     * @return void
      */
-    load_saved_buttons: function() {},
+    load_saved_buttons: function() {
+      if (Object.isUndefined(this.settings)) return false;
+
+      var t = this;
+      new Hash(this.settings).values().each(function(button_config){
+        var button_config = new Hash(button_config);
+        var name = button_config.keys().first();
+        var params = button_config.values().first();
+
+        t.render_button(name, params);
+      });
+    },
 
     /**
      * Make buttons list sortable
      */
-    init_sortable_list: function() {},
+    init_sortable_list: function() {
+      Sortable.create('buttons_list', {
+        tag:'li',
+        onChange: function(){}
+      });
+    },
 
     /**
      * Callback invoked before settings form submitted
      */
-    before_form_submit: function() {},
+    attach_input_names: function(e) {
+      var button_number = 0;
+      $$('li.hot_button').each(function(li){
+        var button_type = li.classNames().toArray().pop();
+        li.select('input, textarea, select').each(function(element){
+          var xname = element.readAttribute('xname');
+          var name = [button_number, button_type, xname].join('][');
+          name = 'settings[' + name + ']';
+          element.setAttribute('name', name);
+        });
+        button_number++;
+      });
+    },
 
     /**
      * Render to page "Add Hot Button" select
@@ -178,6 +236,10 @@ document.observe("dom:loaded", function() {
       var t = this;
 
       var wrapper = new Element('div', {id: 'hot_buttons_selector_wrapper'});
+
+      var label = new Element('label', {for: 'hot_buttons_selector'})
+        .insert(this._('select_hot_button'));
+      wrapper.insert(label);
 
       var select = new Element('select', {id: 'hot_buttons_selector'});
       var buttons = this.available_buttons;
@@ -193,7 +255,7 @@ document.observe("dom:loaded", function() {
       var add_button = new Element('a', {
         class: 'icon-add icon',
         href: 'javascript:void(0)'
-      }).insert('Add');
+      }).insert(this._('add'));
       wrapper.appendChild(add_button);
 
       Event.observe(add_button, 'click', function(){
@@ -218,6 +280,7 @@ document.observe("dom:loaded", function() {
       var button = this.buttons_factory.get(button_name, params)
 
       $('buttons_list').insert(button);
+      this.init_sortable_list();
     },
 
     /**

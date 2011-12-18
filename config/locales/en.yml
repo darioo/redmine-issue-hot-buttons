@@ -1,10 +1,19 @@
 en:
   issue_hot_buttons:
-    select_hot_button: "Select hot button to add"
+    add: "Add"
+    delete: "Delete"
+    confirm: "Are you sure?"
+    select_hot_button: "Select Hot Button"
+    caption: "Caption"
+
+    select_hot_button: "Select hot button"
     hot_button_title: "Hot button title"
 
     assign_to_me: "Assign to me"
+    assign_to_me_description: "Assign issue to current user"
 
     time_tracker: "Time tracker"
+    time_tracker_description: "Add start/pause/stop time button to help tracking working time"
 
     reassign_to: "Reassign to"
+    reassign_to_description: "High-configurable button for make simple many issue common actions"

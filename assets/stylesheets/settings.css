@@ -1,3 +1,41 @@
 /**
  * Redmine Issue Hot Buttons plugin
  */
+
+/**
+ * Hot button settings common styles
+ */
+#hot_buttons_settings {}
+  #hot_buttons_settings label {
+    margin: 0;
+  }
+  #hot_buttons_settings label:after {
+    content: ':';
+  }
+
+/**
+ * Hot button list common styles
+ */
+#buttons_list {
+  margin: 10px 0 0 0;
+  padding: 0;
+}
+  #buttons_list li.hot_button {
+    margin-top: 5px;
+    padding: 5px;
+    border: 1px solid #E4E4E4;
+    background: white;
+    list-style: none;
+  }
+    #buttons_list li.hot_button p.title,
+    #buttons_list li.hot_button p.description {
+      margin: 0;
+      padding: 0;
+    }
+    #buttons_list li.hot_button p.title {
+      font-weight: bold;
+    }
+      #buttons_list li.hot_button p.title a.icon {
+        font-weight: normal;
+        float: right;
+      }
