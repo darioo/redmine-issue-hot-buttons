@@ -9,32 +9,16 @@ document.observe("dom:loaded", function() {
    */
   var ButtonSettingsFactory = Class.create({
     /**
-     * Get hot button config by name
-     *
-     * @param  name   Hot Button name
-     * @param  params Saved button configuration
-     * @return Hot Button settings section
-     */
-    get: function(name, params) {
-      if (Object.isFunction(this['button_' + name])) {
-        return this.wrap_button(name, this['button_' + name](params));
-      }
-      return false;
-    },
-
-    /**
      * "Assign to" me Hot Button
      *
      * @param  params Saved button configuration
      * @return "Assign to" me Hot Button settings section
      */
     button_assign_to_me: function(params) {
-      return [
-        new Element('input', {type: 'hidden', xname: 'enabled', value:1}),
-        new Element('label', {for: 'assign_to_me_caption'})
-          .insert(this._('caption')),
-        new Element('input', {id: 'assign_to_me_caption', type: 'text', xname: 'caption'})
-      ];
+      return {
+        enabled: ['hidden', 1],
+        caption: 'text',
+      };
     },
 
     /**
@@ -44,7 +28,14 @@ document.observe("dom:loaded", function() {
      * @return "Time tracker" Hot Button settings section
      */
     button_time_tracker: function(params) {
-      return new Element('input', {type: 'hidden', xname: 'enabled', value:1});
+      return {
+        enabled:    ['hidden', 1],
+        start:      'text',
+        pause:      'text',
+        resume:     'text',
+        stop:       'text',
+        autosubmit: 'flag'
+      };
     },
 
     /**
@@ -54,7 +45,27 @@ document.observe("dom:loaded", function() {
      * @return "Reassign to" Hot Button settings section
      */
     button_reassign_to: function(params) {
-      return new Element('input', {type: 'hidden', xname: 'enabled', value:1});
+      return {
+        enabled: ['hidden', 1]
+      };
+    },
+
+    /**
+     * Get hot button config by name
+     *
+     * @param  name   Hot Button name
+     * @param  params Saved button configuration
+     * @return Hot Button settings section
+     */
+    get: function(button_name, params) {
+      if (Object.isFunction(this['button_' + button_name])) {
+        var button_frame = this['button_' + button_name](params);
+        return this.wrap_button(
+          button_name,
+          this.render_form(button_name, button_frame, params)
+        );
+      }
+      return false;
     },
 
     /**
@@ -78,15 +89,6 @@ document.observe("dom:loaded", function() {
         Event.element(event).up(1).remove();
       })
 
-      button = Object.isArray(button)
-        ? button
-        : [button];
-
-      var button_fields = new Element('div', {class: 'fields'});
-      button.each(function(item){
-        button_fields.insert(item)
-      });
-
       var elements = [
         new Element('p', {class: 'title'})
           .insert(this._(button_name))
@@ -95,7 +97,7 @@ document.observe("dom:loaded", function() {
         new Element('p', {class: 'description'})
           .insert(this._([button_name, 'description'])),
 
-        button_fields
+        button
       ];
 
       var wrapper = new Element('li')
@@ -110,14 +112,155 @@ document.observe("dom:loaded", function() {
     },
 
     /**
+     * Render Hot Button configuration inputs group
+     *
+     * @param button_name  Hot button name
+     * @param button_frame Hot button structure
+     * @param params       Hot button saved params
+     *
+     */
+    render_form: function(button_name, button_frame, params) {
+      return this.render_group(
+        button_name,
+        button_frame,
+        new Element('div',{class: 'fields'}),
+        new Hash(params));
+    },
+
+    /**
+     * Render inputs group and wrap it
+     *
+     * @param  button_name  Hot button name
+     * @param  inputs_group Inputs group object
+     * @param  wrap_element Wrapper for button
+     * @param  params       Hot button saved params
+     * @return Rendered inputs_group wrapped by wrap_element
+     */
+    render_group: function(button_name, inputs_group, wrap_element, params) {
+      var t = this;
+
+      new Hash(inputs_group).each(function(pair){
+        var input_name    = pair.key;
+        var input_options = pair.value;
+
+        if (! Object.isString(input_options) && ! Object.isArray(input_options)) {
+          var sub_wrapper = new Element('fieldset', {class: 'subset'}).insert(
+            new Element('legend').insert(t._([button_name, input_name, 'subset']))
+          );
+
+          t.render_group(button_name, input_options, sub_wrapper, params);
+          wrap_element.insert(sub_wrapper);
+        }
+        else {
+          if (! Object.isArray(input_options)) input_options = [input_options];
+          var input_type  = input_options.shift();
+          var input_value = params.get(input_name) || input_options.shift();
+
+          wrap_element.insert(
+            t.render_input(
+              button_name,
+              input_type,
+              input_name,
+              input_value
+            )
+          );
+
+        }
+      });
+      
+      return wrap_element;
+    },
+
+    /**
+     * Render single input
+     *
+     * @param type  Input type
+     *  Available types:
+     *   - text
+     *   - list
+     *   - flag
+     *   - hidden
+     * @param name
+     * @param value
+     */
+    render_input: function(button_name, type, name, value) {
+      var input_element = null;
+      var no_label = false;
+      var input_id = [button_name, name].join('_');
+      
+      switch (type) {
+        case 'hidden':
+          input_element = new Element('input', {
+            id: input_id,
+            xname: name,
+            type:  'hidden',
+            value: value,
+          });
+          no_label = true;
+          break;
+
+        case 'list':
+          value = value || (this._([button_name, name, 'value'], false) || value);
+          input_element = new Element('textarea', {
+            id: input_id,
+            xname: name
+          }).update(value);
+          break;
+
+        case 'flag':
+          input_element = [
+            new Element('input', {
+              xname: name,
+              type: 'hidden',
+              value: 0
+            }),
+            new Element('input', {
+              id: input_id,
+              xname: name,
+              type: 'checkbox',
+              value: 1
+            })
+          ];
+          var is_undefined = Object.isUndefined(value);
+          var has_default = this._([button_name, name, 'value'], false);
+
+          if ((is_undefined && has_default) || (!is_undefined && parseInt(value) !== 0)) {
+            input_element.last().setAttribute('checked', 'checked')
+          }
+          break;
+
+        default:
+        case 'text':
+          value = value || (this._([button_name, name, 'value'], false) || value);
+          input_element = new Element('input', {
+            id: input_id,
+            xname: name,
+            type: 'text',
+            value: value || ''
+          });
+      }
+
+      var result = new Element('div', {class: 'input_wrapper'})
+        .insert(no_label || new Element('label', {for: input_id}).insert(this._([input_id, 'label'])));
+
+      input_element = Object.isArray(input_element) ? input_element : [input_element];
+      input_element.each(function(element){
+        result.insert(element);
+      });
+
+      return result;
+    },
+
+    /**
      * Wrapper for Translator.get() method
      * Translate i18n ID to string for current language
      *
      * @param  key i18n ID
+     * @param  get_back Get back i18n ID if translation not exists
      * @return Translated string for current language
      */
-    _: function(key) {
-      return this.translator.get(key);
+    _: function(key, get_back) {
+      return this.translator.get(key, get_back);
     }
   });
 
@@ -141,11 +284,13 @@ document.observe("dom:loaded", function() {
      * Translate string using IssueHotButtonsSettings locale strings store
      *
      * @param  key i18n identifier
+     * @param  get_back Get back i18n ID if translation not exists
      * @return Translated string or input key if translation not found
      */
-    get: function(key) {
+    get: function(key, get_back) {
+      get_back = get_back === false ? false : true;
       if (Object.isArray(key)) key = key.join('_');
-      return this.i18n_strings.get(key) || key;
+      return this.i18n_strings.get(key) || (get_back ? key : false);
     }
   });
 
@@ -270,6 +415,8 @@ document.observe("dom:loaded", function() {
 
     /**
      * Render Hot Button
+     *
+     * @return void
      */
     render_button: function(button_name, params) {
       // Create buttons list, if not exists
@@ -287,13 +434,15 @@ document.observe("dom:loaded", function() {
      * Wrapper for Translator.get() method
      * Translate i18n ID to string for current language
      *
-     * @param  key i18n ID
+     * @param  key      i18n ID
+     * @param  get_back Get back i18n ID if translation not exists
      * @return Translated string for current language
      */
-    _: function(key) {
-      return this.translator.get(key);
+    _: function(key, get_back) {
+      return this.translator.get(key, get_back);
     }
   });
 
+  // Initialize settings page!
   new Settings();
 });

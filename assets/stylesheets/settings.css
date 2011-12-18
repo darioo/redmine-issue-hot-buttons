@@ -7,11 +7,22 @@
  */
 #hot_buttons_settings {}
   #hot_buttons_settings label {
-    margin: 0;
+    margin: 0 5px 0 0;
+    float: none;
+    display: inline-block;
+    vertical-align: top;
+    width: 200px;
   }
   #hot_buttons_settings label:after {
     content: ':';
   }
+
+/**
+ * Hot button selector style
+ */
+#hot_buttons_settings #hot_buttons_selector_wrapper label {
+  width: auto;
+}
 
 /**
  * Hot button list common styles
@@ -39,3 +50,6 @@
         font-weight: normal;
         float: right;
       }
+    #buttons_list li.hot_button fieldset {
+      margin-top: 10px;
+    }
