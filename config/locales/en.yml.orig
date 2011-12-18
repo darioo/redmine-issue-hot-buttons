@@ -1,0 +1,18 @@
+en:
+  issue_hot_buttons:
+    select_hot_button: "Select hot button to add"
+    hot_button_title: "Hot button title"
+
+    assign_to_me: "Assign to me"
+
+    time_tracker: "Time tracker"
+
+<<<<<<< HEAD
+    reassign_to: "Reassign to"
+=======
+  issue_time_tracking: "Time tracking"
+  issue_time_tracking_desc: "Start/pause/stop button for issue worktime tracking"
+  issue_time_tracking_start: "Start button title"
+  issue_time_tracking_pause: "Pause button title"
+  issue_time_tracking_stop: "Stop button title"
+>>>>>>> 0f7224267c5729b4c20e4104b9b7787560db77bd
