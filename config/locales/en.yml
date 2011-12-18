@@ -1,17 +1,10 @@
 en:
-  select_hot_button: "Select hot button to add"
-  hot_button_title: "Hot button title"
+  issue_hot_buttons:
+    select_hot_button: "Select hot button to add"
+    hot_button_title: "Hot button title"
 
-  assign_to_me: "Assign to me"
-  assign_to_me_desc: "Assign selected issue to current user"
+    assign_to_me: "Assign to me"
 
-  change_status_and_assign_to: "Change status to other user"
-  change_status_and_assign_to_desc: "Change issue status and assing to other user"
-  change_status_for_issues: "Allowed issues statuses"
-  change_status_to_roles: "Allowed assign to roles"
-  change_status_set_percent: "Set done %"
+    time_tracker: "Time tracker"
 
-  issue_time_tracking: "Time tracking"
-  issue_time_tracking_start: "Start button title"
-  issue_time_tracking_pause: "Pause button title"
-  issue_time_tracking_stop: "Stop button title"
+    reassign_to: "Reassign to"

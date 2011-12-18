@@ -10,3 +10,9 @@ Redmine::Plugin.register :redmine_issue_hot_buttons do
 	
 	settings :default => {'list_size' => '5', 'precision' => '2'}, :partial => 'settings/settings'
 end
+
+class Hooks < Redmine::Hook::ViewListener
+  render_on :view_issues_show_details_bottom,
+            :partial => 'assets',
+            :layout => false
+end
