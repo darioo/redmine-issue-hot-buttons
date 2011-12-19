@@ -36,4 +36,4 @@ en:
 
 
     reassign_to: "Reassign to"
-    reassign_to_description: "High-configurable button for make simple many issue common actions"
+    reassign_to_description: "Reassing issue to other user and (optional) update status"

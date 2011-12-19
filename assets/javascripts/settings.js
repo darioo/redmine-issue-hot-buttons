@@ -11,29 +11,27 @@ document.observe("dom:loaded", function() {
     /**
      * "Assign to" me Hot Button
      *
-     * @param  params Saved button configuration
-     * @return "Assign to" me Hot Button settings section
+     * @return "Assign to" me Hot Button settings frame
      */
     button_assign_to_me: function(params) {
       return {
         enabled: ['hidden', 1],
-        caption: 'text',
+        caption: 'text'
       };
     },
 
     /**
      * "Time tracker" Hot Button
      *
-     * @param  params Saved button configuration
-     * @return "Time tracker" Hot Button settings section
+     * @return "Time tracker" Hot Button settings frame
      */
-    button_time_tracker: function(params) {
+    button_time_tracker: function() {
       return {
-        enabled:    ['hidden', 1],
-        start:      'text',
-        pause:      'text',
-        resume:     'text',
-        stop:       'text',
+        enabled: ['hidden', 1],
+        start: 'text',
+        pause: 'text',
+        resume: 'text',
+        stop: 'text',
         autosubmit: 'flag'
       };
     },
@@ -41,14 +39,31 @@ document.observe("dom:loaded", function() {
     /**
      * "Reassign to" Hot Button
      *
-     * @param  params Saved button configuration
-     * @return "Reassign to" Hot Button settings section
+     * @return "Reassign to" Hot Button settings frame
      */
-    button_reassign_to: function(params) {
+    button_reassign_to: function() {
       return {
-        enabled: ['hidden', 1]
+        enabled: ['hidden', 1],
+				caption: 'text',
+				conditions: {
+					issue_status: ['multiselect', 123, this.issue_statuses],
+					source_user_role: ['multiselect', false, this.user_roles],
+					target_user_role: ['multiselect', false, this.user_roles],
+					has_comment: 'flag'	
+				},
+				actions: {
+					set_issue_status: ['select', false, this.issue_statuses]
+				}
       };
     },
+		
+		button_quick_update: function(params) {
+			return {
+				enabled: ['hidden', 1],
+				caption: ['text'],
+				fields:  ['list']
+			};
+		},
 
     /**
      * Get hot button config by name
@@ -80,7 +95,7 @@ document.observe("dom:loaded", function() {
       var t = this;
 
       var delete_button = new Element('a', {
-        class: 'icon-del icon',
+        'class': 'icon-del icon',
         href: 'javascript:void(0)'
       }).insert(this._('delete'));
 
@@ -90,11 +105,11 @@ document.observe("dom:loaded", function() {
       })
 
       var elements = [
-        new Element('p', {class: 'title'})
+        new Element('p', {'class': 'title'})
           .insert(this._(button_name))
           .insert(delete_button),
 
-        new Element('p', {class: 'description'})
+        new Element('p', {'class': 'description'})
           .insert(this._([button_name, 'description'])),
 
         button
@@ -123,7 +138,7 @@ document.observe("dom:loaded", function() {
       return this.render_group(
         button_name,
         button_frame,
-        new Element('div',{class: 'fields'}),
+        new Element('div',{'class': 'fields'}),
         new Hash(params));
     },
 
@@ -144,7 +159,7 @@ document.observe("dom:loaded", function() {
         var input_options = pair.value;
 
         if (! Object.isString(input_options) && ! Object.isArray(input_options)) {
-          var sub_wrapper = new Element('fieldset', {class: 'subset'}).insert(
+          var sub_wrapper = new Element('fieldset', {'class': 'subset'}).insert(
             new Element('legend').insert(t._([button_name, input_name, 'subset']))
           );
 
@@ -154,14 +169,17 @@ document.observe("dom:loaded", function() {
         else {
           if (! Object.isArray(input_options)) input_options = [input_options];
           var input_type  = input_options.shift();
-          var input_value = params.get(input_name) || input_options.shift();
-
+          var input_value = input_options.shift();
+					input_value = params.get(input_name) || input_value;
+					var default_value = input_options.shift();
+					
           wrap_element.insert(
             t.render_input(
               button_name,
               input_type,
               input_name,
-              input_value
+              input_value,
+							default_value
             )
           );
 
@@ -174,74 +192,88 @@ document.observe("dom:loaded", function() {
     /**
      * Render single input
      *
-     * @param type  Input type
+     * @param input_type  Input type
      *  Available types:
      *   - text
      *   - list
      *   - flag
      *   - hidden
-     * @param name
-     * @param value
+     * @param input_name
+     * @param input_value
      */
-    render_input: function(button_name, type, name, value) {
+    render_input: function(button_name, input_type, input_name, input_value, default_value) {
       var input_element = null;
       var no_label = false;
-      var input_id = [button_name, name].join('_');
+      var input_id = [button_name, input_name].join('_');
       
-      switch (type) {
+      switch (input_type) {
         case 'hidden':
           input_element = new Element('input', {
             id: input_id,
-            xname: name,
+            xname: input_name,
             type:  'hidden',
-            value: value,
+            value: input_value
           });
           no_label = true;
           break;
 
-        case 'list':
-          value = value || (this._([button_name, name, 'value'], false) || value);
-          input_element = new Element('textarea', {
-            id: input_id,
-            xname: name
-          }).update(value);
-          break;
+				/**/
+				case 'select':
+				case 'multiselect':
+					var multiselect = 'multiselect' == input_type;
+					
+					var select = new Element('select', {id: input_id, 'class': input_name});
+					new Hash(default_value).each(function(pair){
+						select.insert(
+							new Element('option', {value: pair.key, name: false})
+								.insert(pair.value)
+						);
+					});
+					if (multiselect) {
+						select.setAttribute('multiple', 'multiple');
+					}
+					
+					input_element =  [
+						select,
+						new Element('input', {xname: input_name, type: 'hidden'})
+					];
+					
+					break;
 
         case 'flag':
           input_element = [
             new Element('input', {
-              xname: name,
+              xname: input_name,
               type: 'hidden',
               value: 0
             }),
             new Element('input', {
               id: input_id,
-              xname: name,
+              xname: input_name,
               type: 'checkbox',
               value: 1
             })
           ];
-          var is_undefined = Object.isUndefined(value);
-          var has_default = this._([button_name, name, 'value'], false);
+          var is_undefined = Object.isUndefined(input_value);
 
-          if ((is_undefined && has_default) || (!is_undefined && parseInt(value) !== 0)) {
+          if ((is_undefined && default_value) || (!is_undefined && parseInt(input_value) !== 0)) {
             input_element.last().setAttribute('checked', 'checked')
           }
           break;
 
         default:
         case 'text':
-          value = value || (this._([button_name, name, 'value'], false) || value);
+          input_value = input_value || default_value || (this._([button_name, input_name, 'value'], false) || input_value);
           input_element = new Element('input', {
             id: input_id,
-            xname: name,
+            xname: input_name,
             type: 'text',
-            value: value || ''
+            value: input_value || ''
           });
       }
 
-      var result = new Element('div', {class: 'input_wrapper'})
-        .insert(no_label || new Element('label', {for: input_id}).insert(this._([input_id, 'label'])));
+      var result = new Element('div', {'class': 'input_wrapper'})
+        .insert(no_label || new Element('label', {'for': input_id}).insert(this._([input_id, 'label'])));
 
       input_element = Object.isArray(input_element) ? input_element : [input_element];
       input_element.each(function(element){
@@ -303,8 +335,9 @@ document.observe("dom:loaded", function() {
      */
     available_buttons: [
       'assign_to_me',
-      'time_tracker',
-      'reassign_to'
+      'reassign_to',
+			'quick_update',
+      'time_tracker'
     ],
 
     /**
@@ -364,12 +397,27 @@ document.observe("dom:loaded", function() {
       var button_number = 0;
       $$('li.hot_button').each(function(li){
         var button_type = li.classNames().toArray().pop();
-        li.select('input, textarea, select').each(function(element){
+
+        li.select('input').each(function(element){
           var xname = element.readAttribute('xname');
           var name = [button_number, button_type, xname].join('][');
           name = 'settings[' + name + ']';
           element.setAttribute('name', name);
         });
+				
+				li.select('select').each(function(select){
+					if (select.hasAttribute('multiple')) {
+						var multivalues = [];
+						select.select('option:selected').each(function(option){
+							multivalues.push(option.value);
+						});
+						select.siblings().last().value = multivalues.join('|');
+					}
+					else {
+						console.log(select.value);
+					}
+				});
+				
         button_number++;
       });
     },
@@ -382,7 +430,7 @@ document.observe("dom:loaded", function() {
 
       var wrapper = new Element('div', {id: 'hot_buttons_selector_wrapper'});
 
-      var label = new Element('label', {for: 'hot_buttons_selector'})
+      var label = new Element('label', {'for': 'hot_buttons_selector'})
         .insert(this._('select_hot_button'));
       wrapper.insert(label);
 
@@ -398,7 +446,7 @@ document.observe("dom:loaded", function() {
       wrapper.appendChild(select);
 
       var add_button = new Element('a', {
-        class: 'icon-add icon',
+        'class': 'icon-add icon',
         href: 'javascript:void(0)'
       }).insert(this._('add'));
       wrapper.appendChild(add_button);

@@ -1,7 +1,13 @@
 <%
-  issue_statuses = IssueStatus.find(:all).map { |status| status.name }
-  custom_fields = CustomField.find(:all).map { |field| field.name }
-  user_roles = Role.find(:all).map { |role| role.name }
+  issue_statuses = {};
+	IssueStatus.find(:all).each { |status| issue_statuses[status.id] = status.name }
+	
+  custom_fields = {}
+	CustomField.find(:all).each { |field| custom_fields[field.id] = field.name }
+	
+  user_roles = {}
+	Role.find(:all).map { |role| user_roles[role.id] = role.name }
+	
   i18n_strings = I18n.backend.send(:translations)
   locale = I18n.locale
 %>
