@@ -46,7 +46,7 @@ document.observe("dom:loaded", function() {
         _optional: ['caption2'],
         enabled: ['hidden', 1],
         caption: 'text',
-        caption2: 'text',
+        caption2: ['text', false, 'asdasd'],
         conditions: {
           _optional: ['target_user_role', 'has_comment'],
           issue_status: ['multiselect', 123, this.issue_statuses],
@@ -246,7 +246,8 @@ document.observe("dom:loaded", function() {
           input_value = input_value.isJSON() ? input_value.evalJSON() : input_value;
           
           var select = new Element('select', {id: input_id, 'class': input_name})
-            .addClassName(isOptional ? 'optional' : '');
+            .addClassName(isOptional ? 'optional' : '')
+            .addClassName(input_value.length ? '' : 'no_value');
 
           if (multiselect) {
             select.setAttribute('multiple', 'multiple');
@@ -280,6 +281,8 @@ document.observe("dom:loaded", function() {
           break;
 
         case 'flag':
+          var is_undefined = Object.isUndefined(input_value);
+
           input_element = [
             new Element('input', {
               xname: input_name,
@@ -291,9 +294,10 @@ document.observe("dom:loaded", function() {
               xname: input_name,
               type: 'checkbox',
               value: 1
-            }).addClassName(isOptional ? 'optional' : '')
+            })
+              .addClassName(isOptional ? 'optional' : '')
+              .addClassName(is_undefined ? 'no_value' : '')
           ];
-          var is_undefined = Object.isUndefined(input_value);
 
           if ((is_undefined && default_value) || (!is_undefined && parseInt(input_value) !== 0)) {
             input_element.last().setAttribute('checked', 'checked')
@@ -302,13 +306,17 @@ document.observe("dom:loaded", function() {
 
         default:
         case 'text':
+          var is_no_value = Object.isUndefined(input_value) || ! input_value;
+
           input_value = input_value || default_value || (this._([button_name, input_name, 'value'], false) || input_value);
           input_element = new Element('input', {
             id: input_id,
             xname: input_name,
             type: 'text',
             value: input_value || ''
-          }).addClassName(isOptional ? 'optional' : '');
+          })
+            .addClassName(isOptional ? 'optional' : '')
+            .addClassName(is_no_value ? 'no_value' : '');
       }
 
       var result = new Element('div', {'class': 'input_wrapper'})
@@ -462,7 +470,7 @@ document.observe("dom:loaded", function() {
           else {
             values.push(select.value);
           }
-          select.siblings().last().value = Object.toJSON(values);
+          select.up().select('input').first().value = Object.toJSON(values);
         });
         
         button_number++;
