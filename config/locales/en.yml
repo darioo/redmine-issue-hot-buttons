@@ -5,36 +5,34 @@ en:
     remove: "Remove"
     confirm: "Are you sure?"
     select_hot_button: "Select Hot Button"
+    select_hidden_elements: "Add optional settings"
     caption: "Caption"
-
 
     select_hot_button: "Select hot button"
     hot_button_title: "Hot button title"
 
-
     assign_to_me: "Assign to me"
     assign_to_me_description: "Assign issue to current user"
-    assign_to_me_caption_label: "Button title"
+    assign_to_me_caption_label: "Button caption"
     assign_to_me_caption_value: "Assign to me"
-
 
     time_tracker: "Time tracker"
     time_tracker_description: "Add start/pause/stop time button to help tracking working time"
-
     time_tracker_start_label: "Start caption"
     time_tracker_start_value: "Start working"
-
     time_tracker_pause_label: "Pause caption"
     time_tracker_pause_value: "Take a pause"
-
     time_tracker_resume_label: "Resume caption"
     time_tracker_resume_value: "Continue working"
-
     time_tracker_stop_label: "Stop caption"
     time_tracker_stop_value: "Finish working"
-
     time_tracker_autosubmit_label: "Auto-submit when stop"
-
 
     reassign_to: "Reassign to"
     reassign_to_description: "Reassing issue to other user and (optional) update status"
+
+    quick_update: "Quick update"
+    quick_update_description: "Display some fields from issue update form"
+    quick_update_caption_label: "Button caption"
+    quick_update_standart_label: "Default issue fields"
+    quick_update_custom_label: "Custom fields"

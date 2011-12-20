@@ -62,9 +62,11 @@ document.observe("dom:loaded", function() {
     
     button_quick_update: function(params) {
       return {
+        _optional: ['standart', 'custom'],
         enabled: ['hidden', 1],
         caption: ['text'],
-        fields:  ['list']
+        standart: ['multiselect', false, this.standart_fields],
+        custom: ['multiselect', false, this.custom_fields]
       };
     },
 
@@ -108,9 +110,14 @@ document.observe("dom:loaded", function() {
         Event.element(event).up(1).remove();
       })
 
+      var config_section_title = new Element('a',{
+        'class': 'collapse_config_section',
+        href: 'javascript:void(0)'
+      }).update(this._(button_name));
+
       var elements = [
         new Element('p', {'class': 'title'})
-          .insert(this._(button_name))
+          .insert(config_section_title)
           .insert(delete_button),
 
         new Element('p', {'class': 'description'})
@@ -415,6 +422,7 @@ document.observe("dom:loaded", function() {
 
       // Assign custom fields to ButtonSettingsFactory
       this.buttons_factory.custom_fields = this.custom_fields;
+      this.buttons_factory.standart_fields = this.standart_fields;
       this.buttons_factory.issue_statuses = this.issue_statuses;
       this.buttons_factory.user_roles = this.user_roles;
       this.buttons_factory.hide_optional_field = this.hide_optional_field;
@@ -578,7 +586,6 @@ document.observe("dom:loaded", function() {
           'class': 'icon-add icon',
           href: 'javascript:void(0)'
         }).insert(this._('add'));
-        wrapper.appendChild(add_button);
 
         Event.observe(add_button, 'click', function(event){
           var optional_select = Event.element(event).up().select('select').first();
@@ -590,6 +597,9 @@ document.observe("dom:loaded", function() {
 
           var option = optional_select.select('option[value="' + button_name + '"]').first();
           option.remove();
+          if(optional_select.select('option').length == 1) {
+            optional_select.up().remove();
+          }
         });
 
         field_container.insert({

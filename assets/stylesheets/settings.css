@@ -16,6 +16,18 @@
   #hot_buttons_settings label:after {
     content: ':';
   }
+  #hot_buttons_settings a.icon {
+    vertical-align: top;
+    margin-left: 5px;
+  }
+  #hot_buttons_settings input[type="text"] {
+    margin: 0;
+    width: 160px;
+  }
+  #hot_buttons_settings select {
+    width: 160px;
+    margin: 0;
+  }
 
 /**
  * Hot button selector style
@@ -52,4 +64,11 @@
       }
     #buttons_list li.hot_button fieldset {
       margin-top: 10px;
+    }
+    #buttons_list li.hot_button .optional_elements_selector {
+      margin-top: 5px;
+      margin-bottom: 10px;
+    }
+    #buttons_list li.hot_button div.input_wrapper {
+      margin-bottom: 4px;
     }
