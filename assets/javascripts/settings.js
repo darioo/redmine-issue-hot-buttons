@@ -44,26 +44,26 @@ document.observe("dom:loaded", function() {
     button_reassign_to: function() {
       return {
         enabled: ['hidden', 1],
-				caption: 'text',
-				conditions: {
-					issue_status: ['multiselect', 123, this.issue_statuses],
-					source_user_role: ['multiselect', false, this.user_roles],
-					target_user_role: ['multiselect', false, this.user_roles],
-					has_comment: 'flag'	
-				},
-				actions: {
-					set_issue_status: ['select', false, this.issue_statuses]
-				}
+        caption: 'text',
+        conditions: {
+          issue_status: ['multiselect', 123, this.issue_statuses],
+          source_user_role: ['multiselect', false, this.user_roles],
+          target_user_role: ['multiselect', false, this.user_roles],
+          has_comment: 'flag'  
+        },
+        actions: {
+          set_issue_status: ['select', false, this.issue_statuses]
+        }
       };
     },
-		
-		button_quick_update: function(params) {
-			return {
-				enabled: ['hidden', 1],
-				caption: ['text'],
-				fields:  ['list']
-			};
-		},
+    
+    button_quick_update: function(params) {
+      return {
+        enabled: ['hidden', 1],
+        caption: ['text'],
+        fields:  ['list']
+      };
+    },
 
     /**
      * Get hot button config by name
@@ -170,16 +170,16 @@ document.observe("dom:loaded", function() {
           if (! Object.isArray(input_options)) input_options = [input_options];
           var input_type  = input_options.shift();
           var input_value = input_options.shift();
-					input_value = params.get(input_name) || input_value;
-					var default_value = input_options.shift();
-					
+          input_value = params.get(input_name) || input_value;
+          var default_value = input_options.shift();
+          
           wrap_element.insert(
             t.render_input(
               button_name,
               input_type,
               input_name,
               input_value,
-							default_value
+              default_value
             )
           );
 
@@ -217,28 +217,45 @@ document.observe("dom:loaded", function() {
           no_label = true;
           break;
 
-				/**/
-				case 'select':
-				case 'multiselect':
-					var multiselect = 'multiselect' == input_type;
-					
-					var select = new Element('select', {id: input_id, 'class': input_name});
-					new Hash(default_value).each(function(pair){
-						select.insert(
-							new Element('option', {value: pair.key, name: false})
-								.insert(pair.value)
-						);
-					});
-					if (multiselect) {
-						select.setAttribute('multiple', 'multiple');
-					}
-					
-					input_element =  [
-						select,
-						new Element('input', {xname: input_name, type: 'hidden'})
-					];
-					
-					break;
+        case 'select':
+        case 'multiselect':
+          var multiselect = 'multiselect' == input_type;
+          
+          input_value = input_value.toString();
+          input_value = input_value.isJSON() ? input_value.evalJSON() : input_value;
+          
+          var select = new Element('select', {id: input_id, 'class': input_name});
+          
+          if (multiselect) {
+            select.setAttribute('multiple', 'multiple');
+            new Hash(default_value).each(function(pair){
+              var option_element = new Element('option', {
+                value: pair.key,
+                name: false
+              }).insert(pair.value);
+              
+              if (Object.isArray(input_value) && input_value.indexOf(pair.key) !== -1) {
+                option_element.setAttribute('selected', 'selected')
+              }
+              select.insert(option_element);
+            });
+          }
+          else {
+            new Hash(default_value).each(function(pair){
+                select.insert(
+                  new Element('option', {value: pair.key,name: false})
+                    .insert(pair.value)
+              );
+            });
+            select.value = Object.isArray(input_value) ? input_value.pop() : input_value;
+          }
+          
+          input_element =  [
+            select,
+            new Element('input', {xname: input_name, type: 'hidden'})
+          ];
+          
+          break;
 
         case 'flag':
           input_element = [
@@ -336,7 +353,7 @@ document.observe("dom:loaded", function() {
     available_buttons: [
       'assign_to_me',
       'reassign_to',
-			'quick_update',
+      'quick_update',
       'time_tracker'
     ],
 
@@ -404,20 +421,20 @@ document.observe("dom:loaded", function() {
           name = 'settings[' + name + ']';
           element.setAttribute('name', name);
         });
-				
-				li.select('select').each(function(select){
-					if (select.hasAttribute('multiple')) {
-						var multivalues = [];
-						select.select('option:selected').each(function(option){
-							multivalues.push(option.value);
-						});
-						select.siblings().last().value = multivalues.join('|');
-					}
-					else {
-						console.log(select.value);
-					}
-				});
-				
+        
+        li.select('select').each(function(select){
+          var values = [];
+          if (select.hasAttribute('multiple')) {
+            select.select('option:selected').each(function(option){
+              values.push(option.value);
+            });
+          }
+          else {
+            values.push(select.value);
+          }
+          select.siblings().last().value = Object.toJSON(values);
+        });
+        
         button_number++;
       });
     },
