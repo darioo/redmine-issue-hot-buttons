@@ -2,6 +2,7 @@ en:
   issue_hot_buttons:
     add: "Add"
     delete: "Delete"
+    remove: "Remove"
     confirm: "Are you sure?"
     select_hot_button: "Select Hot Button"
     caption: "Caption"

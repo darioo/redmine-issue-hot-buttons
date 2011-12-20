@@ -43,13 +43,16 @@ document.observe("dom:loaded", function() {
      */
     button_reassign_to: function() {
       return {
+        _optional: ['caption2'],
         enabled: ['hidden', 1],
         caption: 'text',
+        caption2: 'text',
         conditions: {
+          _optional: ['target_user_role', 'has_comment'],
           issue_status: ['multiselect', 123, this.issue_statuses],
           source_user_role: ['multiselect', false, this.user_roles],
           target_user_role: ['multiselect', false, this.user_roles],
-          has_comment: 'flag'  
+          has_comment: 'flag'
         },
         actions: {
           set_issue_status: ['select', false, this.issue_statuses]
@@ -75,6 +78,7 @@ document.observe("dom:loaded", function() {
     get: function(button_name, params) {
       if (Object.isFunction(this['button_' + button_name])) {
         var button_frame = this['button_' + button_name](params);
+
         return this.wrap_button(
           button_name,
           this.render_form(button_name, button_frame, params)
@@ -154,7 +158,14 @@ document.observe("dom:loaded", function() {
     render_group: function(button_name, inputs_group, wrap_element, params) {
       var t = this;
 
-      new Hash(inputs_group).each(function(pair){
+      inputs_group = new Hash(inputs_group);
+
+      var optional_fields = inputs_group.get('_optional') || [];
+
+      inputs_group.each(function(pair){
+        // ignore service keys that starts with underscore, like "_optional"
+        if (! pair.key.indexOf('_')) return false;
+
         var input_name    = pair.key;
         var input_options = pair.value;
 
@@ -172,14 +183,20 @@ document.observe("dom:loaded", function() {
           var input_value = input_options.shift();
           input_value = params.get(input_name) || input_value;
           var default_value = input_options.shift();
-          
+          // special input params like "_optional"
+          var service_params = new Hash();
+          if (optional_fields.indexOf(input_name) != -1) {
+            service_params.set('_optional', true);
+          }
+
           wrap_element.insert(
             t.render_input(
               button_name,
               input_type,
               input_name,
               input_value,
-              default_value
+              default_value,
+              service_params
             )
           );
 
@@ -200,12 +217,16 @@ document.observe("dom:loaded", function() {
      *   - hidden
      * @param input_name
      * @param input_value
+     * @param default_value
+     * @param service_params
      */
-    render_input: function(button_name, input_type, input_name, input_value, default_value) {
+    render_input: function(button_name, input_type, input_name, input_value, default_value, service_params) {
       var input_element = null;
       var no_label = false;
       var input_id = [button_name, input_name].join('_');
-      
+
+      var isOptional = service_params.get('_optional');
+
       switch (input_type) {
         case 'hidden':
           input_element = new Element('input', {
@@ -224,8 +245,9 @@ document.observe("dom:loaded", function() {
           input_value = input_value.toString();
           input_value = input_value.isJSON() ? input_value.evalJSON() : input_value;
           
-          var select = new Element('select', {id: input_id, 'class': input_name});
-          
+          var select = new Element('select', {id: input_id, 'class': input_name})
+            .addClassName(isOptional ? 'optional' : '');
+
           if (multiselect) {
             select.setAttribute('multiple', 'multiple');
             new Hash(default_value).each(function(pair){
@@ -269,7 +291,7 @@ document.observe("dom:loaded", function() {
               xname: input_name,
               type: 'checkbox',
               value: 1
-            })
+            }).addClassName(isOptional ? 'optional' : '')
           ];
           var is_undefined = Object.isUndefined(input_value);
 
@@ -286,7 +308,7 @@ document.observe("dom:loaded", function() {
             xname: input_name,
             type: 'text',
             value: input_value || ''
-          });
+          }).addClassName(isOptional ? 'optional' : '');
       }
 
       var result = new Element('div', {'class': 'input_wrapper'})
@@ -296,6 +318,14 @@ document.observe("dom:loaded", function() {
       input_element.each(function(element){
         result.insert(element);
       });
+
+      if (isOptional) {
+        var delete_button = new Element('a', {
+          'class': 'icon-move icon',
+          href: 'javascript:void(0)'
+        }).insert(this._('Remove'));
+        result.insert(delete_button);
+      }
 
       return result;
     },
