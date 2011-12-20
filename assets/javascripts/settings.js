@@ -332,6 +332,15 @@ document.observe("dom:loaded", function() {
           'class': 'icon-move icon',
           href: 'javascript:void(0)'
         }).insert(this._('Remove'));
+
+        t = this;
+
+        Event.observe(delete_button, 'click', function(event){
+          var optional_field = Event.element(event).up().select('.optional').first();
+          t.hide_optional_field(optional_field);
+        });
+
+
         result.insert(delete_button);
       }
 
@@ -408,6 +417,7 @@ document.observe("dom:loaded", function() {
       this.buttons_factory.custom_fields = this.custom_fields;
       this.buttons_factory.issue_statuses = this.issue_statuses;
       this.buttons_factory.user_roles = this.user_roles;
+      this.buttons_factory.hide_optional_field = this.hide_optional_field;
 
       this.translator = this.buttons_factory.translator = new Translator(this.i18n_strings);
 
@@ -453,14 +463,18 @@ document.observe("dom:loaded", function() {
       $$('li.hot_button').each(function(li){
         var button_type = li.classNames().toArray().pop();
 
-        li.select('input').each(function(element){
+        li.select('div.input_wrapper input').each(function(element){
+          if (! element.up().visible()) return;
+
           var xname = element.readAttribute('xname');
           var name = [button_number, button_type, xname].join('][');
           name = 'settings[' + name + ']';
           element.setAttribute('name', name);
         });
         
-        li.select('select').each(function(select){
+        li.select('div.input_wrapper select').each(function(select){
+          if (! select.up().visible()) return;
+
           var values = [];
           if (select.hasAttribute('multiple')) {
             select.select('option:selected').each(function(option){
@@ -530,7 +544,69 @@ document.observe("dom:loaded", function() {
       var button = this.buttons_factory.get(button_name, params)
 
       $('buttons_list').insert(button);
+      this.hide_optional_fields(button);
       this.init_sortable_list();
+    },
+
+    hide_optional_fields: function(button) {
+      if (! button) return;
+      t = this;
+      var hidden_fields_selector = new Element('select', {
+        'class': 'optional_fields'
+      });
+      button.select('.optional.no_value').each(function(field){
+        t.hide_optional_field(field)
+      });
+    },
+
+    hide_optional_field: function(field){
+      t = this;
+
+      var label_text = field.siblings().first().innerHTML;
+      var element_id = field.readAttribute('id');
+
+      var field_wrapper = field.up();
+      var field_container = field_wrapper.up();
+
+      var optional_fields_select = null;
+      if (! field_container.select('select.optional_fields').length) {
+        optional_fields_select = new Element('select', {
+          'class': 'optional_fields'
+        }).insert(new Element('option'));
+
+        var add_button = new Element('a', {
+          'class': 'icon-add icon',
+          href: 'javascript:void(0)'
+        }).insert(this._('add'));
+        wrapper.appendChild(add_button);
+
+        Event.observe(add_button, 'click', function(event){
+          var optional_select = Event.element(event).up().select('select').first();
+          var button_name = optional_select.value;
+          if (button_name.length == 0) return false;
+
+          var optional_field = $(button_name).up();
+          optional_field.show();
+
+          var option = optional_select.select('option[value="' + button_name + '"]').first();
+          option.remove();
+        });
+
+        field_container.insert({
+          top: new Element('div', {'class': 'optional_elements_selector'})
+            .insert(new Element('label').update(this._('select_hidden_elements')))
+            .insert(optional_fields_select)
+            .insert(add_button)
+        })
+      }
+      else {
+        optional_fields_select = field_container.select('select.optional_fields').first();
+      }
+      optional_fields_select.insert(
+        new Element('option', {value: element_id}).update(label_text)
+      );
+
+      field_wrapper.hide();
     },
 
     /**
