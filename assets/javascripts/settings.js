@@ -598,7 +598,7 @@ document.observe("dom:loaded", function() {
           var option = optional_select.select('option[value="' + button_name + '"]').first();
           option.remove();
           if(optional_select.select('option').length == 1) {
-            optional_select.up().remove();
+            optional_select.up().hide();
           }
         });
 
@@ -615,6 +615,7 @@ document.observe("dom:loaded", function() {
       optional_fields_select.insert(
         new Element('option', {value: element_id}).update(label_text)
       );
+      optional_fields_select.up().show();  
 
       field_wrapper.hide();
     },
