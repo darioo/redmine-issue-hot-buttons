@@ -76,3 +76,14 @@
     #buttons_list li.hot_button div.input_wrapper {
       margin-bottom: 4px;
     }
+    #buttons_list li.hot_button a.collapse_section {
+      text-decoration: none;
+      border-bottom: 1px dashed;
+    }
+      #buttons_list li.hot_button a.collapse_section:hover {
+        border-bottom: 1px solid;
+      }
+  #buttons_list li.hot_button.collapsed .description,
+  #buttons_list li.hot_button.collapsed .fields {
+    display: none;
+  }

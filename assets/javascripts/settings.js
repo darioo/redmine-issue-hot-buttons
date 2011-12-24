@@ -133,9 +133,19 @@ document.observe("dom:loaded", function() {
       })
 
       var config_section_title = new Element('a',{
-        'class': 'collapse_config_section',
+        'class': 'collapse_section',
         href: 'javascript:void(0)'
       }).update(this._(button_name));
+
+      Event.observe(config_section_title, 'click', function(event){
+        var config_section = Event.element(event).up(1);
+        if (config_section.hasClassName('collapsed')) {
+          config_section.removeClassName('collapsed');
+        }
+        else {
+          config_section.addClassName('collapsed');
+        }
+      })
 
       var elements = [
         new Element('p', {'class': 'title'})
@@ -480,7 +490,7 @@ document.observe("dom:loaded", function() {
         var name = button_config.keys().first();
         var params = button_config.values().first();
 
-        t.render_button(name, params);
+        t.render_button(name, params, true);
       });
     },
 
@@ -500,6 +510,11 @@ document.observe("dom:loaded", function() {
     attach_input_names: function(e) {
       var button_number = 0;
       $$('li.hot_button').each(function(li){
+        var collapsed = li.hasClassName('collapsed');
+        if (collapsed) {
+          li.removeClassName('collapsed');
+        }
+
         var button_type = li.classNames().toArray().pop();
 
         li.select('div.input_wrapper input').each(function(element){
@@ -525,7 +540,10 @@ document.observe("dom:loaded", function() {
           }
           select.up().select('input').first().value = Object.toJSON(values);
         });
-        
+
+        if (collapsed) {
+          li.addClassName('collapsed');
+        }
         button_number++;
       });
     },
@@ -577,13 +595,16 @@ document.observe("dom:loaded", function() {
      *
      * @return void
      */
-    render_button: function(button_name, params) {
+    render_button: function(button_name, params, collapsed) {
       // Create buttons list, if not exists
       if ($('buttons_list') == null) {
         $('hot_buttons_settings').appendChild(new Element('ul', {id: 'buttons_list'}));
       }
 
       var button = this.buttons_factory.get(button_name, params)
+      if (button && collapsed) {
+        button.addClassName('collapsed');
+      }
 
       $('buttons_list').insert(button);
       this.hide_optional_fields(button);
