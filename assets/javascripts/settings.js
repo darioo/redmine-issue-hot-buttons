@@ -423,10 +423,6 @@ document.observe("dom:loaded", function() {
     get: function(key, get_back) {
       get_back = get_back === false ? false : true;
       if (Object.isArray(key)) key = key.join('_');
-
-      // debug code
-      if (! this.i18n_strings.get(key)) console.log(key);
-
       return this.i18n_strings.get(key) || (get_back ? key : false);
     }
   });
@@ -563,12 +559,15 @@ document.observe("dom:loaded", function() {
       }).insert(this._('add'));
       wrapper.appendChild(add_button);
 
-      Event.observe(add_button, 'click', function(){
+      var add_button_event_callback = function(){
         var button_name = $('hot_buttons_selector').value;
         if (button_name.length == 0) return false;
 
         t.render_button(button_name);
-      })
+      }
+
+      Event.observe(add_button, 'click', add_button_event_callback);
+      Event.observe(select, 'change', add_button_event_callback);
 
       $('hot_buttons_settings').appendChild(wrapper);
     },
@@ -617,13 +616,8 @@ document.observe("dom:loaded", function() {
           'class': 'optional_fields'
         }).insert(new Element('option'));
 
-        var add_button = new Element('a', {
-          'class': 'icon-add icon',
-          href: 'javascript:void(0)'
-        }).insert(this._('add'));
-
-        Event.observe(add_button, 'click', function(event){
-          var optional_select = Event.element(event).up().select('select').first();
+        Event.observe(optional_fields_select, 'change', function(event){
+          var optional_select = Event.element(event);
           var button_name = optional_select.value;
           if (button_name.length == 0) return false;
 
@@ -641,7 +635,6 @@ document.observe("dom:loaded", function() {
           top: new Element('div', {'class': 'optional_elements_selector'})
             .insert(new Element('label').update(this._('select_hidden_elements')))
             .insert(optional_fields_select)
-            .insert(add_button)
         })
       }
       else {
