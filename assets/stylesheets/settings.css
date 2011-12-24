@@ -63,6 +63,8 @@
     }
       #buttons_list li.hot_button p.title a.icon {
         font-weight: normal;
+      }
+      #buttons_list li.hot_button p.title a.icon-del {
         float: right;
       }
     #buttons_list li.hot_button fieldset {

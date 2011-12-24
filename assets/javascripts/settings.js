@@ -16,6 +16,7 @@ document.observe("dom:loaded", function() {
     button_assign_to_me: function(params) {
       return {
         enabled: ['hidden', 1],
+        internal_name: ['hidden', ''],
         caption: 'text'
       };
     },
@@ -28,6 +29,7 @@ document.observe("dom:loaded", function() {
     button_time_tracker: function() {
       return {
         enabled: ['hidden', 1],
+        internal_name: ['hidden', ''],
         start: 'text',
         pause: 'text',
         resume: 'text',
@@ -54,6 +56,7 @@ document.observe("dom:loaded", function() {
     button_reassign_to: function() {
       return {
         enabled: ['hidden', 1],
+        internal_name: ['hidden', ''],
         caption: 'text',
         conditions: {
           _optional: ['user_role', 'issue_status', 'issue_tracker'],
@@ -82,6 +85,7 @@ document.observe("dom:loaded", function() {
       return {
         _optional: ['standart', 'custom'],
         enabled: ['hidden', 1],
+        internal_name: ['hidden', ''],
         caption: 'text',
         fields: {
           _optional: ['standart', 'custom', 'include_comment'],
@@ -103,9 +107,12 @@ document.observe("dom:loaded", function() {
       if (Object.isFunction(this['button_' + button_name])) {
         var button_frame = this['button_' + button_name](params);
 
+        var config_section_name = !Object.isUndefined(params) && !Object.isUndefined(params.internal_name) && params['internal_name'].trim();
+
         return this.wrap_button(
           button_name,
-          this.render_form(button_name, button_frame, params)
+          this.render_form(button_name, button_frame, params),
+          config_section_name
         );
       }
       return false;
@@ -119,7 +126,7 @@ document.observe("dom:loaded", function() {
      * @param  button      Nake hot button config fields
      * @return Complete Hot Button settings section
      */
-    wrap_button: function(button_name, button) {
+    wrap_button: function(button_name, button, config_section_name) {
       var t = this;
 
       var delete_button = new Element('a', {
@@ -135,10 +142,14 @@ document.observe("dom:loaded", function() {
       var config_section_title = new Element('a',{
         'class': 'collapse_section',
         href: 'javascript:void(0)'
-      }).update(this._(button_name));
+      })
+        .update(this._(button_name))
+        .insert(new Element('span', {
+          'class': 'internal_name'
+        }).update(config_section_name ? '('+config_section_name+')' : ''));
 
       Event.observe(config_section_title, 'click', function(event){
-        var config_section = Event.element(event).up(1);
+        var config_section = Event.element(event).up('.hot_button');
         if (config_section.hasClassName('collapsed')) {
           config_section.removeClassName('collapsed');
         }
@@ -147,9 +158,69 @@ document.observe("dom:loaded", function() {
         }
       })
 
+      var internal_name_input = new Element('input', {
+        type: 'text',
+        'class': 'internal_name',
+        value: config_section_name
+      }).hide();
+
+      var edit_internal_name = new Element('a', {
+        'class': 'icon-edit icon edit_internal_name',
+        href: 'javascript:void(0)'
+      }).insert(this._('rename'));
+
+      Event.observe(edit_internal_name, 'click', function(event){
+        Event.element(event).up().select('.save_internal_name')
+          .first()
+          .show();
+        Event.element(event).up().select('input.internal_name')
+          .first()
+          .show()
+          .focus();
+        Event.element(event).hide();
+      });
+
+      var save_internal_name = new Element('a', {
+        'class': 'icon-save icon save_internal_name',
+        href: 'javascript:void(0)'
+      })
+        .insert(this._('save'))
+        .hide();
+
+      Event.observe(save_internal_name, 'click', function(event){
+        Event.element(event).up().select('.edit_internal_name')
+          .first()
+          .show();
+        Event.element(event).up().select('input.internal_name')
+          .first()
+          .hide();
+        Event.element(event).hide();
+        
+        var internal_name = Event.element(event).up().select('input.internal_name')
+          .first()
+          .value
+          .trim();
+
+        if(internal_name) {
+          Event.element(event).up().select('span.internal_name').first().update(
+            '(' + internal_name + ')'
+          );
+        }
+        else {
+          Event.element(event).up().select('span.internal_name').first().update('');
+        }
+
+        Event.element(event).up(1).select('input[xname="internal_name"]')
+          .first()
+          .value = internal_name;
+      });
+
       var elements = [
         new Element('p', {'class': 'title'})
           .insert(config_section_title)
+          .insert(internal_name_input)
+          .insert(save_internal_name)
+          .insert(edit_internal_name)
           .insert(delete_button),
 
         new Element('p', {'class': 'description'})
@@ -517,7 +588,7 @@ document.observe("dom:loaded", function() {
 
         var button_type = li.classNames().toArray().pop();
 
-        li.select('div.input_wrapper input').each(function(element){
+        li.select('.input_wrapper input').each(function(element){
           if (! element.up().visible()) return;
 
           var xname = element.readAttribute('xname');
@@ -526,7 +597,7 @@ document.observe("dom:loaded", function() {
           element.setAttribute('name', name);
         });
         
-        li.select('div.input_wrapper select').each(function(select){
+        li.select('.input_wrapper select').each(function(select){
           if (! select.up().visible()) return;
 
           var values = [];

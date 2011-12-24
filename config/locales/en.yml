@@ -3,6 +3,8 @@ en:
     add: "Add"
     delete: "Delete"
     remove: "Remove"
+    rename: "Rename"
+    save: "Save"
     confirm: "Are you sure?"
     select_hot_button: "Select Hot Button"
     select_hidden_elements: "Optional"
