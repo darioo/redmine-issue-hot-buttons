@@ -32,7 +32,17 @@ document.observe("dom:loaded", function() {
         pause: 'text',
         resume: 'text',
         stop: 'text',
-        autosubmit: 'flag'
+        options: {
+          _optional: ['include_comment', 'autosubmit'],
+          include_comment: 'flag',
+          autosubmit: 'flag'
+        },
+        conditions: {
+          _optional: ['user_role', 'issue_status', 'issue_tracker'],
+          user_role: ['multiselect', false, this.user_roles],
+          issue_status: ['multiselect', false, this.issue_statuses],
+          issue_tracker: ['multiselect', false, this.issue_trackers]
+        },
       };
     },
 
@@ -43,30 +53,42 @@ document.observe("dom:loaded", function() {
      */
     button_reassign_to: function() {
       return {
-        _optional: ['caption2'],
         enabled: ['hidden', 1],
         caption: 'text',
-        caption2: ['text', false, 'asdasd'],
         conditions: {
-          _optional: ['target_user_role', 'has_comment'],
-          issue_status: ['multiselect', 123, this.issue_statuses],
-          source_user_role: ['multiselect', false, this.user_roles],
-          target_user_role: ['multiselect', false, this.user_roles],
-          has_comment: 'flag'
+          _optional: ['user_role', 'issue_status', 'issue_tracker'],
+          user_role: ['multiselect', false, this.user_roles],
+          issue_status: ['multiselect', false, this.issue_statuses],
+          issue_tracker: ['multiselect', false, this.issue_trackers]
         },
         actions: {
-          set_issue_status: ['select', false, this.issue_statuses]
+          _optional: [
+            'set_issue_status','assign_to_other', 'assign_to_current',
+            'set_done', 'include_standart_fields', 'include_custom_fields',
+            'include_comment'
+          ],
+          set_issue_status: ['select', false, this.issue_statuses],
+          assign_to_other: ['multiselect', false, this.user_roles],
+          assign_to_current: 'flag',
+          set_done: 'flag',
+          include_standart_fields: ['multiselect', false, this.standart_fields],
+          include_custom_fields: ['multiselect', false, this.custom_fields],
+          include_comment: 'flag'
         }
-      };
+      }
     },
-    
+
     button_quick_update: function(params) {
       return {
         _optional: ['standart', 'custom'],
         enabled: ['hidden', 1],
-        caption: ['text'],
-        standart: ['multiselect', false, this.standart_fields],
-        custom: ['multiselect', false, this.custom_fields]
+        caption: 'text',
+        fields: {
+          _optional: ['standart', 'custom', 'include_comment'],
+          standart: ['multiselect', false, this.standart_fields],
+          custom: ['multiselect', false, this.custom_fields],
+          include_comment: 'flag'
+        }
       };
     },
 
@@ -177,9 +199,17 @@ document.observe("dom:loaded", function() {
         var input_options = pair.value;
 
         if (! Object.isString(input_options) && ! Object.isArray(input_options)) {
-          var sub_wrapper = new Element('fieldset', {'class': 'subset'}).insert(
-            new Element('legend').insert(t._([button_name, input_name, 'subset']))
-          );
+          var sub_wrapper = new Element('fieldset', {
+            'class': 'subset',
+            'id': [button_name, input_name, 'subset'].join('_')
+          });
+
+          var legend = false;
+          if (legend = t._([button_name, input_name, 'subset'], false)) {
+            sub_wrapper.insert(
+              new Element('legend').insert(legend)
+            );
+          }
 
           t.render_group(button_name, input_options, sub_wrapper, params);
           wrap_element.insert(sub_wrapper);
@@ -393,6 +423,10 @@ document.observe("dom:loaded", function() {
     get: function(key, get_back) {
       get_back = get_back === false ? false : true;
       if (Object.isArray(key)) key = key.join('_');
+
+      // debug code
+      if (! this.i18n_strings.get(key)) console.log(key);
+
       return this.i18n_strings.get(key) || (get_back ? key : false);
     }
   });
@@ -406,9 +440,9 @@ document.observe("dom:loaded", function() {
      */
     available_buttons: [
       'assign_to_me',
-      'reassign_to',
       'quick_update',
-      'time_tracker'
+      'time_tracker',
+      'reassign_to'
     ],
 
     /**
@@ -424,6 +458,7 @@ document.observe("dom:loaded", function() {
       this.buttons_factory.custom_fields = this.custom_fields;
       this.buttons_factory.standart_fields = this.standart_fields;
       this.buttons_factory.issue_statuses = this.issue_statuses;
+      this.buttons_factory.issue_trackers = this.issue_trackers;
       this.buttons_factory.user_roles = this.user_roles;
       this.buttons_factory.hide_optional_field = this.hide_optional_field;
 

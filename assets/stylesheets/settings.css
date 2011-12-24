@@ -24,6 +24,9 @@
     margin: 0;
     width: 160px;
   }
+  #hot_buttons_settings input[type="checkbox"] {
+    margin: 0;
+  }
   #hot_buttons_settings select {
     width: 160px;
     margin: 0;
@@ -64,6 +67,7 @@
       }
     #buttons_list li.hot_button fieldset {
       margin-top: 10px;
+      padding-top: 10px;
     }
     #buttons_list li.hot_button .optional_elements_selector {
       margin-top: 5px;
