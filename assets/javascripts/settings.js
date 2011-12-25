@@ -8,18 +8,6 @@ document.observe("dom:loaded", function() {
    * Produce Hot Button settings sections
    */
   var ButtonSettingsFactory = Class.create({
-    /**
-     * "Assign to" me Hot Button
-     *
-     * @return "Assign to" me Hot Button settings frame
-     */
-    button_assign_to_me: function(params) {
-      return {
-        enabled: ['hidden', 1],
-        internal_name: ['hidden', ''],
-        caption: 'text'
-      };
-    },
 
     /**
      * "Time tracker" Hot Button
@@ -53,7 +41,7 @@ document.observe("dom:loaded", function() {
      *
      * @return "Reassign to" Hot Button settings frame
      */
-    button_reassign_to: function() {
+    button_issue_update: function() {
       return {
         enabled: ['hidden', 1],
         internal_name: ['hidden', ''],
@@ -81,21 +69,6 @@ document.observe("dom:loaded", function() {
       }
     },
 
-    button_quick_update: function(params) {
-      return {
-        _optional: ['standart', 'custom'],
-        enabled: ['hidden', 1],
-        internal_name: ['hidden', ''],
-        caption: 'text',
-        fields: {
-          _optional: ['standart', 'custom', 'include_comment'],
-          standart: ['multiselect', false, this.standart_fields],
-          custom: ['multiselect', false, this.custom_fields],
-          include_comment: 'flag'
-        }
-      };
-    },
-
     /**
      * Get hot button config by name
      *
@@ -112,7 +85,7 @@ document.observe("dom:loaded", function() {
         return this.wrap_button(
           button_name,
           this.render_form(button_name, button_frame, params),
-          config_section_name
+          config_section_name || this._(button_name)
         );
       }
       return false;
@@ -140,13 +113,10 @@ document.observe("dom:loaded", function() {
       })
 
       var config_section_title = new Element('a',{
-        'class': 'collapse_section',
+        'class': 'collapse_section internal_name',
         href: 'javascript:void(0)'
       })
-        .update(this._(button_name))
-        .insert(new Element('span', {
-          'class': 'internal_name'
-        }).update(config_section_name ? '('+config_section_name+')' : ''));
+        .update(config_section_name);
 
       Event.observe(config_section_title, 'click', function(event){
         var config_section = Event.element(event).up('.hot_button');
@@ -170,14 +140,20 @@ document.observe("dom:loaded", function() {
       }).insert(this._('rename'));
 
       Event.observe(edit_internal_name, 'click', function(event){
-        Event.element(event).up().select('.save_internal_name')
-          .first()
-          .show();
-        Event.element(event).up().select('input.internal_name')
-          .first()
-          .show()
-          .focus();
-        Event.element(event).hide();
+        var button_edit = Event.element(event);
+        var wrapper = button_edit.up();
+
+        var button_save = wrapper.select('a.save_internal_name').first();
+        var name_input = wrapper.select('input.internal_name').first();
+        var name_link = wrapper.select('a.internal_name').first();
+
+        name_input.value = name_link.innerHTML;
+
+        button_save.show();
+        name_input.show().focus();
+
+        button_edit.hide();
+        name_link.hide();
       });
 
       var save_internal_name = new Element('a', {
@@ -188,31 +164,24 @@ document.observe("dom:loaded", function() {
         .hide();
 
       Event.observe(save_internal_name, 'click', function(event){
-        Event.element(event).up().select('.edit_internal_name')
-          .first()
-          .show();
-        Event.element(event).up().select('input.internal_name')
-          .first()
-          .hide();
-        Event.element(event).hide();
-        
-        var internal_name = Event.element(event).up().select('input.internal_name')
-          .first()
-          .value
-          .trim();
+        var button_save = Event.element(event);
+        var wrapper = button_save.up();
 
-        if(internal_name) {
-          Event.element(event).up().select('span.internal_name').first().update(
-            '(' + internal_name + ')'
-          );
-        }
-        else {
-          Event.element(event).up().select('span.internal_name').first().update('');
-        }
+        var button_edit = wrapper.select('a.edit_internal_name').first();
+        var name_input = wrapper.select('input.internal_name').first();
+        var name_link = wrapper.select('a.internal_name').first();
 
-        Event.element(event).up(1).select('input[xname="internal_name"]')
+        button_edit.show();
+        name_input.hide();
+        button_save.hide();
+        name_link.show();
+
+        var internal_name_value = name_input.value.trim();
+        name_link.update(internal_name_value);
+
+        button_save.up(1).select('input[xname="internal_name"]')
           .first()
-          .value = internal_name;
+          .value = internal_name_value;
       });
 
       var elements = [
@@ -516,10 +485,8 @@ document.observe("dom:loaded", function() {
      * Available Hot Buttons
      */
     available_buttons: [
-      'assign_to_me',
-      'quick_update',
       'time_tracker',
-      'reassign_to'
+      'issue_update'
     ],
 
     /**
