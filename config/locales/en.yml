@@ -9,6 +9,7 @@ en:
     select_hot_button: "Select Hot Button"
     select_hidden_elements: "Optional"
     caption: "Caption"
+    current_user: "current user"
 
     select_hot_button: "Select hot button"
     hot_button_title: "Hot button title"
