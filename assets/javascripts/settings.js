@@ -4,13 +4,13 @@
 document.observe("dom:loaded", function() {
 
   /**
-   * Hot Buttons configuration factory class.
+   * Hot Buttons configuration factory.
    * Produce Hot Button settings sections
    */
   var ButtonSettingsFactory = Class.create({
 
     /**
-     * "Time tracker" Hot Button
+     * "Time tracker" Hot Button fields frame
      *
      * @return "Time tracker" Hot Button settings frame
      */
@@ -32,12 +32,12 @@ document.observe("dom:loaded", function() {
           user_role: ['multiselect', false, this.user_roles],
           issue_status: ['multiselect', false, this.issue_statuses],
           issue_tracker: ['multiselect', false, this.issue_trackers]
-        },
+        }
       };
     },
 
     /**
-     * "Reassign to" Hot Button
+     * "Reassign to" Hot Button fields frame
      *
      * @return "Reassign to" Hot Button settings frame
      */
@@ -73,6 +73,7 @@ document.observe("dom:loaded", function() {
      *
      * @param  name   Hot Button name
      * @param  params Saved button configuration
+     *
      * @return Hot Button settings section
      */
     get: function(button_name, params) {
@@ -94,8 +95,10 @@ document.observe("dom:loaded", function() {
      * Wrap Hot Button settings section to li with common elements
      * like Title, Description and section config controls
      *
-     * @param  button_name Hot Button name
-     * @param  button      Nake hot button config fields
+     * @param  button_name         Hot Button name
+     * @param  button              Nake hot button config fields
+     * @param  config_section_name Hot button internal name
+     *
      * @return Complete Hot Button settings section
      */
     wrap_button: function(button_name, button, config_section_name) {
@@ -211,10 +214,11 @@ document.observe("dom:loaded", function() {
     /**
      * Render Hot Button configuration inputs group
      *
-     * @param button_name  Hot button name
-     * @param button_frame Hot button structure
-     * @param params       Hot button saved params
+     * @param  button_name  Hot button name
+     * @param  button_frame Hot button structure
+     * @param  params       Hot button saved params
      *
+     * @return Hot button settings form
      */
     render_form: function(button_name, button_frame, params) {
       return this.render_group(
@@ -231,6 +235,7 @@ document.observe("dom:loaded", function() {
      * @param  inputs_group Inputs group object
      * @param  wrap_element Wrapper for button
      * @param  params       Hot button saved params
+     *
      * @return Rendered inputs_group wrapped by wrap_element
      */
     render_group: function(button_name, inputs_group, wrap_element, params) {
@@ -295,16 +300,19 @@ document.observe("dom:loaded", function() {
     /**
      * Render single input
      *
-     * @param input_type  Input type
+     * @param  input_type  Input type
      *  Available types:
      *   - text
-     *   - list
+     *   - select
+     *   - multiselect
      *   - flag
      *   - hidden
-     * @param input_name
-     * @param input_value
-     * @param default_value
-     * @param service_params
+     * @param  input_name
+     * @param  inpulistt_value
+     * @param  default_value
+     * @param  service_params
+     *
+     * @return Sigle input for hot button settings form
      */
     render_input: function(button_name, input_type, input_name, input_value, default_value, service_params) {
       var input_element = null;
@@ -439,6 +447,7 @@ document.observe("dom:loaded", function() {
      *
      * @param  key i18n ID
      * @param  get_back Get back i18n ID if translation not exists
+     *
      * @return Translated string for current language
      */
     _: function(key, get_back) {
@@ -448,14 +457,15 @@ document.observe("dom:loaded", function() {
 
 
   /**
-   * Translator class
+   * Translator
    */
   var Translator = Class.create({
     /**
      * Constructor.
      * Initialize translator
      *
-     * @param  i18n strings object
+     * @param  i18n strings class object
+     *
      * @return void
      */
     initialize: function(i18n_strings) {
@@ -467,6 +477,7 @@ document.observe("dom:loaded", function() {
      *
      * @param  key i18n identifier
      * @param  get_back Get back i18n ID if translation not exists
+     *
      * @return Translated string or input key if translation not found
      */
     get: function(key, get_back) {
@@ -477,9 +488,10 @@ document.observe("dom:loaded", function() {
   });
 
   /**
-   * Settings page class
+   * Settings page
    */
   var Settings = Class.create(IssueHotButtonsSettings, {
+
     /**
      * Available Hot Buttons
      */
@@ -534,6 +546,8 @@ document.observe("dom:loaded", function() {
 
     /**
      * Make buttons list sortable
+     *
+     * @return void
      */
     init_sortable_list: function() {
       Sortable.create('buttons_list', {
@@ -544,6 +558,10 @@ document.observe("dom:loaded", function() {
 
     /**
      * Callback invoked before settings form submitted
+     *
+     * @param  e Event object
+     *
+     * @return void
      */
     attach_input_names: function(e) {
       var button_number = 0;
@@ -588,6 +606,8 @@ document.observe("dom:loaded", function() {
 
     /**
      * Render to page "Add Hot Button" select
+     *
+     * @return void
      */
     render_selector: function() {
       var t = this;
@@ -712,6 +732,7 @@ document.observe("dom:loaded", function() {
      *
      * @param  key      i18n ID
      * @param  get_back Get back i18n ID if translation not exists
+     * 
      * @return Translated string for current language
      */
     _: function(key, get_back) {
