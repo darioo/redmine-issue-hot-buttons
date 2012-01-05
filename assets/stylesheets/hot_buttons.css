@@ -1,0 +1,9 @@
+/**
+ * Redmine Issue Hot Buttons plugin
+ */
+#issue_hot_buttons {
+  margin-bottom: 5px;
+}
+  #issue_hot_buttons span.hot_button {
+    display: inline-block;
+  }
