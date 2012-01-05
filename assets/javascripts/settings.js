@@ -1,7 +1,8 @@
 /**
  * Redmine Issue Hot Buttons plugin
+ * Settings page
  */
-document.observe("dom:loaded", function() {
+document.observe('dom:loaded', function() {
 
   /**
    * Hot Buttons configuration factory.
@@ -254,8 +255,7 @@ document.observe("dom:loaded", function() {
 
         if (! Object.isString(input_options) && ! Object.isArray(input_options)) {
           var sub_wrapper = new Element('fieldset', {
-            'class': 'subset',
-            'id': [button_name, input_name, 'subset'].join('_')
+            'class': 'subset'
           });
 
           var legend = false;
@@ -317,14 +317,12 @@ document.observe("dom:loaded", function() {
     render_input: function(button_name, input_type, input_name, input_value, default_value, service_params) {
       var input_element = null;
       var no_label = false;
-      var input_id = [button_name, input_name].join('_');
 
       var isOptional = service_params.get('_optional');
 
       switch (input_type) {
         case 'hidden':
           input_element = new Element('input', {
-            id: input_id,
             xname: input_name,
             type:  'hidden',
             value: input_value
@@ -339,7 +337,7 @@ document.observe("dom:loaded", function() {
           input_value = input_value.toString();
           input_value = input_value.isJSON() ? input_value.evalJSON() : input_value;
           
-          var select = new Element('select', {id: input_id, 'class': input_name})
+          var select = new Element('select', {'class': input_name})
             .addClassName(isOptional ? 'optional' : '')
             .addClassName(input_value.length ? '' : 'no_value');
 
@@ -376,7 +374,6 @@ document.observe("dom:loaded", function() {
 
         case 'flag':
           var is_undefined = Object.isUndefined(input_value);
-
           input_element = [
             new Element('input', {
               xname: input_name,
@@ -384,8 +381,8 @@ document.observe("dom:loaded", function() {
               value: 0
             }),
             new Element('input', {
-              id: input_id,
               xname: input_name,
+              'class': input_name,
               type: 'checkbox',
               value: 1
             })
@@ -404,7 +401,6 @@ document.observe("dom:loaded", function() {
 
           input_value = input_value || default_value || (this._([button_name, input_name, 'value'], false) || input_value);
           input_element = new Element('input', {
-            id: input_id,
             xname: input_name,
             type: 'text',
             value: input_value || ''
@@ -414,7 +410,7 @@ document.observe("dom:loaded", function() {
       }
 
       var result = new Element('div', {'class': 'input_wrapper'})
-        .insert(no_label || new Element('label', {'for': input_id}).insert(this._([input_id, 'label'])));
+        .insert(no_label || new Element('label').insert(this._([button_name, input_name, 'label'])));
 
       input_element = Object.isArray(input_element) ? input_element : [input_element];
       input_element.each(function(element){
@@ -684,7 +680,7 @@ document.observe("dom:loaded", function() {
       t = this;
 
       var label_text = field.siblings().first().innerHTML;
-      var element_id = field.readAttribute('id');
+      var element_name = field.classNames().toArray().first();
 
       var field_wrapper = field.up();
       var field_container = field_wrapper.up();
@@ -699,8 +695,7 @@ document.observe("dom:loaded", function() {
           var optional_select = Event.element(event);
           var button_name = optional_select.value;
           if (button_name.length == 0) return false;
-
-          var optional_field = $(button_name).up();
+          var optional_field = optional_select.up(1).select('.' + button_name).first().up();
           optional_field.show();
 
           var option = optional_select.select('option[value="' + button_name + '"]').first();
@@ -720,7 +715,7 @@ document.observe("dom:loaded", function() {
         optional_fields_select = field_container.select('select.optional_fields').first();
       }
       optional_fields_select.insert(
-        new Element('option', {value: element_id}).update(label_text)
+        new Element('option', {value: element_name}).update(label_text)
       );
 
       field_wrapper.hide();
