@@ -1,9 +1,8 @@
 <%
-  users_per_role = @project.users_by_role.each {|role, users|
-    users.map! { |user|
-      user.id
-    }
-    {role => users}
+
+  users_per_role = {};
+  @project.users_by_role.each { |role, users|
+    users_per_role[role.id] = users.map { |user| user.id }
   }
 
   i18n_strings = I18n.backend.send(:translations)
