@@ -20,6 +20,13 @@ document.observe('dom:loaded', function(){
    */
   var IssueUpdateButton = Class.create(AbstractHotButton, {
 
+    fields: [
+      'assign_to_other',
+      'include_standart_fields',
+      'include_custom_fields',
+      'include_comment',
+    ],
+
     render: function(config) {
       this.config = new Hash(config);
 
@@ -128,7 +135,9 @@ document.observe('dom:loaded', function(){
     get_opt_controls: function(button_config) {
       t = this;
       var elements = [];
-      button_config.keys().each(function(field){
+
+      this.fields.each(function(field){
+        if (! button_config.get(field)) return false;
         switch(field) {
 
           case 'assign_to_other':
@@ -211,7 +220,6 @@ document.observe('dom:loaded', function(){
 
     hot_button_submit_action: function(event, t){
       var hot_button = Event.element(event);
-      console.log(hot_button.config)
     }
 
   });
