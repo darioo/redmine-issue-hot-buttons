@@ -168,6 +168,13 @@ document.observe('dom:loaded', function(){
             break;
 
           case 'include_comment':
+            var comment_element = new Element('p');
+            comment_element.insert(new Element('label').update(t._('notes')));
+            comment_element.insert(new Element('textarea', {
+              cols: 30,
+              rows: 5
+            }));
+            elements.push(comment_element);
             break;
 
         }

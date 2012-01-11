@@ -7,6 +7,7 @@ en:
     cancel: "Cancel"
     submit: "Submit"
     save: "Save"
+    notes: "Notes"
     confirm: "Are you sure?"
     select_hot_button: "Select Hot Button"
     select_hidden_elements: "Optional"

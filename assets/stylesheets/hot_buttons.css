@@ -11,22 +11,23 @@
 #issue_hot_buttons_additional {
   border: 1px solid #D7D7D7;
   padding: 2px;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
+  background-color: #F6F6F6;
 }
   #issue_hot_buttons_additional .controls {
     float: left;
   }
   #issue_hot_buttons_additional .optional_wrapper {
     float: left;
-    padding: 3px 0;
+    padding: 7px 0;
   }
   #issue_hot_buttons_additional .optional_wrapper button.submit {
-    margin: 5px 0 0 153px;
+    margin: 4px 0 0 153px;
     vertical-align: middle;
   }
   #issue_hot_buttons_additional .optional_wrapper p {
     vertical-align: middle;
-    margin: 0 0 4px 0;
+    margin: 0 0 6px 0;
   }
     #issue_hot_buttons_additional .optional_wrapper p input,
     #issue_hot_buttons_additional .optional_wrapper p select {
@@ -37,7 +38,7 @@
       text-align: right;
       display: inline-block;
       margin-right: 3px;
-      vertical-align: middle;
+      vertical-align: top;
       font-weight: bold;
     }
       #issue_hot_buttons_additional .optional_wrapper p label span.required {
@@ -48,6 +49,9 @@
     }
     #issue_hot_buttons_additional .optional_wrapper p input {
       width: 150px;
+    }
+    #issue_hot_buttons_additional .optional_wrapper textarea {
+      margin: 0;
     }
   #issue_hot_buttons_additional .icon_close {
     vertical-align: top;
