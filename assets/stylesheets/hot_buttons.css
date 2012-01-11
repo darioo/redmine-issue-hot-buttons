@@ -2,8 +2,24 @@
  * Redmine Issue Hot Buttons plugin
  */
 #issue_hot_buttons {
+  margin-bottom: 4px;
+}
+  #issue_hot_buttons button.action {
+    margin-right: 3px;
+  }
+
+#issue_hot_buttons_additional {
+  border: 1px solid #D7D7D7;
+  padding: 2px;
   margin-bottom: 5px;
 }
-  #issue_hot_buttons span.hot_button {
+  #issue_hot_buttons_additional .icon_close {
+    vertical-align: top;
+    height: 12px;
+    width: 12px;
     display: inline-block;
+    background-image: url(/images/close.png);
+  }
+  #issue_hot_buttons_additional .icon_close:hover {
+    background-image: url(/images/close_hl.png);
   }
