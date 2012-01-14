@@ -68,6 +68,36 @@ document.observe('dom:loaded', function(){
      * @return boolean
      */
     check_conditions: function() {
+      var t = this;
+
+      // User role condition
+      var user_roles = this.config.get('user_role');
+      if (user_roles) {
+        user_roles = user_roles.evalJSON();
+
+        var available_users = [];
+        user_roles.each(function(role){
+          if (! Object.isUndefined(t.users_per_role[role])) {
+            available_users = available_users.concat(t.users_per_role[role]);
+          }
+        });
+        if(0 > available_users.uniq().indexOf(t.current_user)) return false;
+      }
+
+      // Issue status condition
+      var issue_statuses = this.config.get('issue_status');
+      if (issue_statuses) {
+        issue_statuses = issue_statuses.evalJSON();
+        if(0 > issue_statuses.indexOf(t.issue.status_id.toString())) return false;
+      }
+
+      // Issue tracker condition
+      var issue_tracker = this.config.get('issue_tracker');
+      if (issue_tracker) {
+        issue_tracker = issue_tracker.evalJSON();
+        if (0 > issue_tracker.indexOf(t.issue.tracker_id.toString())) return false;
+      }
+      
       return true;
     },
 
@@ -210,6 +240,7 @@ document.observe('dom:loaded', function(){
             assign_to_roles.each(function(role_id){
               allowed_users = allowed_users.concat(t.users_per_role[role_id]);
             });
+            allowed_users = allowed_users.uniq();
 
             mirrored_element.select('select option').each(function(option){
               value = parseInt(option.readAttribute('value'));
