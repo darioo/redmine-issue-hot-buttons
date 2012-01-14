@@ -4,15 +4,32 @@
  */
 document.observe('dom:loaded', function(){
 
+  /**
+   * Parent object for all hot buttons
+   */
   var AbstractHotButton = Class.create(IssueHotButtons, {
+
+    /**
+     * Constructor
+     */
     initialize: function(){
       this.i18n_strings = new Hash(this.i18n_strings);
     },
+
+    /**
+     * Translate string using IssueHotButtonsSettings locale strings store
+     *
+     * @param  key i18n identifier
+     * @param  get_back Get back i18n ID if translation not exists
+     *
+     * @return Translated string or input key if translation not found
+     */
     _: function(key, get_back){
       get_back = get_back === false ? false : true;
       if (Object.isArray(key)) key = key.join('_');
       return this.i18n_strings.get(key) || (get_back ? key : false);
     }
+
   });
 
   /**
@@ -20,6 +37,9 @@ document.observe('dom:loaded', function(){
    */
   var IssueUpdateButton = Class.create(AbstractHotButton, {
 
+    /**
+     * Optional fileds in custom order
+     */
     fields: [
       'assign_to_other',
       'include_standart_fields',
@@ -27,6 +47,12 @@ document.observe('dom:loaded', function(){
       'include_comment',
     ],
 
+    /**
+     * Hot button rendering entry point
+     *
+     * @param config
+     * @return <button /> element
+     */
     render: function(config) {
       this.config = new Hash(config);
 
@@ -36,10 +62,21 @@ document.observe('dom:loaded', function(){
       return this.render_button();
     },
 
+    /**
+     * Check is button suitable for current context
+     *
+     * @return boolean
+     */
     check_conditions: function() {
-      return true
+      return true;
     },
 
+    /**
+     * Check is button need optional controls,
+     * e.g. select user for reassign
+     *
+     * @return boolean
+     */
     has_additional_controls: function(){
       var t = this;
       var has_additional = false;
@@ -54,6 +91,11 @@ document.observe('dom:loaded', function(){
       return has_additional;
     },
 
+    /**
+     * Render hot button and attach click listener
+     *
+     * @return <button /> element
+     */
     render_button: function() {
       var t = this;
       var button = new Element('button', {'class': 'action'})
@@ -74,6 +116,12 @@ document.observe('dom:loaded', function(){
       return button;
     },
 
+    /**
+     * Hide optional button controls
+     *
+     * @param event (optional) If method used as event listener
+     * @return void
+     */
     hide_optional: function(event) {
       $('issue_hot_buttons').select('button').each(function(btn){
         btn.removeAttribute('disabled');
@@ -88,6 +136,14 @@ document.observe('dom:loaded', function(){
       }
     },
 
+    /**
+     * Event listener for hot buttons with optional controls
+     * Displays opt. controls and add event listeners
+     *
+     * @param event Event
+     * @param t     IssueUpdateButton context
+     * @return void
+     */
     hot_button_opt_action: function(event, t) {
       var hot_button = Event.element(event);
       
@@ -132,6 +188,12 @@ document.observe('dom:loaded', function(){
       $('issue_hot_buttons').insert({after: additional_container});
     },
 
+    /**
+     * Render optional controls
+     *
+     * @param button_config Hot button configuration
+     * @return array Hot buttons array
+     */
     get_opt_controls: function(button_config) {
       t = this;
       var elements = [];
@@ -191,6 +253,13 @@ document.observe('dom:loaded', function(){
       return elements;
     },
 
+    /**
+     * Clone element from issue update form
+     * Perform additional things for fileds with datepickers
+     *
+     * @param element_id Element ID
+     * @return form element
+     */
     get_mirrored_element: function(element_id) {
       mirror_element_id = ['hot_button', element_id].join('_');
 
@@ -218,6 +287,12 @@ document.observe('dom:loaded', function(){
       return mirrored_element;
     },
 
+    /**
+     * Submit hot button action
+     *
+     * @param event Event object
+     * @param t     IssueUpdateButton context
+     */
     hot_button_submit_action: function(event, t){
       var hot_button = Event.element(event);
     }

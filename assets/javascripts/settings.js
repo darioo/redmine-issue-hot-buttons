@@ -81,7 +81,10 @@ document.observe('dom:loaded', function() {
       if (Object.isFunction(this['button_' + button_name])) {
         var button_frame = this['button_' + button_name](params);
 
-        var config_section_name = !Object.isUndefined(params) && !Object.isUndefined(params.internal_name) && params['internal_name'].trim();
+
+        var config_section_name = !Object.isUndefined(params) &&
+          ! Object.isUndefined(params.internal_name) &&
+          params['internal_name'].strip();
 
         return this.wrap_button(
           button_name,
