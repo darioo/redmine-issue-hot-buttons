@@ -28,38 +28,6 @@ document.observe('dom:loaded', function(){
       get_back = get_back === false ? false : true;
       if (Object.isArray(key)) key = key.join('_');
       return this.i18n_strings.get(key) || (get_back ? key : false);
-    }
-
-  });
-
-  /**
-   * Issue Update Hot Button
-   */
-  var IssueUpdateButton = Class.create(AbstractHotButton, {
-
-    /**
-     * Optional fileds in custom order
-     */
-    fields: [
-      'assign_to_other',
-      'include_standart_fields',
-      'include_custom_fields',
-      'include_comment',
-    ],
-
-    /**
-     * Hot button rendering entry point
-     *
-     * @param config
-     * @return <button /> element
-     */
-    render: function(config) {
-      this.config = new Hash(config);
-
-      // button is not suitable for current context
-      if (! this.check_conditions()) return false;
-
-      return this.render_button();
     },
 
     /**
@@ -97,8 +65,40 @@ document.observe('dom:loaded', function(){
         issue_tracker = issue_tracker.evalJSON();
         if (0 > issue_tracker.indexOf(t.issue.tracker_id.toString())) return false;
       }
-      
+
       return true;
+    }
+
+  });
+
+  /**
+   * Issue Update Hot Button
+   */
+  var IssueUpdateButton = Class.create(AbstractHotButton, {
+
+    /**
+     * Optional fileds in custom order
+     */
+    fields: [
+      'assign_to_other',
+      'include_standart_fields',
+      'include_custom_fields',
+      'include_comment',
+    ],
+
+    /**
+     * Hot button rendering entry point
+     *
+     * @param config
+     * @return <button /> element
+     */
+    render: function(config) {
+      this.config = new Hash(config);
+
+      // button is not suitable for current context
+      if (! this.check_conditions()) return false;
+
+      return this.render_button();
     },
 
     /**
@@ -209,7 +209,8 @@ document.observe('dom:loaded', function(){
       Event.observe(close_button, 'click', this.hide_optional)
 
       var additional_container = new Element('div', {
-        id: 'issue_hot_buttons_additional'
+        id: 'issue_hot_buttons_additional',
+        'class': 'update_issue'
       })
         .insert(new Element('div', {'class': 'controls'}).insert(close_button))
         .insert(additional_wrapper)
@@ -333,7 +334,35 @@ document.observe('dom:loaded', function(){
   /**
    * Time Tracker Hot Button
    */
-  var TimeTrackerButton = Class.create({
+  var TimeTrackerButton = Class.create(AbstractHotButton, {
+
+    /**
+     * Hot button rendering entry point
+     *
+     * @param config
+     * @return <button /> element
+     */
+    render: function(config) {
+      this.config = new Hash(config);
+
+      // button is not suitable for current context
+      if (! this.check_conditions()) return false;
+
+      return this.render_button();
+    },
+
+    /**
+     * Render TimeTracker Hot Button
+     *
+     * @return <button /> element
+     */
+    render_button: function() {
+      var start_working = new Element('button', {})
+        .update(this.config.get('start'));
+
+      return start_working;
+    }
+
   });
 
   /**
@@ -349,8 +378,8 @@ document.observe('dom:loaded', function(){
      */
     initialize: function() {
       this.buttons = {
-        issue_update: new IssueUpdateButton/*,
-        time_tracker: new TimeTrackerButton*/
+        issue_update: new IssueUpdateButton,
+        time_tracker: new TimeTrackerButton
       };
       this.render_hot_buttons();
     },

@@ -19,16 +19,19 @@ document.observe('dom:loaded', function() {
       return {
         enabled: ['hidden', 1],
         internal_name: ['hidden', ''],
-        start: 'text',
-        pause: 'text',
-        resume: 'text',
-        stop: 'text',
-        activity: ['select', false, this.activities],
-        page_close_confirm: 'text',
+        caption: 'text',
+        controls: {
+          start: 'text',
+          pause: 'text',
+          resume: 'text',
+          stop: 'text',
+        },
         options: {
-          _optional: ['include_comment', 'autosubmit'],
+          _optional: ['activity', 'select_activity'],
+          page_close_confirm: 'text',
+          activity: ['select', false, this.activities],
+          select_activity: 'flag',
           include_comment: 'flag',
-          autosubmit: 'flag'
         },
         conditions: {
           _optional: ['user_role', 'issue_status', 'issue_tracker'],
