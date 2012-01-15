@@ -33,6 +33,9 @@ en:
     time_tracker_user_role_label: "User role"
     time_tracker_issue_status_label: "Issue status"
     time_tracker_issue_tracker_label: "Issue tracker"
+    time_tracker_activity_label: "Activity"
+    time_tracker_page_close_confirm_label: "Page close confirm message"
+    time_tracker_page_close_confirm_value: "Are you really want to leave page with active working timer?"
 
     issue_update: "Update issue"
     issue_update_description: "High-configurable update issue hot button"

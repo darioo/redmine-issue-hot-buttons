@@ -23,6 +23,8 @@ document.observe('dom:loaded', function() {
         pause: 'text',
         resume: 'text',
         stop: 'text',
+        activity: ['select', false, this.activities],
+        page_close_confirm: 'text',
         options: {
           _optional: ['include_comment', 'autosubmit'],
           include_comment: 'flag',
@@ -517,6 +519,7 @@ document.observe('dom:loaded', function() {
       this.buttons_factory.issue_trackers = this.issue_trackers;
       this.user_roles['current_user'] = '&lt;&lt; ' + this._('current_user') + ' &gt;&gt;';
       this.buttons_factory.user_roles = this.user_roles;
+      this.buttons_factory.activities = this.activities;
 
 
       this.render_selector();
