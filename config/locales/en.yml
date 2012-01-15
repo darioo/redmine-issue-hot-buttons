@@ -9,13 +9,12 @@ en:
     save: "Save"
     notes: "Notes"
     confirm: "Are you sure?"
-    select_hot_button: "Select Hot Button"
+    select_hot_button: "Select Hot Button to add"
     select_hidden_elements: "Optional"
     caption: "Caption"
     current_user: "current user"
-
-    select_hot_button: "Select hot button"
-    hot_button_title: "Hot button title"
+    collapse_all: "Collapse all"
+    expand_all: "Expand all"
 
     time_tracker: "Time tracker"
     time_tracker_description: "Add start/pause/stop time button to help tracking working time"

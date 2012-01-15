@@ -38,7 +38,9 @@
 #hot_buttons_settings #hot_buttons_selector_wrapper label {
   width: auto;
 }
-
+  #hot_buttons_settings #hot_buttons_selector_wrapper div.collapse_expand {
+    margin-top: 8px;
+  }
 /**
  * Hot button list common styles
  */
