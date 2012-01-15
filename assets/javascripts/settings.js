@@ -19,19 +19,18 @@ document.observe('dom:loaded', function() {
       return {
         enabled: ['hidden', 1],
         internal_name: ['hidden', ''],
-        caption: 'text',
-        controls: {
-          start: 'text',
-          pause: 'text',
-          resume: 'text',
-          stop: 'text',
-        },
+        start: 'text',
+        pause: 'text',
+        resume: 'text',
+        stop: 'text',
         options: {
-          _optional: ['activity', 'select_activity'],
+          _optional: ['timer_prefix', 'round_interval', 'select_activity', 'include_comment'],
           page_close_confirm: 'text',
+          timer_prefix: 'text',
+          round_interval: 'text',
           activity: ['select', false, this.activities],
           select_activity: 'flag',
-          include_comment: 'flag',
+          include_comment: 'flag'
         },
         conditions: {
           _optional: ['user_role', 'issue_status', 'issue_tracker'],
@@ -52,12 +51,6 @@ document.observe('dom:loaded', function() {
         enabled: ['hidden', 1],
         internal_name: ['hidden', ''],
         caption: 'text',
-        conditions: {
-          _optional: ['user_role', 'issue_status', 'issue_tracker'],
-          user_role: ['multiselect', false, this.user_roles],
-          issue_status: ['multiselect', false, this.issue_statuses],
-          issue_tracker: ['multiselect', false, this.issue_trackers]
-        },
         actions: {
           _optional: [
             'set_issue_status','assign_to_other',
@@ -70,6 +63,12 @@ document.observe('dom:loaded', function() {
           include_standart_fields: ['multiselect', false, this.standart_fields],
           include_custom_fields: ['multiselect', false, this.custom_fields],
           include_comment: 'flag'
+        },
+        conditions: {
+          _optional: ['user_role', 'issue_status', 'issue_tracker'],
+          user_role: ['multiselect', false, this.user_roles],
+          issue_status: ['multiselect', false, this.issue_statuses],
+          issue_tracker: ['multiselect', false, this.issue_trackers]
         }
       }
     },
@@ -410,6 +409,7 @@ document.observe('dom:loaded', function() {
           input_value = input_value || default_value || (this._([button_name, input_name, 'value'], false) || input_value);
           input_element = new Element('input', {
             xname: input_name,
+            'class': input_name,
             type: 'text',
             value: input_value || ''
           })

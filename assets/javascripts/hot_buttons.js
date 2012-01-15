@@ -67,6 +67,26 @@ document.observe('dom:loaded', function(){
       }
 
       return true;
+    },
+
+    /**
+     * Hide optional button controls
+     *
+     * @param event (optional) If method used as event listener
+     * @return void
+     */
+    hide_optional: function(event) {
+      $('issue_hot_buttons').select('button').each(function(btn){
+        btn.removeAttribute('disabled');
+        btn.setStyle({opacity: 1});
+      });
+      if (event) {
+        var element = Event.element(event);
+        element.up(1).remove();
+      }
+      else {
+        $('issue_hot_buttons_additional').remove();
+      }
     }
 
   });
@@ -147,26 +167,6 @@ document.observe('dom:loaded', function(){
     },
 
     /**
-     * Hide optional button controls
-     *
-     * @param event (optional) If method used as event listener
-     * @return void
-     */
-    hide_optional: function(event) {
-      $('issue_hot_buttons').select('button').each(function(btn){
-        btn.removeAttribute('disabled');
-        btn.setStyle({opacity: 1});
-      });
-      if (event) {
-        var element = Event.element(event);
-        element.up(1).remove();
-      }
-      else {
-        $('issue_hot_buttons_additional').remove();
-      }
-    },
-
-    /**
      * Event listener for hot buttons with optional controls
      * Displays opt. controls and add event listeners
      *
@@ -179,7 +179,7 @@ document.observe('dom:loaded', function(){
       
       hot_button.up().select('button').each(function(btn){
         btn.writeAttribute('disabled', 'disabled');
-        btn.setStyle({opacity: 0.3});
+        btn.setStyle({opacity: 0.15});
       });
 
       hot_button.setStyle({opacity: 1});
@@ -213,8 +213,7 @@ document.observe('dom:loaded', function(){
         'class': 'update_issue'
       })
         .insert(new Element('div', {'class': 'controls'}).insert(close_button))
-        .insert(additional_wrapper)
-        .insert(new Element('div', {'class': 'clear'}));
+        .insert(additional_wrapper);
 
       $('issue_hot_buttons').insert({after: additional_container});
     },
@@ -326,7 +325,10 @@ document.observe('dom:loaded', function(){
      * @param t     IssueUpdateButton context
      */
     hot_button_submit_action: function(event, t){
-      var hot_button = Event.element(event);
+      var button = Event.element(event);
+
+      // Submit here
+
     }
 
   });
@@ -357,10 +359,134 @@ document.observe('dom:loaded', function(){
      * @return <button /> element
      */
     render_button: function() {
-      var start_working = new Element('button', {})
+      var t = this;
+      var start_working = new Element('button', {'class': 'action'})
         .update(this.config.get('start'));
 
+      Event.observe(start_working, 'click', function(event) {
+        t.start_working_action(event, t);
+      });
+
       return start_working;
+    },
+
+    start_working_action: function(event, t) {
+      var hot_button = Event.element(event);
+      hot_button.up().select('button').each(function(btn){
+        btn.writeAttribute('disabled', 'disabled');
+        btn.setStyle({opacity: 0.15});
+      });
+      hot_button.setStyle({opacity: 1});
+
+      var timer_label = new Element('label', {
+        'class': 'timer'
+      })
+        .update('0');
+
+      t.init_timer(timer_label);
+
+      var pause_button = new Element('button', {
+        'class': 'pause'
+      })
+        .update(t.config.get('pause'))
+        .observe('click', t.pause_button_action);
+
+      var resume_button = new Element('button', {
+        'class': 'resume',
+        'style': 'display: none;'
+      })
+        .update(t.config.get('resume'))
+        .observe('click', t.resume_button_action);
+
+      var stop_button = new Element('button', {
+        'class': 'stop'
+      })
+        .update(t.config.get('stop'))
+        .observe('click', function(event) {
+          timer_label.status = 'stop';
+          t.finish_action(event, t);
+          t.hide_optional();
+        });
+      stop_button.config = t.config;
+
+      var timer_controls = new Element('div', {
+        'class': 'timer_controls'
+      })
+        .insert(timer_label)
+        .insert(pause_button)
+        .insert(resume_button)
+        .insert(stop_button);
+
+      var optional_controls = new Element('div', {
+        'class': 'optional_controls'
+      })
+
+      var additional_wrapper = new Element('div', {
+        'class': 'optional_wrapper'
+      })
+        .insert(timer_controls)
+        .insert(optional_controls);
+
+      var close_button = new Element('a', {
+        'class': 'icon_close',
+        href: 'javascript:void(0)'
+      })
+        .observe('click', function(event) {
+          timer_label.status = 'stop';
+          t.hide_optional(event);
+        })
+
+      var additional_container = new Element('div', {
+        id: 'issue_hot_buttons_additional',
+        'class': 'time_tracker'
+      })
+        .insert(new Element('div', {'class': 'controls'}).insert(close_button))
+        .insert(additional_wrapper);
+
+      $('issue_hot_buttons').insert({after: additional_container});
+    },
+
+    init_timer: function(label) {
+      var mode = ['run', 'pause', 'stop'];
+
+      label.elapsed = 0;
+      label.status = 'run';
+      
+      new PeriodicalExecuter(function(pe) {
+        if (0 > mode.indexOf(label.status)) pe.stop();
+        if ('stop'  === label.status) pe.stop();
+        if ('pause' === label.status) return;
+
+        label.elapsed++
+        label.update(label.elapsed);
+      }, 1);
+    },
+
+    pause_button_action: function(event) {
+      var button = Event.element(event);
+      button.up().select('button.resume').first().show();
+      button.up().select('label.timer').first().status = 'pause';
+      button.hide();
+    },
+
+    resume_button_action: function(event) {
+      var button = Event.element(event);
+      button.up().select('button.pause').first().show();
+      button.up().select('label.timer').first().status = 'run';
+      button.hide();
+    },
+
+    /**
+     * Finish(stop) button action
+     *
+     * @param event Event object
+     * @param t     IssueUpdateButton context
+     */
+    finish_action: function(event, t){
+      var button = Event.element(event);
+
+      // Submit here
+      
     }
 
   });

@@ -15,11 +15,11 @@
   background-color: #F6F6F6;
 }
   #issue_hot_buttons_additional .controls {
+    display: inline-block;
     float: left;
   }
   #issue_hot_buttons_additional .optional_wrapper {
-    float: left;
-    padding: 7px 0;
+    display: inline-block;
   }
   #issue_hot_buttons_additional .optional_wrapper button.submit {
     margin: 4px 0 0 153px;
@@ -63,3 +63,19 @@
   #issue_hot_buttons_additional .icon_close:hover {
     background-image: url(/images/close_hl.png);
   }
+
+/**
+ * Issue Update specific styles
+ */
+#issue_hot_buttons_additional.update_issue .optional_wrapper {
+  padding: 7px 0;
+}
+
+/**
+ * Time tracker specific styles
+ */
+#issue_hot_buttons_additional.time_tracker label.timer {
+  font-size: 16px;
+  margin: 0 5px;
+  vertical-align: middle;
+}
