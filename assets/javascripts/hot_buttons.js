@@ -393,7 +393,7 @@ document.observe('dom:loaded', function(){
       var timer_label = new Element('label', {
         'class': 'timer'
       })
-        .update('0');
+        .update('00:00:00');
 
       t.init_timer(timer_label);
 
@@ -470,7 +470,21 @@ document.observe('dom:loaded', function(){
         if ('pause' === label.status) return;
 
         label.elapsed++
-        label.update(label.elapsed);
+
+        var hours = Math.floor(label.elapsed / (60 * 60));
+        var divisor_for_minutes = label.elapsed % (60 * 60);
+        var minutes = Math.floor(divisor_for_minutes / 60);
+        var divisor_for_seconds = divisor_for_minutes % 60;
+        var seconds = Math.ceil(divisor_for_seconds);
+
+        var human_time = [
+          hours   < 10 ? '0'.concat(hours)   : hours,
+          minutes < 10 ? '0'.concat(minutes) : minutes,
+          seconds < 10 ? '0'.concat(seconds) : seconds
+        ].join(':');
+
+        label.update(human_time);
+
       }, 1);
     },
 
