@@ -47,7 +47,7 @@
     #issue_hot_buttons_additional .optional_wrapper p label:after {
       content: ':';
     }
-    #issue_hot_buttons_additional .optional_wrapper p input {
+    #issue_hot_buttons_additional .optional_wrapper p input[type="text"] {
       width: 150px;
     }
     #issue_hot_buttons_additional .optional_wrapper textarea {

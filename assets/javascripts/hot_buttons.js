@@ -298,7 +298,9 @@ document.observe('dom:loaded', function(){
       if (! original_element) return false;
 
       var mirrored_element = original_element.up().clone(true);
-      mirrored_element.select('input, select').first().writeAttribute('id', mirror_element_id);
+      mirrored_element.select('input, select').each(function(element){
+        element.writeAttribute('id', mirror_element_id);
+      });
       mirrored_element.select('label').first().writeAttribute('for', mirror_element_id);
 
       var calendar_field = mirrored_element.select('img.calendar-trigger').first();

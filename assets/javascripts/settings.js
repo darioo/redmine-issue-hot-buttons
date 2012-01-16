@@ -61,7 +61,7 @@ document.observe('dom:loaded', function() {
           assign_to_other: ['multiselect', false, this.user_roles],
           set_done: 'flag',
           include_standart_fields: ['multiselect', false, this.standart_fields],
-          include_custom_fields: ['multiselect', false, this.custom_fields],
+          include_custom_fields: ['multiselect', false, this.issue_custom_fields],
           include_comment: 'flag'
         },
         conditions: {
@@ -516,7 +516,7 @@ document.observe('dom:loaded', function() {
       this.translator = this.buttons_factory.translator = new Translator(this.i18n_strings);
 
       // Assign custom fields to ButtonSettingsFactory
-      this.buttons_factory.custom_fields = this.custom_fields;
+      this.buttons_factory.issue_custom_fields = this.issue_custom_fields;
       this.buttons_factory.standart_fields = this.standart_fields;
       this.buttons_factory.issue_statuses = this.issue_statuses;
       this.buttons_factory.issue_trackers = this.issue_trackers;
