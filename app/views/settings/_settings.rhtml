@@ -18,10 +18,16 @@
 	CustomField.find(:all).each { |field| custom_fields[field.id] = field.name }
 	
   user_roles = {}
-	Role.find(:all).map { |role| user_roles[role.id] = role.name }
+	Role.find(:all).each { |role| user_roles[role.id] = role.name }
 	
   i18n_strings = I18n.backend.send(:translations)
   locale = I18n.locale
+
+  trackers = {}
+  Tracker.find(:all).each { |tracker| trackers[tracker.id] = tracker.name }
+
+  activities = {}
+  p TimeEntryActivity.find(:all).each { |activity| activities[activity.id] = activity.name}
 %>
 <% content_for :header_tags do %>
   <%= javascript_include_tag 'settings.js', :plugin => 'redmine_issue_hot_buttons' %>
@@ -29,9 +35,11 @@
   <script type="text/javascript">
     var IssueHotButtonsSettings = {
       issue_statuses:  <%= issue_statuses.to_json %>,
+      issue_trackers:  <%= trackers.to_json %>,
       standart_fields: <%= issue_fields.to_json %>,
       custom_fields:   <%= custom_fields.to_json %>,
       user_roles:      <%= user_roles.to_json %>,
+      activities:      <%= activities.to_json %>,
       settings:        <%= @settings.to_json %>,
       i18n_strings:    <%= i18n_strings[locale][:issue_hot_buttons].to_json %>
     };

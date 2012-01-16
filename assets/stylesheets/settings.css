@@ -24,6 +24,9 @@
     margin: 0;
     width: 160px;
   }
+  #hot_buttons_settings input[type="checkbox"] {
+    margin: 0;
+  }
   #hot_buttons_settings select {
     width: 160px;
     margin: 0;
@@ -35,7 +38,9 @@
 #hot_buttons_settings #hot_buttons_selector_wrapper label {
   width: auto;
 }
-
+  #hot_buttons_settings #hot_buttons_selector_wrapper div.collapse_expand {
+    margin-top: 8px;
+  }
 /**
  * Hot button list common styles
  */
@@ -60,10 +65,13 @@
     }
       #buttons_list li.hot_button p.title a.icon {
         font-weight: normal;
+      }
+      #buttons_list li.hot_button p.title a.icon-del {
         float: right;
       }
     #buttons_list li.hot_button fieldset {
       margin-top: 10px;
+      padding-top: 10px;
     }
     #buttons_list li.hot_button .optional_elements_selector {
       margin-top: 5px;
@@ -72,3 +80,14 @@
     #buttons_list li.hot_button div.input_wrapper {
       margin-bottom: 4px;
     }
+    #buttons_list li.hot_button a.collapse_section {
+      text-decoration: none;
+      border-bottom: 1px dashed;
+    }
+      #buttons_list li.hot_button a.collapse_section:hover {
+        border-bottom: 1px solid;
+      }
+  #buttons_list li.hot_button.collapsed .description,
+  #buttons_list li.hot_button.collapsed .fields {
+    display: none;
+  }

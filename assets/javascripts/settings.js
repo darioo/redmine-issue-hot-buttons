@@ -1,73 +1,76 @@
 /**
  * Redmine Issue Hot Buttons plugin
+ * Settings page
  */
-document.observe("dom:loaded", function() {
+document.observe('dom:loaded', function() {
 
   /**
-   * Hot Buttons configuration factory class.
+   * Hot Buttons configuration factory.
    * Produce Hot Button settings sections
    */
   var ButtonSettingsFactory = Class.create({
-    /**
-     * "Assign to" me Hot Button
-     *
-     * @return "Assign to" me Hot Button settings frame
-     */
-    button_assign_to_me: function(params) {
-      return {
-        enabled: ['hidden', 1],
-        caption: 'text'
-      };
-    },
 
     /**
-     * "Time tracker" Hot Button
+     * "Time tracker" Hot Button fields frame
      *
      * @return "Time tracker" Hot Button settings frame
      */
     button_time_tracker: function() {
       return {
         enabled: ['hidden', 1],
+        internal_name: ['hidden', ''],
         start: 'text',
         pause: 'text',
         resume: 'text',
         stop: 'text',
-        autosubmit: 'flag'
+        options: {
+          _optional: ['timer_prefix', 'round_interval', 'select_activity', 'include_comment'],
+          page_close_confirm: 'text',
+          timer_prefix: 'text',
+          round_interval: 'text',
+          activity: ['select', false, this.activities],
+          select_activity: 'flag',
+          include_comment: 'flag'
+        },
+        conditions: {
+          _optional: ['user_role', 'issue_status', 'issue_tracker'],
+          user_role: ['multiselect', false, this.user_roles],
+          issue_status: ['multiselect', false, this.issue_statuses],
+          issue_tracker: ['multiselect', false, this.issue_trackers]
+        }
       };
     },
 
     /**
-     * "Reassign to" Hot Button
+     * "Reassign to" Hot Button fields frame
      *
      * @return "Reassign to" Hot Button settings frame
      */
-    button_reassign_to: function() {
+    button_issue_update: function() {
       return {
-        _optional: ['caption2'],
         enabled: ['hidden', 1],
+        internal_name: ['hidden', ''],
         caption: 'text',
-        caption2: ['text', false, 'asdasd'],
-        conditions: {
-          _optional: ['target_user_role', 'has_comment'],
-          issue_status: ['multiselect', 123, this.issue_statuses],
-          source_user_role: ['multiselect', false, this.user_roles],
-          target_user_role: ['multiselect', false, this.user_roles],
-          has_comment: 'flag'
-        },
         actions: {
-          set_issue_status: ['select', false, this.issue_statuses]
+          _optional: [
+            'set_issue_status','assign_to_other',
+            'set_done', 'include_standart_fields', 'include_custom_fields',
+            'include_comment'
+          ],
+          set_issue_status: ['select', false, this.issue_statuses],
+          assign_to_other: ['multiselect', false, this.user_roles],
+          set_done: 'flag',
+          include_standart_fields: ['multiselect', false, this.standart_fields],
+          include_custom_fields: ['multiselect', false, this.custom_fields],
+          include_comment: 'flag'
+        },
+        conditions: {
+          _optional: ['user_role', 'issue_status', 'issue_tracker'],
+          user_role: ['multiselect', false, this.user_roles],
+          issue_status: ['multiselect', false, this.issue_statuses],
+          issue_tracker: ['multiselect', false, this.issue_trackers]
         }
-      };
-    },
-    
-    button_quick_update: function(params) {
-      return {
-        _optional: ['standart', 'custom'],
-        enabled: ['hidden', 1],
-        caption: ['text'],
-        standart: ['multiselect', false, this.standart_fields],
-        custom: ['multiselect', false, this.custom_fields]
-      };
+      }
     },
 
     /**
@@ -75,15 +78,22 @@ document.observe("dom:loaded", function() {
      *
      * @param  name   Hot Button name
      * @param  params Saved button configuration
+     *
      * @return Hot Button settings section
      */
     get: function(button_name, params) {
       if (Object.isFunction(this['button_' + button_name])) {
         var button_frame = this['button_' + button_name](params);
 
+
+        var config_section_name = !Object.isUndefined(params) &&
+          ! Object.isUndefined(params.internal_name) &&
+          params['internal_name'].strip();
+
         return this.wrap_button(
           button_name,
-          this.render_form(button_name, button_frame, params)
+          this.render_form(button_name, button_frame, params),
+          config_section_name || this._(button_name)
         );
       }
       return false;
@@ -93,11 +103,13 @@ document.observe("dom:loaded", function() {
      * Wrap Hot Button settings section to li with common elements
      * like Title, Description and section config controls
      *
-     * @param  button_name Hot Button name
-     * @param  button      Nake hot button config fields
+     * @param  button_name         Hot Button name
+     * @param  button              Nake hot button config fields
+     * @param  config_section_name Hot button internal name
+     *
      * @return Complete Hot Button settings section
      */
-    wrap_button: function(button_name, button) {
+    wrap_button: function(button_name, button, config_section_name) {
       var t = this;
 
       var delete_button = new Element('a', {
@@ -111,13 +123,83 @@ document.observe("dom:loaded", function() {
       })
 
       var config_section_title = new Element('a',{
-        'class': 'collapse_config_section',
+        'class': 'collapse_section internal_name',
         href: 'javascript:void(0)'
-      }).update(this._(button_name));
+      })
+        .update(config_section_name);
+
+      Event.observe(config_section_title, 'click', function(event){
+        var config_section = Event.element(event).up('.hot_button');
+        if (config_section.hasClassName('collapsed')) {
+          config_section.removeClassName('collapsed');
+        }
+        else {
+          config_section.addClassName('collapsed');
+        }
+      })
+
+      var internal_name_input = new Element('input', {
+        type: 'text',
+        'class': 'internal_name',
+        value: config_section_name
+      }).hide();
+
+      var edit_internal_name = new Element('a', {
+        'class': 'icon-edit icon edit_internal_name',
+        href: 'javascript:void(0)'
+      }).insert(this._('rename'));
+
+      Event.observe(edit_internal_name, 'click', function(event){
+        var button_edit = Event.element(event);
+        var wrapper = button_edit.up();
+
+        var button_save = wrapper.select('a.save_internal_name').first();
+        var name_input = wrapper.select('input.internal_name').first();
+        var name_link = wrapper.select('a.internal_name').first();
+
+        name_input.value = name_link.innerHTML;
+
+        button_save.show();
+        name_input.show().focus();
+
+        button_edit.hide();
+        name_link.hide();
+      });
+
+      var save_internal_name = new Element('a', {
+        'class': 'icon-save icon save_internal_name',
+        href: 'javascript:void(0)'
+      })
+        .insert(this._('save'))
+        .hide();
+
+      Event.observe(save_internal_name, 'click', function(event){
+        var button_save = Event.element(event);
+        var wrapper = button_save.up();
+
+        var button_edit = wrapper.select('a.edit_internal_name').first();
+        var name_input = wrapper.select('input.internal_name').first();
+        var name_link = wrapper.select('a.internal_name').first();
+
+        button_edit.show();
+        name_input.hide();
+        button_save.hide();
+        name_link.show();
+
+        var internal_name_value = name_input.value.trim();
+        name_link.update(internal_name_value);
+
+        button_save.up(1).select('input[xname="internal_name"]')
+          .first()
+          .value = internal_name_value;
+      });
 
       var elements = [
         new Element('p', {'class': 'title'})
           .insert(config_section_title)
+          .insert(internal_name_input)
+          .insert(save_internal_name)
+          .insert(edit_internal_name)
           .insert(delete_button),
 
         new Element('p', {'class': 'description'})
@@ -140,10 +222,11 @@ document.observe("dom:loaded", function() {
     /**
      * Render Hot Button configuration inputs group
      *
-     * @param button_name  Hot button name
-     * @param button_frame Hot button structure
-     * @param params       Hot button saved params
+     * @param  button_name  Hot button name
+     * @param  button_frame Hot button structure
+     * @param  params       Hot button saved params
      *
+     * @return Hot button settings form
      */
     render_form: function(button_name, button_frame, params) {
       return this.render_group(
@@ -160,6 +243,7 @@ document.observe("dom:loaded", function() {
      * @param  inputs_group Inputs group object
      * @param  wrap_element Wrapper for button
      * @param  params       Hot button saved params
+     *
      * @return Rendered inputs_group wrapped by wrap_element
      */
     render_group: function(button_name, inputs_group, wrap_element, params) {
@@ -177,9 +261,16 @@ document.observe("dom:loaded", function() {
         var input_options = pair.value;
 
         if (! Object.isString(input_options) && ! Object.isArray(input_options)) {
-          var sub_wrapper = new Element('fieldset', {'class': 'subset'}).insert(
-            new Element('legend').insert(t._([button_name, input_name, 'subset']))
-          );
+          var sub_wrapper = new Element('fieldset', {
+            'class': 'subset'
+          });
+
+          var legend = false;
+          if (legend = t._([button_name, input_name, 'subset'], false)) {
+            sub_wrapper.insert(
+              new Element('legend').insert(legend)
+            );
+          }
 
           t.render_group(button_name, input_options, sub_wrapper, params);
           wrap_element.insert(sub_wrapper);
@@ -216,28 +307,29 @@ document.observe("dom:loaded", function() {
     /**
      * Render single input
      *
-     * @param input_type  Input type
+     * @param  input_type  Input type
      *  Available types:
      *   - text
-     *   - list
+     *   - select
+     *   - multiselect
      *   - flag
      *   - hidden
-     * @param input_name
-     * @param input_value
-     * @param default_value
-     * @param service_params
+     * @param  input_name
+     * @param  inpulistt_value
+     * @param  default_value
+     * @param  service_params
+     *
+     * @return Sigle input for hot button settings form
      */
     render_input: function(button_name, input_type, input_name, input_value, default_value, service_params) {
       var input_element = null;
       var no_label = false;
-      var input_id = [button_name, input_name].join('_');
 
       var isOptional = service_params.get('_optional');
 
       switch (input_type) {
         case 'hidden':
           input_element = new Element('input', {
-            id: input_id,
             xname: input_name,
             type:  'hidden',
             value: input_value
@@ -252,7 +344,7 @@ document.observe("dom:loaded", function() {
           input_value = input_value.toString();
           input_value = input_value.isJSON() ? input_value.evalJSON() : input_value;
           
-          var select = new Element('select', {id: input_id, 'class': input_name})
+          var select = new Element('select', {'class': input_name})
             .addClassName(isOptional ? 'optional' : '')
             .addClassName(input_value.length ? '' : 'no_value');
 
@@ -289,7 +381,6 @@ document.observe("dom:loaded", function() {
 
         case 'flag':
           var is_undefined = Object.isUndefined(input_value);
-
           input_element = [
             new Element('input', {
               xname: input_name,
@@ -297,8 +388,8 @@ document.observe("dom:loaded", function() {
               value: 0
             }),
             new Element('input', {
-              id: input_id,
               xname: input_name,
+              'class': input_name,
               type: 'checkbox',
               value: 1
             })
@@ -317,8 +408,8 @@ document.observe("dom:loaded", function() {
 
           input_value = input_value || default_value || (this._([button_name, input_name, 'value'], false) || input_value);
           input_element = new Element('input', {
-            id: input_id,
             xname: input_name,
+            'class': input_name,
             type: 'text',
             value: input_value || ''
           })
@@ -327,7 +418,7 @@ document.observe("dom:loaded", function() {
       }
 
       var result = new Element('div', {'class': 'input_wrapper'})
-        .insert(no_label || new Element('label', {'for': input_id}).insert(this._([input_id, 'label'])));
+        .insert(no_label || new Element('label').insert(this._([button_name, input_name, 'label'])));
 
       input_element = Object.isArray(input_element) ? input_element : [input_element];
       input_element.each(function(element){
@@ -360,6 +451,7 @@ document.observe("dom:loaded", function() {
      *
      * @param  key i18n ID
      * @param  get_back Get back i18n ID if translation not exists
+     *
      * @return Translated string for current language
      */
     _: function(key, get_back) {
@@ -369,14 +461,15 @@ document.observe("dom:loaded", function() {
 
 
   /**
-   * Translator class
+   * Translator
    */
   var Translator = Class.create({
     /**
      * Constructor.
      * Initialize translator
      *
-     * @param  i18n strings object
+     * @param  i18n strings class object
+     *
      * @return void
      */
     initialize: function(i18n_strings) {
@@ -388,6 +481,7 @@ document.observe("dom:loaded", function() {
      *
      * @param  key i18n identifier
      * @param  get_back Get back i18n ID if translation not exists
+     *
      * @return Translated string or input key if translation not found
      */
     get: function(key, get_back) {
@@ -398,17 +492,16 @@ document.observe("dom:loaded", function() {
   });
 
   /**
-   * Settings page class
+   * Settings page
    */
   var Settings = Class.create(IssueHotButtonsSettings, {
+
     /**
      * Available Hot Buttons
      */
     available_buttons: [
-      'assign_to_me',
-      'reassign_to',
-      'quick_update',
-      'time_tracker'
+      'time_tracker',
+      'issue_update'
     ],
 
     /**
@@ -420,14 +513,17 @@ document.observe("dom:loaded", function() {
     initialize: function() {
       this.buttons_factory = new ButtonSettingsFactory();
 
+      this.translator = this.buttons_factory.translator = new Translator(this.i18n_strings);
+
       // Assign custom fields to ButtonSettingsFactory
       this.buttons_factory.custom_fields = this.custom_fields;
       this.buttons_factory.standart_fields = this.standart_fields;
       this.buttons_factory.issue_statuses = this.issue_statuses;
+      this.buttons_factory.issue_trackers = this.issue_trackers;
+      this.user_roles['current_user'] = '&lt;&lt; ' + this._('current_user') + ' &gt;&gt;';
       this.buttons_factory.user_roles = this.user_roles;
-      this.buttons_factory.hide_optional_field = this.hide_optional_field;
+      this.buttons_factory.activities = this.activities;
 
-      this.translator = this.buttons_factory.translator = new Translator(this.i18n_strings);
 
       this.render_selector();
       this.load_saved_buttons();
@@ -449,12 +545,14 @@ document.observe("dom:loaded", function() {
         var name = button_config.keys().first();
         var params = button_config.values().first();
 
-        t.render_button(name, params);
+        t.render_button(name, params, true);
       });
     },
 
     /**
      * Make buttons list sortable
+     *
+     * @return void
      */
     init_sortable_list: function() {
       Sortable.create('buttons_list', {
@@ -465,13 +563,22 @@ document.observe("dom:loaded", function() {
 
     /**
      * Callback invoked before settings form submitted
+     *
+     * @param  e Event object
+     *
+     * @return void
      */
     attach_input_names: function(e) {
       var button_number = 0;
       $$('li.hot_button').each(function(li){
+        var collapsed = li.hasClassName('collapsed');
+        if (collapsed) {
+          li.removeClassName('collapsed');
+        }
+
         var button_type = li.classNames().toArray().pop();
 
-        li.select('div.input_wrapper input').each(function(element){
+        li.select('.input_wrapper input').each(function(element){
           if (! element.up().visible()) return;
 
           var xname = element.readAttribute('xname');
@@ -480,7 +587,7 @@ document.observe("dom:loaded", function() {
           element.setAttribute('name', name);
         });
         
-        li.select('div.input_wrapper select').each(function(select){
+        li.select('.input_wrapper select').each(function(select){
           if (! select.up().visible()) return;
 
           var values = [];
@@ -494,13 +601,18 @@ document.observe("dom:loaded", function() {
           }
           select.up().select('input').first().value = Object.toJSON(values);
         });
-        
+
+        if (collapsed) {
+          li.addClassName('collapsed');
+        }
         button_number++;
       });
     },
 
     /**
      * Render to page "Add Hot Button" select
+     *
+     * @return void
      */
     render_selector: function() {
       var t = this;
@@ -522,18 +634,44 @@ document.observe("dom:loaded", function() {
       });
       wrapper.appendChild(select);
 
-      var add_button = new Element('a', {
-        'class': 'icon-add icon',
-        href: 'javascript:void(0)'
-      }).insert(this._('add'));
-      wrapper.appendChild(add_button);
+      var collapse_button = new Element('a',{
+        'href': 'javascript:void(0)',
+        'class': 'icon icon-folder'
+      })
+        .update(this._('collapse_all'))
+        .observe('click', function(){
+          $$('#buttons_list li.hot_button').each(function(hot_button){
+            hot_button.hasClassName('collapsed')
+              ? false
+              : hot_button.addClassName('collapsed');
+          });
+        });
+      var expand_button = new Element('a',{
+        'href': 'javascript:void(0)',
+        'class': 'icon open icon-folder'
+      })
+        .update(this._('expand_all'))
+        .observe('click', function(){
+          $$('#buttons_list li.hot_button').each(function(hot_button){
+            hot_button.removeClassName('collapsed');
+          });
+        })
+        .wrap('span', {'class': 'open'});
+      var collapse_controls = new Element('div', {'class': 'collapse_expand'})
+        .insert(collapse_button)
+        .insert(expand_button);
+      wrapper.insert(collapse_controls);
 
-      Event.observe(add_button, 'click', function(){
+      var add_button_event_callback = function(){
         var button_name = $('hot_buttons_selector').value;
         if (button_name.length == 0) return false;
 
-        t.render_button(button_name);
-      })
+        $$('#hot_buttons_selector option').first().selected = true;
+
+        t.render_button(button_name, false, false, 'top');
+      }
+
+      Event.observe(select, 'change', add_button_event_callback);
 
       $('hot_buttons_settings').appendChild(wrapper);
     },
@@ -543,15 +681,21 @@ document.observe("dom:loaded", function() {
      *
      * @return void
      */
-    render_button: function(button_name, params) {
+    render_button: function(button_name, params, collapsed, position) {
       // Create buttons list, if not exists
       if ($('buttons_list') == null) {
         $('hot_buttons_settings').appendChild(new Element('ul', {id: 'buttons_list'}));
       }
 
       var button = this.buttons_factory.get(button_name, params)
+      if (button && collapsed) {
+        button.addClassName('collapsed');
+      }
+      if (! button) return;
+      var insert = {};
+      insert[position || 'bottom'] = button;
 
-      $('buttons_list').insert(button);
+      $('buttons_list').insert(insert);
       this.hide_optional_fields(button);
       this.init_sortable_list();
     },
@@ -571,7 +715,7 @@ document.observe("dom:loaded", function() {
       t = this;
 
       var label_text = field.siblings().first().innerHTML;
-      var element_id = field.readAttribute('id');
+      var element_name = field.classNames().toArray().first();
 
       var field_wrapper = field.up();
       var field_container = field_wrapper.up();
@@ -582,17 +726,11 @@ document.observe("dom:loaded", function() {
           'class': 'optional_fields'
         }).insert(new Element('option'));
 
-        var add_button = new Element('a', {
-          'class': 'icon-add icon',
-          href: 'javascript:void(0)'
-        }).insert(this._('add'));
-
-        Event.observe(add_button, 'click', function(event){
-          var optional_select = Event.element(event).up().select('select').first();
+        Event.observe(optional_fields_select, 'change', function(event){
+          var optional_select = Event.element(event);
           var button_name = optional_select.value;
           if (button_name.length == 0) return false;
-
-          var optional_field = $(button_name).up();
+          var optional_field = optional_select.up(1).select('.' + button_name).first().up();
           optional_field.show();
 
           var option = optional_select.select('option[value="' + button_name + '"]').first();
@@ -606,14 +744,13 @@ document.observe("dom:loaded", function() {
           top: new Element('div', {'class': 'optional_elements_selector'})
             .insert(new Element('label').update(this._('select_hidden_elements')))
             .insert(optional_fields_select)
-            .insert(add_button)
         })
       }
       else {
         optional_fields_select = field_container.select('select.optional_fields').first();
       }
       optional_fields_select.insert(
-        new Element('option', {value: element_id}).update(label_text)
+        new Element('option', {value: element_name}).update(label_text)
       );
       optional_fields_select.up().show();  
 
@@ -626,6 +763,7 @@ document.observe("dom:loaded", function() {
      *
      * @param  key      i18n ID
      * @param  get_back Get back i18n ID if translation not exists
+     * 
      * @return Translated string for current language
      */
     _: function(key, get_back) {

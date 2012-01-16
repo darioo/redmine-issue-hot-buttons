@@ -1,0 +1,81 @@
+/**
+ * Redmine Issue Hot Buttons plugin
+ */
+#issue_hot_buttons {
+  margin-bottom: 4px;
+}
+  #issue_hot_buttons button.action {
+    margin-right: 3px;
+  }
+
+#issue_hot_buttons_additional {
+  border: 1px solid #D7D7D7;
+  padding: 2px;
+  margin-bottom: 10px;
+  background-color: #F6F6F6;
+}
+  #issue_hot_buttons_additional .controls {
+    display: inline-block;
+    float: left;
+  }
+  #issue_hot_buttons_additional .optional_wrapper {
+    display: inline-block;
+  }
+  #issue_hot_buttons_additional .optional_wrapper button.submit {
+    margin: 4px 0 0 153px;
+    vertical-align: middle;
+  }
+  #issue_hot_buttons_additional .optional_wrapper p {
+    vertical-align: middle;
+    margin: 0 0 6px 0;
+  }
+    #issue_hot_buttons_additional .optional_wrapper p input,
+    #issue_hot_buttons_additional .optional_wrapper p select {
+      margin: 0;
+    }
+    #issue_hot_buttons_additional .optional_wrapper p label {
+      width: 150px;
+      text-align: right;
+      display: inline-block;
+      margin-right: 3px;
+      vertical-align: top;
+      font-weight: bold;
+    }
+      #issue_hot_buttons_additional .optional_wrapper p label span.required {
+        display: none;
+      }
+    #issue_hot_buttons_additional .optional_wrapper p label:after {
+      content: ':';
+    }
+    #issue_hot_buttons_additional .optional_wrapper p input {
+      width: 150px;
+    }
+    #issue_hot_buttons_additional .optional_wrapper textarea {
+      margin: 0;
+    }
+  #issue_hot_buttons_additional .icon_close {
+    vertical-align: top;
+    height: 12px;
+    width: 12px;
+    display: inline-block;
+    background-image: url(/images/close.png);
+  }
+  #issue_hot_buttons_additional .icon_close:hover {
+    background-image: url(/images/close_hl.png);
+  }
+
+/**
+ * Issue Update specific styles
+ */
+#issue_hot_buttons_additional.update_issue .optional_wrapper {
+  padding: 7px 0;
+}
+
+/**
+ * Time tracker specific styles
+ */
+#issue_hot_buttons_additional.time_tracker label.timer {
+  font-size: 16px;
+  margin: 0 5px;
+  vertical-align: middle;
+}
