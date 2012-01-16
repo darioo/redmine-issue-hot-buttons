@@ -87,6 +87,52 @@ document.observe('dom:loaded', function(){
       else {
         $('issue_hot_buttons_additional').remove();
       }
+    },
+
+    /**
+     * Clone element from issue update form
+     * Perform additional things for fileds with datepickers
+     *
+     * @param element_id Element ID
+     * @return form element
+     */
+    get_mirrored_element: function(element_id) {
+      mirror_element_id = ['hot_button', element_id].join('_');
+
+      var original_element = $(element_id);
+      if (! original_element) return false;
+
+      var mirrored_element = original_element.up().clone(true);
+      mirrored_element.select('input, select').each(function(element){
+        element.writeAttribute('id', mirror_element_id);
+      });
+      mirrored_element.select('label').first().writeAttribute('for', mirror_element_id);
+
+      // Special magic for calendar inputs
+      var calendar_field = mirrored_element.select('img.calendar-trigger').first();
+      if (! Object.isUndefined(calendar_field)) {
+        calendar_field.writeAttribute('id', [mirror_element_id, 'trigger'].join('_'));
+        Calendar.setup({
+          inputField : mirrored_element.select('input').first(),
+          ifFormat : '%Y-%m-%d',
+          button : calendar_field
+        });
+      }
+
+      // Special magic for textareas
+      var textarea = mirrored_element.select('textarea').first();
+      if (! Object.isUndefined(textarea)) {
+        textarea.removeAttribute('style');
+        textarea.writeAttribute('cols', 30);
+        textarea.writeAttribute('rows', 5);
+
+      }
+
+      /*Event.observe(mirrored_element.select('input,select').first(), 'change', function(event) {
+        original_element.value = Event.element(event).value;
+      });*/
+
+      return mirrored_element;
     }
 
   });
@@ -282,52 +328,6 @@ document.observe('dom:loaded', function(){
         }
       });
       return elements;
-    },
-
-    /**
-     * Clone element from issue update form
-     * Perform additional things for fileds with datepickers
-     *
-     * @param element_id Element ID
-     * @return form element
-     */
-    get_mirrored_element: function(element_id) {
-      mirror_element_id = ['hot_button', element_id].join('_');
-
-      var original_element = $(element_id);
-      if (! original_element) return false;
-
-      var mirrored_element = original_element.up().clone(true);
-      mirrored_element.select('input, select').each(function(element){
-        element.writeAttribute('id', mirror_element_id);
-      });
-      mirrored_element.select('label').first().writeAttribute('for', mirror_element_id);
-
-      // Special magic for calendar inputs
-      var calendar_field = mirrored_element.select('img.calendar-trigger').first();
-      if (! Object.isUndefined(calendar_field)) {
-        calendar_field.writeAttribute('id', [mirror_element_id, 'trigger'].join('_'));
-        Calendar.setup({
-          inputField : mirrored_element.select('input').first(),
-          ifFormat : '%Y-%m-%d',
-          button : calendar_field
-        });
-      }
-
-      // Special magic for textareas
-      var textarea = mirrored_element.select('textarea').first();
-      if (! Object.isUndefined(textarea)) {
-        textarea.removeAttribute('style');
-        textarea.writeAttribute('cols', 30);
-        textarea.writeAttribute('rows', 5);
-        
-      }
-
-      /*Event.observe(mirrored_element.select('input,select').first(), 'change', function(event) {
-        original_element.value = Event.element(event).value;
-      });*/
-
-      return mirrored_element;
     },
 
     /**

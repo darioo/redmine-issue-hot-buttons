@@ -24,10 +24,11 @@ document.observe('dom:loaded', function() {
         resume: 'text',
         stop: 'text',
         options: {
-          _optional: ['timer_prefix', 'round_interval', 'select_activity', 'include_comment'],
+          _optional: ['timer_prefix', 'round_interval', 'with_seconds', 'select_activity', 'include_comment'],
           page_close_confirm: 'text',
           timer_prefix: 'text',
           round_interval: 'text',
+          with_seconds: 'flag',
           activity: ['select', false, this.activities],
           select_activity: 'flag',
           include_comment: 'flag'
