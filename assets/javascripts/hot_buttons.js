@@ -303,6 +303,7 @@ document.observe('dom:loaded', function(){
       });
       mirrored_element.select('label').first().writeAttribute('for', mirror_element_id);
 
+      // Special magic for calendar inputs
       var calendar_field = mirrored_element.select('img.calendar-trigger').first();
       if (! Object.isUndefined(calendar_field)) {
         calendar_field.writeAttribute('id', [mirror_element_id, 'trigger'].join('_'));
@@ -311,6 +312,15 @@ document.observe('dom:loaded', function(){
           ifFormat : '%Y-%m-%d',
           button : calendar_field
         });
+      }
+
+      // Special magic for textareas
+      var textarea = mirrored_element.select('textarea').first();
+      if (! Object.isUndefined(textarea)) {
+        textarea.removeAttribute('style');
+        textarea.writeAttribute('cols', 30);
+        textarea.writeAttribute('rows', 5);
+        
       }
 
       /*Event.observe(mirrored_element.select('input,select').first(), 'change', function(event) {
