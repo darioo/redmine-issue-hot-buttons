@@ -97,21 +97,23 @@ document.observe('dom:loaded', function(){
      * @return form element
      */
     get_mirrored_element: function(element_id) {
-      mirror_element_id = ['hot_button', element_id].join('_');
+      var tmp_id = [element_id, Math.round(Math.random() * 10000000)].join('_');
 
       var original_element = $(element_id);
       if (! original_element) return false;
 
       var mirrored_element = original_element.up().clone(true);
-      mirrored_element.select('input, select').each(function(element){
-        element.writeAttribute('id', mirror_element_id);
+      mirrored_element.select('input[type!="hidden"], select, textarea').each(function(element){
+        
+        element.writeAttribute('id', tmp_id);
+        element.addClassName(element_id);
       });
-      mirrored_element.select('label').first().writeAttribute('for', mirror_element_id);
+      mirrored_element.select('label').first().writeAttribute('for', tmp_id);
 
       // Special magic for calendar inputs
       var calendar_field = mirrored_element.select('img.calendar-trigger').first();
       if (! Object.isUndefined(calendar_field)) {
-        calendar_field.writeAttribute('id', [mirror_element_id, 'trigger'].join('_'));
+        calendar_field.removeAttribute('id');
         Calendar.setup({
           inputField : mirrored_element.select('input').first(),
           ifFormat : '%Y-%m-%d',
