@@ -47,7 +47,7 @@ en:
     time_tracker_with_seconds_label: "Timer with seconds"
 
     issue_update: "Update issue"
-    issue_update_description: "High-configurable update issue hot button"
+    issue_update_description: "Flexible Hot Button for update issue"
     issue_update_caption_label: " Button title"
     issue_update_conditions_subset: "Conditions"
     issue_update_user_role_label: "User role"
@@ -56,7 +56,6 @@ en:
     issue_update_actions_subset: "Actions"
     issue_update_set_issue_status_label: "Set issue status to"
     issue_update_assign_to_other_label: "Assignee to"
-    issue_update_assign_to_current_label: "Assign to current user"
     issue_update_set_done_label: "Set issue Done to 100%"
     issue_update_include_standart_fields_label: "Update default fields"
     issue_update_include_custom_fields_label: "Update custom fields"
