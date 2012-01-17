@@ -24,13 +24,14 @@ document.observe('dom:loaded', function() {
         resume: 'text',
         stop: 'text',
         options: {
-          _optional: ['timer_prefix', 'round_interval', 'with_seconds', 'select_activity', 'include_comment'],
+          _optional: ['timer_prefix', 'round_interval', 'with_seconds', 'select_activity', 'include_custom_fields', 'include_comment'],
           page_close_confirm: 'text',
           timer_prefix: 'text',
           round_interval: 'text',
           with_seconds: 'flag',
           activity: ['select', false, this.activities],
           select_activity: 'flag',
+          include_custom_fields: ['multiselect', false, this.time_entry_custom_fields],
           include_comment: 'flag'
         },
         conditions: {
@@ -521,6 +522,7 @@ document.observe('dom:loaded', function() {
 
       // Assign custom fields to ButtonSettingsFactory
       this.buttons_factory.issue_custom_fields = this.issue_custom_fields;
+      this.buttons_factory.time_entry_custom_fields = this.time_entry_custom_fields;
       this.buttons_factory.standart_fields = this.standart_fields;
       this.buttons_factory.issue_statuses = this.issue_statuses;
       this.buttons_factory.issue_trackers = this.issue_trackers;

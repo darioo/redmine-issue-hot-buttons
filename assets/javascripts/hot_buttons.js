@@ -433,7 +433,11 @@ document.observe('dom:loaded', function(){
 
       var optional_controls = new Element('div', {
         'class': 'optional_controls'
-      })
+      });
+
+      t.get_opt_controls(t.config).each(function(element){
+        optional_controls.insert(element);
+      });
 
       var additional_wrapper = new Element('div', {
         'class': 'optional_wrapper'
@@ -460,12 +464,55 @@ document.observe('dom:loaded', function(){
       $('issue_hot_buttons').insert({after: additional_container});
     },
 
+    /**
+     * Render optional controls
+     *
+     * @param button_config Hot button configuration
+     * @return array Hot buttons array
+     */
+    get_opt_controls: function(button_config) {
+      t = this;
+      var elements = [];
+
+      var select_activity_element = this.get_mirrored_element('time_entry_activity_id');
+      var activity_selector = select_activity_element.select('select').first();
+      // remove "-- Please select --" item
+      activity_selector.select('option').first().remove();
+      var activity = button_config.get('activity').evalJSON().pop();
+      activity_selector.value = activity;
+      var select_activity = button_config.get('select_activity');
+      select_activity = select_activity ? select_activity.evalJSON() : false;
+      if (! select_activity) {
+        activity_selector.writeAttribute('disabled', 'disabled')
+      }
+
+      elements.push(select_activity_element);
+
+      var custom_fields = button_config.get('include_custom_fields');
+      custom_fields = custom_fields ? custom_fields.evalJSON() : false;
+      if (custom_fields) {
+        custom_fields.each(function(custom_field_id){
+          elements.push(t.get_mirrored_element(
+            ['time_entry_custom_field_values', custom_field_id].join('_')
+          ));
+        });
+      }
+
+      var include_comment = button_config.get('include_comment');
+      include_comment = include_comment ? include_comment.evalJSON() : false;
+      if (include_comment) {
+        elements.push(t.get_mirrored_element('time_entry_comments'));
+      }
+
+      return elements;
+    },
+
     init_timer: function(label) {
       var mode = ['run', 'pause', 'stop'];
 
       label.elapsed = 0;
       label.status = 'run';
-      
+
       new PeriodicalExecuter(function(pe) {
         if (0 > mode.indexOf(label.status)) pe.stop();
         if ('stop'  === label.status) pe.stop();

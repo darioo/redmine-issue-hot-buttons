@@ -30,6 +30,7 @@ en:
     time_tracker_stop_label: "Stop caption"
     time_tracker_stop_value: "Finish working"
     time_tracker_autosubmit_label: "Auto-submit when stop"
+    time_tracker_include_custom_fields_label: "Include custom fields"
     time_tracker_include_comment_label: "Include comment"
     time_tracker_conditions_subset: "Conditions"
     time_tracker_user_role_label: "User role"
