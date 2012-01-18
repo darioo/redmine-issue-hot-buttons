@@ -659,7 +659,7 @@ document.observe('dom:loaded', function(){
       button.up().select('label.timer').first().status = 'run';
       button.hide();
     },
-
+       
     /**
      * Finish(stop) button action
      *
@@ -667,10 +667,60 @@ document.observe('dom:loaded', function(){
      * @param t     IssueUpdateButton context
      */
     finish_action: function(event, t){
-      var button = Event.element(event);
-
-      // Submit here
+      var button = Event.element(event); 
       
+      var timer = button.up().select('label.timer').first();
+      var working_time = timer.elapsed;
+      var round_interval = parseInt(t.config.get('round_interval'));
+      round_interval = isNaN(round_interval) ? 1 : round_interval;
+      round_interval *= 60;
+      var module = working_time % round_interval;
+      working_time = Math.floor(working_time / round_interval) * round_interval;
+      working_time += (module > 0)
+        ? round_interval
+        : 0;
+      
+      $('time_entry_hours').value = (working_time / 60 / 60);
+      
+      [
+        'activity',
+        'include_comment',
+        'include_custom_fields',
+      ].each(function(option){
+        if (! t.config.get(option)) return false;
+        switch(option) {
+
+          case 'activity':
+            var activity = t.config.get('activity').evalJSON();
+            $('time_entry_activity_id').value = 
+              button.up(1).select('select.time_entry_activity_id').first().value;
+            break;
+
+          case 'include_comment':
+            var include_comment = t.config.get('include_comment').evalJSON();
+            if (include_comment) {
+              $('time_entry_comments').value = 
+                button.up(1).select('input.time_entry_comments').first().value;
+            }
+            break;
+
+          case 'include_custom_fields':
+            var custom_fields = t.config.get('include_custom_fields').evalJSON();
+            custom_fields.each(function(id){
+              var custom_field_id = ['time_entry_custom_field_values', id].join('_');
+              var original_field = $(custom_field_id);
+              var mirrored_field = button.up(1).select('.' + custom_field_id).first();
+              if (mirrored_field && original_field) {
+                original_field.value = mirrored_field.value;
+              }
+            });
+            break;
+        }
+      });
+     
+      // Submit issue form!
+      $('issue-form').submit();
+     
     }
 
   });

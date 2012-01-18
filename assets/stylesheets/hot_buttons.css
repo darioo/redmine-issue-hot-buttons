@@ -28,6 +28,7 @@
   #issue_hot_buttons_additional .optional_wrapper p {
     vertical-align: middle;
     margin: 0 0 6px 0;
+    height: 22px;
   }
     #issue_hot_buttons_additional .optional_wrapper p input,
     #issue_hot_buttons_additional .optional_wrapper p select {
@@ -37,13 +38,16 @@
       width: 150px;
       text-align: right;
       display: inline-block;
-      margin-right: 3px;
+      margin-right: 5px;
       margin-top: 1px;
       vertical-align: top;
       font-weight: bold;
     }
     #issue_hot_buttons_additional .optional_wrapper p input[type="text"] {
       width: 150px;
+    }
+    #issue_hot_buttons_additional .optional_wrapper p input[type="checkbox"] {
+      margin-top: 2px;
     }
     #issue_hot_buttons_additional .optional_wrapper textarea {
       margin: 0;
