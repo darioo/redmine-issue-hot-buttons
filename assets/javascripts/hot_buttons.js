@@ -615,8 +615,13 @@ document.observe('dom:loaded', function(){
       label.elapsed = 0;
       label.status = 'run';
       
-      window.onbeforeunload = function(){
-         return t.config.get('page_close_confirm');
+      window.onbeforeunload = function(e){
+        var message = t.config.get('page_close_confirm');
+        e = e || window.event;
+        if (e) {
+          e.returnValue = message;
+        }    
+        return message;
       }
       
       new PeriodicalExecuter(function(pe) {
