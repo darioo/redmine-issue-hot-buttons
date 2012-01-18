@@ -1,14 +1,14 @@
 require 'redmine'
 
 Redmine::Plugin.register :redmine_issue_hot_buttons do
-  name 'Issue Hot Buttons plugin'
-  author 'Mike Kolganov'
-  description 'Plugin for Redmine that add some often used actions to issue page'
-  version '0.0.1'
+  name 'Issue Hot Buttons Plugin'
+  author 'Mike Kolganov of Thumbtack Inc.'
+  description 'Plugin for Redmine that add buttons for often used actions to issue page'
+  version '0.1.0a'
   url 'https://github.com/mikekolganov/redmine-issue-hot-buttons'
   author_url 'mailto:mike.kolganov@gmail.com'
 	
-	settings :default => {'list_size' => '5', 'precision' => '2'}, :partial => 'settings/settings'
+	settings :partial => 'settings/settings'
 end
 
 class Hooks < Redmine::Hook::ViewListener

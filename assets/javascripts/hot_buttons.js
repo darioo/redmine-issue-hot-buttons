@@ -87,6 +87,54 @@ document.observe('dom:loaded', function(){
       else {
         $('issue_hot_buttons_additional').remove();
       }
+    },
+
+    /**
+     * Clone element from issue update form
+     * Perform additional things for fileds with datepickers
+     *
+     * @param element_id Element ID
+     * @return form element
+     */
+    get_mirrored_element: function(element_id) {
+      var tmp_id = [element_id, Math.round(Math.random() * 10000000)].join('_');
+
+      var original_element = $(element_id);
+      if (! original_element) return false;
+
+      var mirrored_element = original_element.up().clone(true);
+      mirrored_element.select('input[type!="hidden"], select, textarea').each(function(element){
+        
+        element.writeAttribute('id', tmp_id);
+        element.addClassName(element_id);
+      });
+      mirrored_element.select('label').first().writeAttribute('for', tmp_id);
+
+      // Special magic for calendar inputs
+      var calendar_field = mirrored_element.select('img.calendar-trigger').first();
+      if (! Object.isUndefined(calendar_field)) {
+        calendar_field.removeAttribute('id');
+        Calendar.setup({
+          inputField : mirrored_element.select('input').first(),
+          ifFormat : '%Y-%m-%d',
+          button : calendar_field
+        });
+      }
+
+      // Special magic for textareas
+      var textarea = mirrored_element.select('textarea').first();
+      if (! Object.isUndefined(textarea)) {
+        textarea.removeAttribute('style');
+        textarea.writeAttribute('cols', 30);
+        textarea.writeAttribute('rows', 5);
+
+      }
+
+      /*Event.observe(mirrored_element.select('input,select').first(), 'change', function(event) {
+        original_element.value = Event.element(event).value;
+      });*/
+
+      return mirrored_element;
     }
 
   });
@@ -285,40 +333,6 @@ document.observe('dom:loaded', function(){
     },
 
     /**
-     * Clone element from issue update form
-     * Perform additional things for fileds with datepickers
-     *
-     * @param element_id Element ID
-     * @return form element
-     */
-    get_mirrored_element: function(element_id) {
-      mirror_element_id = ['hot_button', element_id].join('_');
-
-      var original_element = $(element_id);
-      if (! original_element) return false;
-
-      var mirrored_element = original_element.up().clone(true);
-      mirrored_element.select('input, select').first().writeAttribute('id', mirror_element_id);
-      mirrored_element.select('label').first().writeAttribute('for', mirror_element_id);
-
-      var calendar_field = mirrored_element.select('img.calendar-trigger').first();
-      if (! Object.isUndefined(calendar_field)) {
-        calendar_field.writeAttribute('id', [mirror_element_id, 'trigger'].join('_'));
-        Calendar.setup({
-          inputField : mirrored_element.select('input').first(),
-          ifFormat : '%Y-%m-%d',
-          button : calendar_field
-        });
-      }
-
-      /*Event.observe(mirrored_element.select('input,select').first(), 'change', function(event) {
-        original_element.value = Event.element(event).value;
-      });*/
-
-      return mirrored_element;
-    },
-
-    /**
      * Submit hot button action
      *
      * @param event Event object
@@ -381,7 +395,7 @@ document.observe('dom:loaded', function(){
       var timer_label = new Element('label', {
         'class': 'timer'
       })
-        .update('0');
+        .update('00:00:00');
 
       t.init_timer(timer_label);
 
@@ -419,7 +433,11 @@ document.observe('dom:loaded', function(){
 
       var optional_controls = new Element('div', {
         'class': 'optional_controls'
-      })
+      });
+
+      t.get_opt_controls(t.config).each(function(element){
+        optional_controls.insert(element);
+      });
 
       var additional_wrapper = new Element('div', {
         'class': 'optional_wrapper'
@@ -446,19 +464,76 @@ document.observe('dom:loaded', function(){
       $('issue_hot_buttons').insert({after: additional_container});
     },
 
+    /**
+     * Render optional controls
+     *
+     * @param button_config Hot button configuration
+     * @return array Hot buttons array
+     */
+    get_opt_controls: function(button_config) {
+      t = this;
+      var elements = [];
+
+      var select_activity_element = this.get_mirrored_element('time_entry_activity_id');
+      var activity_selector = select_activity_element.select('select').first();
+      // remove "-- Please select --" item
+      activity_selector.select('option').first().remove();
+      var activity = button_config.get('activity').evalJSON().pop();
+      activity_selector.value = activity;
+      var select_activity = button_config.get('select_activity');
+      select_activity = select_activity ? select_activity.evalJSON() : false;
+      if (! select_activity) {
+        activity_selector.writeAttribute('disabled', 'disabled')
+      }
+
+      elements.push(select_activity_element);
+
+      var custom_fields = button_config.get('include_custom_fields');
+      custom_fields = custom_fields ? custom_fields.evalJSON() : false;
+      if (custom_fields) {
+        custom_fields.each(function(custom_field_id){
+          elements.push(t.get_mirrored_element(
+            ['time_entry_custom_field_values', custom_field_id].join('_')
+          ));
+        });
+      }
+
+      var include_comment = button_config.get('include_comment');
+      include_comment = include_comment ? include_comment.evalJSON() : false;
+      if (include_comment) {
+        elements.push(t.get_mirrored_element('time_entry_comments'));
+      }
+
+      return elements;
+    },
+
     init_timer: function(label) {
       var mode = ['run', 'pause', 'stop'];
 
       label.elapsed = 0;
       label.status = 'run';
-      
+
       new PeriodicalExecuter(function(pe) {
         if (0 > mode.indexOf(label.status)) pe.stop();
         if ('stop'  === label.status) pe.stop();
         if ('pause' === label.status) return;
 
         label.elapsed++
-        label.update(label.elapsed);
+
+        var hours = Math.floor(label.elapsed / (60 * 60));
+        var divisor_for_minutes = label.elapsed % (60 * 60);
+        var minutes = Math.floor(divisor_for_minutes / 60);
+        var divisor_for_seconds = divisor_for_minutes % 60;
+        var seconds = Math.ceil(divisor_for_seconds);
+
+        var human_time = [
+          hours   < 10 ? '0'.concat(hours)   : hours,
+          minutes < 10 ? '0'.concat(minutes) : minutes,
+          seconds < 10 ? '0'.concat(seconds) : seconds
+        ].join(':');
+
+        label.update(human_time);
+
       }, 1);
     },
 

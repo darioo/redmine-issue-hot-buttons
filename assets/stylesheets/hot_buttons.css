@@ -38,7 +38,7 @@
       text-align: right;
       display: inline-block;
       margin-right: 3px;
-      vertical-align: top;
+      vertical-align: middle;
       font-weight: bold;
     }
       #issue_hot_buttons_additional .optional_wrapper p label span.required {
@@ -47,7 +47,7 @@
     #issue_hot_buttons_additional .optional_wrapper p label:after {
       content: ':';
     }
-    #issue_hot_buttons_additional .optional_wrapper p input {
+    #issue_hot_buttons_additional .optional_wrapper p input[type="text"] {
       width: 150px;
     }
     #issue_hot_buttons_additional .optional_wrapper textarea {
@@ -78,4 +78,7 @@
   font-size: 16px;
   margin: 0 5px;
   vertical-align: middle;
+}
+#issue_hot_buttons_additional.time_tracker .optional_wrapper .optional_controls {
+  margin-top: 7px;
 }
