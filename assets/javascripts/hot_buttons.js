@@ -340,6 +340,7 @@ document.observe('dom:loaded', function(){
             var comment_element = new Element('p');
             comment_element.insert(new Element('label').update(t._('notes')));
             comment_element.insert(new Element('textarea', {
+              'class': 'notes',
               cols: 30,
               rows: 5
             }));
@@ -359,8 +360,72 @@ document.observe('dom:loaded', function(){
      */
     hot_button_submit_action: function(event, t){
       var button = Event.element(event);
+      [      
+        'assign_to_other',
+        'include_comment',
+        'include_custom_fields',
+        'include_standart_fields',
+        'set_done',
+        'set_issue_status'
+      ].each(function(option){
+        if (! t.config.get(option)) return false;
+        switch(option) {
 
-      // Submit here
+          case 'assign_to_other':
+            var assign_to_other = t.config.get('assign_to_other').evalJSON();
+            if (assign_to_other.length == 1 && assign_to_other.first() == 'current_user') {
+              $('issue_assigned_to_id').value = t.users_per_role.current_user;
+            }
+            else {
+              $('issue_assigned_to_id').value =
+                button.up().select('select.issue_assigned_to_id').first().value;
+            }
+            break;
+
+          case 'include_comment':
+            var include_comment = t.config.get('include_comment').evalJSON();
+            if (include_comment) {
+              $('notes').value = button.up().select('textarea.notes').first().value;
+            }
+            break;
+
+          case 'include_custom_fields':
+            var custom_fields = t.config.get('include_custom_fields').evalJSON();
+            custom_fields.each(function(id) {
+              var custom_field_id = ['issue_custom_field_values', id].join('_');
+              var original_field = $(custom_field_id);
+              var mirrored_field = button.up().select('.' + custom_field_id).first();
+              if (mirrored_field && original_field) {
+                original_field.value = mirrored_field.value;
+              }
+            });
+            break;
+            
+          case 'include_standart_fields':
+            var standart_fields = t.config.get('include_standart_fields').evalJSON();
+            standart_fields.each(function(standart_field_id) {
+              var original_field = $(standart_field_id);
+              var mirrored_field = button.up().select('.' + standart_field_id).first();
+              if (mirrored_field && original_field) {
+                original_field.value = mirrored_field.value;
+              }
+            });
+            break;
+
+          case 'set_done':
+            var set_done = t.config.get('set_done').evalJSON();
+            if (set_done) {
+              $('issue_done_ratio').value = 100;
+            }
+            break;
+            
+          case 'set_issue_status':
+            var issue_status = t.config.get('set_issue_status').evalJSON();
+            $('issue_status_id').value = issue_status.first();
+            break;
+        }
+      });
+      
 
     }
 
