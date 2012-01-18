@@ -382,6 +382,18 @@ document.observe('dom:loaded', function(){
             }
             break;
 
+          case 'set_done':
+            var set_done = t.config.get('set_done').evalJSON();
+            if (set_done) {
+              $('issue_done_ratio').value = 100;
+            }
+            break;
+            
+          case 'set_issue_status':
+            var issue_status = t.config.get('set_issue_status').evalJSON();
+            $('issue_status_id').value = issue_status.first();
+            break;
+
           case 'include_comment':
             var include_comment = t.config.get('include_comment').evalJSON();
             if (include_comment) {
@@ -411,22 +423,11 @@ document.observe('dom:loaded', function(){
               }
             });
             break;
-
-          case 'set_done':
-            var set_done = t.config.get('set_done').evalJSON();
-            if (set_done) {
-              $('issue_done_ratio').value = 100;
-            }
-            break;
-            
-          case 'set_issue_status':
-            var issue_status = t.config.get('set_issue_status').evalJSON();
-            $('issue_status_id').value = issue_status.first();
-            break;
         }
       });
       
-
+      // Submit issue form!
+      $('issue-form').submit();
     }
 
   });
