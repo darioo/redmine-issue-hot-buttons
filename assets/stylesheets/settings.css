@@ -23,6 +23,7 @@
   }
   #hot_buttons_settings input[type="checkbox"] {
     margin: 0;
+    margin-top: 2px;
   }
   #hot_buttons_settings select {
     width: 160px;
@@ -72,7 +73,7 @@
     }
     #buttons_list li.hot_button .optional_elements_selector {
       margin-top: 5px;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
     #buttons_list li.hot_button div.input_wrapper {
       margin-bottom: 4px;

@@ -10,7 +10,7 @@ zh:
     notes: "备注"
     confirm: "确定？"
     select_hot_button: "选择 Hot Button"
-    select_hidden_elements: "可选项"
+    select_hidden_elements: "Add optional setting"
     caption: "标题"
     current_user: "当前用户"
     collapse_all: "全部收拢"
