@@ -182,16 +182,28 @@ document.observe('dom:loaded', function(){
      */
     has_additional_controls: function(){
       var t = this;
-      var has_additional = false;
+      var no_additional = true;
       [
         'assign_to_other',
         'include_standart_fields',
         'include_custom_fields',
         'include_comment',
       ].each(function(i){
-        if (! Object.isUndefined(t.config.get(i))) return has_additional = true;
+        if (! Object.isUndefined(t.config.get(i))) {
+          switch(i) {
+            case 'assign_to_other':
+              var assign_to = t.config.get('assign_to_other').evalJSON();
+              if (! (assign_to.length == 1 && assign_to.first() == 'current_user')) {
+                no_additional = no_additional && false;
+              }
+              break;
+            default:
+              no_additional = no_additional && false;
+              break;
+          };
+        }
       });
-      return has_additional;
+      return ! no_additional;
     },
 
     /**
@@ -287,6 +299,9 @@ document.observe('dom:loaded', function(){
 
           case 'assign_to_other':
             var assign_to_roles = button_config.get('assign_to_other').evalJSON();
+            if (assign_to_roles.length == 1 && assign_to_roles.first() == 'current_user') {
+              return;
+            }
             var mirrored_element = t.get_mirrored_element('issue_assigned_to_id');
 
             var allowed_users = [];

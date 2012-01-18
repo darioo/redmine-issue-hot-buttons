@@ -1,5 +1,7 @@
 <%
-  users_per_role = {};
+  users_per_role = {
+    :current_user => User.current.id
+  };
   @project.users_by_role.each { |role, users|
     users_per_role[role.id] = users.map { |user| user.id }
   }
@@ -12,7 +14,6 @@
   <%= stylesheet_link_tag 'hot_buttons.css', :plugin => 'redmine_issue_hot_buttons' %>
   <script type="text/javascript">
     var IssueHotButtons = {
-      current_user:    <%= User.current.id %>,
       issue:           <%= @issue.to_json %>,
       users_per_role:  <%= users_per_role.to_json %>,
       settings:        <%= Setting['plugin_redmine_issue_hot_buttons'].to_json %>,
