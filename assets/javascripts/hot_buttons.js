@@ -49,7 +49,8 @@ document.observe('dom:loaded', function(){
             available_users = available_users.concat(t.users_per_role[role]);
           }
         });
-        if(0 > available_users.uniq().indexOf(t.current_user)) return false;
+        var current_user = t.users_per_role.current_user;
+        if(0 > available_users.uniq().indexOf(current_user)) return false;
       }
 
       // Issue status condition
