@@ -22,7 +22,7 @@
     display: inline-block;
   }
   #issue_hot_buttons_additional .optional_wrapper button.submit {
-    margin: 4px 0 0 153px;
+    margin: 2px 0 0 153px;
     vertical-align: middle;
   }
   #issue_hot_buttons_additional .optional_wrapper p {
@@ -38,14 +38,9 @@
       text-align: right;
       display: inline-block;
       margin-right: 3px;
-      vertical-align: middle;
+      margin-top: 1px;
+      vertical-align: top;
       font-weight: bold;
-    }
-      #issue_hot_buttons_additional .optional_wrapper p label span.required {
-        display: none;
-      }
-    #issue_hot_buttons_additional .optional_wrapper p label:after {
-      content: ':';
     }
     #issue_hot_buttons_additional .optional_wrapper p input[type="text"] {
       width: 150px;
@@ -81,4 +76,10 @@
 }
 #issue_hot_buttons_additional.time_tracker .optional_wrapper .optional_controls {
   margin-top: 7px;
+}
+#issue_hot_buttons_additional.time_tracker .timer_controls button {
+  margin-right: 3px;
+}
+#issue_hot_buttons_additional.time_tracker .timer_controls .timer .prefix {
+  margin-right: 4px;
 }

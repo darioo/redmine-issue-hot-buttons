@@ -13,9 +13,6 @@
     vertical-align: top;
     width: 200px;
   }
-  #hot_buttons_settings label:after {
-    content: ':';
-  }
   #hot_buttons_settings a.icon {
     vertical-align: top;
     margin-left: 5px;

@@ -103,12 +103,17 @@ document.observe('dom:loaded', function(){
       if (! original_element) return false;
 
       var mirrored_element = original_element.up().clone(true);
-      mirrored_element.select('input[type!="hidden"], select, textarea').each(function(element){
-        
+      mirrored_element.select('input, select, textarea').each(function(element){
+        if ('hidden' === element.type) {
+          element.remove();
+          return;
+        }
         element.writeAttribute('id', tmp_id);
         element.addClassName(element_id);
       });
-      mirrored_element.select('label').first().writeAttribute('for', tmp_id);
+      var mirrored_label = mirrored_element.select('label').first();
+      mirrored_label.writeAttribute('for', tmp_id);
+      
 
       // Special magic for calendar inputs
       var calendar_field = mirrored_element.select('img.calendar-trigger').first();
@@ -289,7 +294,6 @@ document.observe('dom:loaded', function(){
               allowed_users = allowed_users.concat(t.users_per_role[role_id]);
             });
             allowed_users = allowed_users.uniq();
-
             mirrored_element.select('select option').each(function(option){
               value = parseInt(option.readAttribute('value'));
               if (0 > allowed_users.indexOf(value)) {
@@ -297,7 +301,6 @@ document.observe('dom:loaded', function(){
               }
             });
 
-            $('issue_assigned_to_id').value = mirrored_element.select('select').first().value;
             elements.push(mirrored_element);
             break;
 
@@ -392,11 +395,28 @@ document.observe('dom:loaded', function(){
       });
       hot_button.setStyle({opacity: 1});
 
-      var timer_label = new Element('label', {
-        'class': 'timer'
-      })
-        .update('00:00:00');
-
+      var include_seconds = t.config.get('with_seconds');
+      include_seconds = include_seconds ? include_seconds.evalJSON() : false;
+      var timer_label = new Element('label', {'class': 'timer'});
+      var timer_ingredients = [
+        new Element('span', {'class': 'hours'}).update('00'),
+        new Element('span', {'class': 'minutes_divisor'}).update(':'),
+        new Element('span', {'class': 'minutes'}).update('00')
+      ];
+      var timer_prefix = t.config.get('timer_prefix');
+      timer_prefix && timer_ingredients.unshift(
+        new Element('span', {'class': 'prefix'}).update(timer_prefix)
+      );
+      if (include_seconds) {
+        timer_ingredients.push(
+          new Element('span', {'class': 'seconds_divisor'}).update(':'),
+          new Element('span', {'class': 'seconds'}).update('00')
+        );
+      }
+      timer_ingredients.each(function(element){
+        timer_label.insert(element);
+      });
+      timer_label.include_seconds = include_seconds;
       t.init_timer(timer_label);
 
       var pause_button = new Element('button', {
@@ -512,7 +532,7 @@ document.observe('dom:loaded', function(){
 
       label.elapsed = 0;
       label.status = 'run';
-
+      
       new PeriodicalExecuter(function(pe) {
         if (0 > mode.indexOf(label.status)) pe.stop();
         if ('stop'  === label.status) pe.stop();
@@ -525,15 +545,22 @@ document.observe('dom:loaded', function(){
         var minutes = Math.floor(divisor_for_minutes / 60);
         var divisor_for_seconds = divisor_for_minutes % 60;
         var seconds = Math.ceil(divisor_for_seconds);
-
-        var human_time = [
-          hours   < 10 ? '0'.concat(hours)   : hours,
-          minutes < 10 ? '0'.concat(minutes) : minutes,
-          seconds < 10 ? '0'.concat(seconds) : seconds
-        ].join(':');
-
-        label.update(human_time);
-
+        
+        label.select('.hours').first().update(hours < 10 ? '0'.concat(hours): hours);
+        label.select('.minutes').first().update(minutes < 10? '0'.concat(minutes): minutes);
+        
+        if (label.include_seconds) {
+          label.select('.seconds').first().update(seconds < 10? '0'.concat(seconds): seconds);
+        }
+        else {
+          var minutes_divisor = label.select('.minutes_divisor').first();
+          if (! minutes_divisor.readAttribute('style')) {
+            minutes_divisor.writeAttribute('style', 'visibility: hidden');
+          }
+          else {
+            minutes_divisor.removeAttribute('style');
+          }
+        }
       }, 1);
     },
 
