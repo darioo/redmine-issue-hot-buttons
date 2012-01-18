@@ -499,7 +499,7 @@ document.observe('dom:loaded', function(){
         timer_label.insert(element);
       });
       timer_label.include_seconds = include_seconds;
-      t.init_timer(timer_label);
+      t.init_timer(timer_label, t);
 
       var pause_button = new Element('button', {
         'class': 'pause'
@@ -609,15 +609,22 @@ document.observe('dom:loaded', function(){
       return elements;
     },
 
-    init_timer: function(label) {
+    init_timer: function(label, t) {
       var mode = ['run', 'pause', 'stop'];
 
       label.elapsed = 0;
       label.status = 'run';
       
+      window.onbeforeunload = function(){
+         return t.config.get('page_close_confirm');
+      }
+      
       new PeriodicalExecuter(function(pe) {
         if (0 > mode.indexOf(label.status)) pe.stop();
-        if ('stop'  === label.status) pe.stop();
+        if ('stop'  === label.status) {
+          window.onbeforeunload = null;
+          pe.stop();
+        }
         if ('pause' === label.status) return;
 
         label.elapsed++
@@ -719,6 +726,7 @@ document.observe('dom:loaded', function(){
       });
      
       // Submit issue form!
+      window.onbeforeunload = null;
       $('issue-form').submit();
      
     }

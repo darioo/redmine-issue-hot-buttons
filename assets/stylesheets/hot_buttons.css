@@ -28,7 +28,7 @@
   #issue_hot_buttons_additional .optional_wrapper p {
     vertical-align: middle;
     margin: 0 0 6px 0;
-    height: 22px;
+    min-height: 22px;
   }
     #issue_hot_buttons_additional .optional_wrapper p input,
     #issue_hot_buttons_additional .optional_wrapper p select {
