@@ -737,6 +737,9 @@ document.observe('dom:loaded', function() {
           if (button_name.length == 0) return false;
           var optional_field = optional_select.up(1).select('.' + button_name).first().up();
           optional_field.show();
+          if (optional_field.select('input[type="checkbox"]').length) {
+            optional_field.select('input[type="checkbox"]').first().checked = true;
+          }
 
           var option = optional_select.select('option[value="' + button_name + '"]').first();
           option.remove();
