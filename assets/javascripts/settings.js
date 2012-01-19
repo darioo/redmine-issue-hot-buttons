@@ -148,7 +148,30 @@ document.observe('dom:loaded', function() {
         'class': 'internal_name',
         value: config_section_name
       }).hide();
+      
+      var save_internal_name_callback = function(event){
+        var wrapper = Event.element(event).up();
 
+        var button_save = wrapper.select('a.save_internal_name').first();
+        var button_edit = wrapper.select('a.edit_internal_name').first();
+        var name_input = wrapper.select('input.internal_name').first();
+        var name_link = wrapper.select('a.internal_name').first();
+
+        button_edit.show();
+        name_input.hide();
+        button_save.hide();
+        name_link.show();
+
+        var internal_name_value = name_input.value.trim();
+        name_link.update(internal_name_value);
+
+        button_save.up(1).select('input[xname="internal_name"]')
+          .first()
+          .value = internal_name_value;
+      };
+      
+      Event.observe(internal_name_input, 'blur', save_internal_name_callback);
+      
       var edit_internal_name = new Element('a', {
         'class': 'icon-edit icon edit_internal_name',
         href: 'javascript:void(0)'
@@ -178,26 +201,7 @@ document.observe('dom:loaded', function() {
         .insert(this._('save'))
         .hide();
 
-      Event.observe(save_internal_name, 'click', function(event){
-        var button_save = Event.element(event);
-        var wrapper = button_save.up();
-
-        var button_edit = wrapper.select('a.edit_internal_name').first();
-        var name_input = wrapper.select('input.internal_name').first();
-        var name_link = wrapper.select('a.internal_name').first();
-
-        button_edit.show();
-        name_input.hide();
-        button_save.hide();
-        name_link.show();
-
-        var internal_name_value = name_input.value.trim();
-        name_link.update(internal_name_value);
-
-        button_save.up(1).select('input[xname="internal_name"]')
-          .first()
-          .value = internal_name_value;
-      });
+      Event.observe(save_internal_name, 'click', save_internal_name_callback);
 
       var elements = [
         new Element('p', {'class': 'title'})
