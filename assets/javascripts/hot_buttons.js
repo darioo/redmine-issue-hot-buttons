@@ -360,6 +360,7 @@ document.observe('dom:loaded', function(){
      */
     hot_button_submit_action: function(event, t){
       var button = Event.element(event);
+
       [      
         'assign_to_other',
         'include_comment',
@@ -368,11 +369,11 @@ document.observe('dom:loaded', function(){
         'set_done',
         'set_issue_status'
       ].each(function(option){
-        if (! t.config.get(option)) return false;
+        if (! button.config.get(option)) return false;
         switch(option) {
 
           case 'assign_to_other':
-            var assign_to_other = t.config.get('assign_to_other').evalJSON();
+            var assign_to_other = button.config.get('assign_to_other').evalJSON();
             if (assign_to_other.length == 1 && assign_to_other.first() == 'current_user') {
               $('issue_assigned_to_id').value = t.users_per_role.current_user;
             }
@@ -383,26 +384,26 @@ document.observe('dom:loaded', function(){
             break;
 
           case 'set_done':
-            var set_done = t.config.get('set_done').evalJSON();
+            var set_done = button.config.get('set_done').evalJSON();
             if (set_done) {
               $('issue_done_ratio').value = 100;
             }
             break;
             
           case 'set_issue_status':
-            var issue_status = t.config.get('set_issue_status').evalJSON();
+            var issue_status = button.config.get('set_issue_status').evalJSON();
             $('issue_status_id').value = issue_status.first();
             break;
 
           case 'include_comment':
-            var include_comment = t.config.get('include_comment').evalJSON();
+            var include_comment = button.config.get('include_comment').evalJSON();
             if (include_comment) {
               $('notes').value = button.up().select('textarea.notes').first().value;
             }
             break;
 
           case 'include_custom_fields':
-            var custom_fields = t.config.get('include_custom_fields').evalJSON();
+            var custom_fields = button.config.get('include_custom_fields').evalJSON();
             custom_fields.each(function(id) {
               var custom_field_id = ['issue_custom_field_values', id].join('_');
               var original_field = $(custom_field_id);
@@ -414,7 +415,7 @@ document.observe('dom:loaded', function(){
             break;
             
           case 'include_standart_fields':
-            var standart_fields = t.config.get('include_standart_fields').evalJSON();
+            var standart_fields = button.config.get('include_standart_fields').evalJSON();
             standart_fields.each(function(standart_field_id) {
               var original_field = $(standart_field_id);
               var mirrored_field = button.up().select('.' + standart_field_id).first();
@@ -461,7 +462,8 @@ document.observe('dom:loaded', function(){
       var t = this;
       var start_working = new Element('button', {'class': 'action'})
         .update(this.config.get('start'));
-
+      start_working.config = this.config;
+      
       Event.observe(start_working, 'click', function(event) {
         t.start_working_action(event, t);
       });
@@ -523,7 +525,7 @@ document.observe('dom:loaded', function(){
           t.finish_action(event, t);
           t.hide_optional();
         });
-      stop_button.config = t.config;
+      stop_button.config = hot_button.config;
 
       var timer_controls = new Element('div', {
         'class': 'timer_controls'
@@ -537,7 +539,7 @@ document.observe('dom:loaded', function(){
         'class': 'optional_controls'
       });
 
-      t.get_opt_controls(t.config).each(function(element){
+      t.get_opt_controls(hot_button.config).each(function(element){
         optional_controls.insert(element);
       });
 
