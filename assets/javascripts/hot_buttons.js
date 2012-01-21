@@ -561,7 +561,7 @@ document.observe('dom:loaded', function(){
       });
       hot_button.setStyle({opacity: 1});
 
-      var include_seconds = t.config.get('with_seconds');
+      var include_seconds = hot_button.config.get('with_seconds');
       include_seconds = include_seconds ? include_seconds.evalJSON() : false;
       var timer_label = new Element('label', {'class': 'timer'});
       var timer_ingredients = [
@@ -569,7 +569,7 @@ document.observe('dom:loaded', function(){
         new Element('span', {'class': 'minutes_divisor'}).update(':'),
         new Element('span', {'class': 'minutes'}).update('00')
       ];
-      var timer_prefix = t.config.get('timer_prefix');
+      var timer_prefix = hot_button.config.get('timer_prefix');
       timer_prefix && timer_ingredients.unshift(
         new Element('span', {'class': 'prefix'}).update(timer_prefix)
       );
@@ -583,25 +583,26 @@ document.observe('dom:loaded', function(){
         timer_label.insert(element);
       });
       timer_label.include_seconds = include_seconds;
+      timer_label.config = hot_button.config;
       t.init_timer(timer_label, t);
 
       var pause_button = new Element('button', {
         'class': 'pause'
       })
-        .update(t.config.get('pause'))
+        .update(hot_button.config.get('pause'))
         .observe('click', t.pause_button_action);
 
       var resume_button = new Element('button', {
         'class': 'resume',
         'style': 'display: none;'
       })
-        .update(t.config.get('resume'))
+        .update(hot_button.config.get('resume'))
         .observe('click', t.resume_button_action);
 
       var stop_button = new Element('button', {
         'class': 'stop'
       })
-        .update(t.config.get('stop'))
+        .update(hot_button.config.get('stop'))
         .observe('click', function(event) {
           timer_label.status = 'stop';
           t.finish_action(event, t);
@@ -637,6 +638,7 @@ document.observe('dom:loaded', function(){
       })
         .observe('click', function(event) {
           timer_label.status = 'stop';
+          document.title = timer_label.canonical_page_title;
           t.hide_optional(event);
         })
 
@@ -695,9 +697,9 @@ document.observe('dom:loaded', function(){
 
     init_timer: function(label, t) {
       var mode = ['run', 'pause', 'stop'];
-      var canonical_page_title = document.title;
+      label.canonical_page_title = document.title;
       
-      var timer_in_title = t.config.get('timer_in_title');
+      var timer_in_title = label.config.get('timer_in_title');
       timer_in_title = timer_in_title ? timer_in_title.evalJSON() : false;
       var title_changed = -1;
       
@@ -705,7 +707,7 @@ document.observe('dom:loaded', function(){
       label.status = 'run';
       
       window.onbeforeunload = function(e){
-        var message = t.config.get('page_close_confirm');
+        var message = label.config.get('page_close_confirm');
         e = e || window.event;
         if (e) {
           e.returnValue = message;
@@ -717,7 +719,7 @@ document.observe('dom:loaded', function(){
         if (0 > mode.indexOf(label.status)) pe.stop();
         if ('stop'  === label.status) {
           window.onbeforeunload = null;
-          document.title = canonical_page_title;
+          document.title = label.canonical_page_title;
           pe.stop();
         }
         if ('pause' === label.status) return;
@@ -736,7 +738,7 @@ document.observe('dom:loaded', function(){
         if (timer_in_title && minutes > title_changed) {
           title_changed = minutes;
           document.title = 
-            [[s_hours, s_minutes].join(':'), canonical_page_title].join(' ');
+            [[s_hours, s_minutes].join(':'), label.canonical_page_title].join(' ');
         }
 
         label.select('.hours').first().update(s_hours);
