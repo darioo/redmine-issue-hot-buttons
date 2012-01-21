@@ -35,6 +35,9 @@
 
   activities = {}
   TimeEntryActivity.find(:all).each { |activity| activities[activity.id] = activity.name}
+  
+  projects = {}
+  Project.find(:all).each { |project| projects[project.id] = project.name};
 %>
 <% content_for :header_tags do %>
   <%= javascript_include_tag 'settings.js', :plugin => 'redmine_issue_hot_buttons' %>
@@ -47,6 +50,7 @@
       issue_custom_fields:      <%= issue_custom_fields.to_json %>,
       time_entry_custom_fields: <%= time_entry_custom_fields.to_json %>,
       user_roles:               <%= user_roles.to_json %>,
+      projects:                 <%= projects.to_json %>,
       activities:               <%= activities.to_json %>,
       settings:                 <%= @settings.to_json %>,
       i18n_strings:             <%= i18n_strings[locale][:issue_hot_buttons].to_json %>

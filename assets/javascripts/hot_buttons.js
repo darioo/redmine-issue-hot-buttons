@@ -49,7 +49,7 @@ document.observe('dom:loaded', function(){
             available_users = available_users.concat(t.users_per_role[role]);
           }
         });
-        var current_user = t.users_per_role.current_user;
+        var current_user = this.users_per_role.current_user;
         if(0 > available_users.uniq().indexOf(current_user)) return false;
       }
 
@@ -57,16 +57,23 @@ document.observe('dom:loaded', function(){
       var issue_statuses = this.config.get('issue_status');
       if (issue_statuses) {
         issue_statuses = issue_statuses.evalJSON();
-        if(0 > issue_statuses.indexOf(t.issue.status_id.toString())) return false;
+        if(0 > issue_statuses.indexOf(this.issue.status_id.toString())) return false;
       }
 
       // Issue tracker condition
       var issue_tracker = this.config.get('issue_tracker');
       if (issue_tracker) {
         issue_tracker = issue_tracker.evalJSON();
-        if (0 > issue_tracker.indexOf(t.issue.tracker_id.toString())) return false;
+        if (0 > issue_tracker.indexOf(this.issue.tracker_id.toString())) return false;
       }
-
+      
+      // Project condition
+      var project = this.config.get('project');
+      if (project) {
+        project = project.evalJSON();
+        if (0 > project.indexOf(this.issue.project_id.toString())) return false;
+      }
+      
       return true;
     },
 

@@ -36,10 +36,11 @@ document.observe('dom:loaded', function() {
           include_comment: 'flag'
         },
         conditions: {
-          _optional: ['user_role', 'issue_status', 'issue_tracker'],
+          _optional: ['user_role', 'issue_status', 'issue_tracker', 'project'],
           user_role: ['multiselect', false, this.user_roles],
           issue_status: ['multiselect', false, this.issue_statuses],
-          issue_tracker: ['multiselect', false, this.issue_trackers]
+          issue_tracker: ['multiselect', false, this.issue_trackers],
+          project: ['multiselect', false, this.projects]
         }
       };
     },
@@ -71,10 +72,11 @@ document.observe('dom:loaded', function() {
           include_comment: 'flag'
         },
         conditions: {
-          _optional: ['user_role', 'issue_status', 'issue_tracker'],
+          _optional: ['user_role', 'issue_status', 'issue_tracker', 'project'],
           user_role: ['multiselect', false, this.user_roles],
           issue_status: ['multiselect', false, this.issue_statuses],
-          issue_tracker: ['multiselect', false, this.issue_trackers]
+          issue_tracker: ['multiselect', false, this.issue_trackers],
+          project: ['multiselect', false, this.projects]
         }
       }
     },
@@ -542,6 +544,7 @@ document.observe('dom:loaded', function() {
       this.buttons_factory.issue_trackers = this.issue_trackers;
       this.buttons_factory.user_roles = this.user_roles;
       this.buttons_factory.activities = this.activities;
+      this.buttons_factory.projects = this.projects;
       
       this.render_selector();
       this.load_saved_buttons();
