@@ -390,7 +390,7 @@ document.observe('dom:loaded', function(){
 
             var allowed_users = [];
             assign_to_roles.each(function(role_id){
-              if (Object.isUndefined(t.users_per_role[role_id])) {
+              if (! Object.isUndefined(t.users_per_role[role_id])) {
                 allowed_users = allowed_users.concat(t.users_per_role[role_id]);
               }
             });
