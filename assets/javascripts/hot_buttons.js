@@ -695,7 +695,12 @@ document.observe('dom:loaded', function(){
 
     init_timer: function(label, t) {
       var mode = ['run', 'pause', 'stop'];
-
+      var canonical_page_title = document.title;
+      
+      var timer_in_title = t.config.get('timer_in_title');
+      timer_in_title = timer_in_title ? timer_in_title.evalJSON() : false;
+      var title_changed = -1;
+      
       label.elapsed = 0;
       label.status = 'run';
       
@@ -712,20 +717,30 @@ document.observe('dom:loaded', function(){
         if (0 > mode.indexOf(label.status)) pe.stop();
         if ('stop'  === label.status) {
           window.onbeforeunload = null;
+          document.title = canonical_page_title;
           pe.stop();
         }
         if ('pause' === label.status) return;
 
-        label.elapsed++
-
+        label.elapsed++;
+        
         var hours = Math.floor(label.elapsed / (60 * 60));
         var divisor_for_minutes = label.elapsed % (60 * 60);
         var minutes = Math.floor(divisor_for_minutes / 60);
         var divisor_for_seconds = divisor_for_minutes % 60;
         var seconds = Math.ceil(divisor_for_seconds);
         
-        label.select('.hours').first().update(hours < 10 ? '0'.concat(hours): hours);
-        label.select('.minutes').first().update(minutes < 10? '0'.concat(minutes): minutes);
+        var s_hours = hours < 10 ? '0'.concat(hours): hours;
+        var s_minutes = minutes < 10? '0'.concat(minutes): minutes;
+        
+        if (timer_in_title && minutes > title_changed) {
+          title_changed = minutes;
+          document.title = 
+            [[s_hours, s_minutes].join(':'), canonical_page_title].join(' ');
+        }
+
+        label.select('.hours').first().update(s_hours);
+        label.select('.minutes').first().update(s_minutes);
         
         if (label.include_seconds) {
           label.select('.seconds').first().update(seconds < 10? '0'.concat(seconds): seconds);

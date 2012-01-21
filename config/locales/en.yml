@@ -45,6 +45,7 @@ en:
     time_tracker_round_interval_label: "Round time interval"
     time_tracker_round_interval_value: "15"
     time_tracker_with_seconds_label: "Timer with seconds"
+    time_tracker_timer_in_title_label: "Show timer in page title"
 
     issue_update: "Update issue"
     issue_update_description: "Flexible Hot Button for update issue"

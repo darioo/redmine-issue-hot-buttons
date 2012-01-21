@@ -45,6 +45,7 @@ zh:
     time_tracker_round_interval_label: "轮询时间间隔"
     time_tracker_round_interval_value: "15"
     time_tracker_with_seconds_label: "秒表计时器"
+    time_tracker_timer_in_title_label: "Show timer in page title"
 
     issue_update: "更新问题"
     issue_update_description: "用于更新问题的 Hot Button"
