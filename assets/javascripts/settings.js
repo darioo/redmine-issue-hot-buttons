@@ -162,7 +162,7 @@ document.observe('dom:loaded', function() {
         button_save.hide();
         name_link.show();
 
-        var internal_name_value = name_input.value.trim();
+        var internal_name_value = name_input.value.strip();
         name_link.update(internal_name_value);
 
         button_save.up(1).select('input[xname="internal_name"]')
@@ -176,8 +176,8 @@ document.observe('dom:loaded', function() {
         'class': 'icon-edit icon edit_internal_name',
         href: 'javascript:void(0)'
       }).insert(this._('rename'));
-
-      Event.observe(edit_internal_name, 'click', function(event){
+      
+      var edit_internal_name_callback = function(event){
         var button_edit = Event.element(event);
         var wrapper = button_edit.up();
 
@@ -192,7 +192,10 @@ document.observe('dom:loaded', function() {
 
         button_edit.hide();
         name_link.hide();
-      });
+      };
+      
+      Event.observe(edit_internal_name, 'click', edit_internal_name_callback);
+      edit_internal_name.click = edit_internal_name_callback;
 
       var save_internal_name = new Element('a', {
         'class': 'icon-save icon save_internal_name',
@@ -677,7 +680,9 @@ document.observe('dom:loaded', function() {
 
         $$('#hot_buttons_selector option').first().selected = true;
 
-        t.render_button(button_name, false, false, 'top');
+        var button = t.render_button(button_name, false, false, 'top');
+        var edit_name = button.select('.edit_internal_name').first();
+        edit_name.click(edit_name.fire('click'));
       }
 
       Event.observe(select, 'change', add_button_event_callback);
@@ -707,6 +712,8 @@ document.observe('dom:loaded', function() {
       $('buttons_list').insert(insert);
       this.hide_optional_fields(button);
       this.init_sortable_list();
+      
+      return button;
     },
 
     hide_optional_fields: function(button) {
