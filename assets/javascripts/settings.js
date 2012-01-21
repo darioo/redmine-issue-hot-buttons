@@ -403,9 +403,9 @@ document.observe('dom:loaded', function() {
               value: 1
             })
               .addClassName(isOptional ? 'optional' : '')
-              .addClassName(is_undefined ? 'no_value' : '')
+              .addClassName(parseInt(input_value) ? '' : 'no_value')
           ];
-
+          
           if ((is_undefined && default_value) || (!is_undefined && parseInt(input_value) !== 0)) {
             input_element.last().setAttribute('checked', 'checked')
           }
