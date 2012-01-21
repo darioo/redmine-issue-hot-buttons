@@ -170,9 +170,11 @@ document.observe('dom:loaded', function(){
       this.config = new Hash(config);
 
       // button is not suitable for current context
-      if (! this.check_conditions()) return false;
+      if (this.check_conditions() && this.is_workflow_suitable()) {
+        return this.render_button();
+      }
 
-      return this.render_button();
+      return false;
     },
 
     /**
@@ -285,8 +287,6 @@ document.observe('dom:loaded', function(){
      */
     render_button: function() {
       var t = this;
-      
-      if (! this.is_workflow_suitable()) return false;
       
       var button = new Element('button', {'class': 'action'})
         .insert(this.config.get('caption'));
@@ -529,11 +529,55 @@ document.observe('dom:loaded', function(){
       this.config = new Hash(config);
 
       // button is not suitable for current context
-      if (! this.check_conditions()) return false;
+      if (this.check_conditions() && this.is_workflow_suitable()) {
+        return this.render_button();        
+      } 
 
-      return this.render_button();
+      return false;
     },
-    
+
+    /**
+     * Check is current button suitable for current workflow settings
+     *
+     * @return boolean
+     */
+    is_workflow_suitable: function() {
+      var t = this;
+      var suitable = true;
+      
+      [
+        'activity',
+        'include_custom_fields'
+      ].each(function(option){
+        var setting = t.config.get(option);
+        if (! setting) return false;
+        
+        switch(option) {
+          case 'activity':
+            var activity = t.config.get('activity').evalJSON().first();
+            var available_activities = [];
+            $$('#time_entry_activity_id option').each(function(option){
+              option.value && available_activities.push(option.value);
+            });
+            suitable = suitable && -1 < available_activities.indexOf(activity);
+            break;
+          case 'include_custom_fields':
+            var custom_fields = t.config.get('include_custom_fields');
+            custom_fields = custom_fields ? custom_fields.evalJSON() : false;
+            custom_fields.each(function(custom_field_num){
+              var custom_field_id =
+                ['time_entry_custom_field_values', custom_field_num].join('_');
+              var custom_field = $(custom_field_id);
+              suitable = suitable &&
+                (custom_field && ! custom_field.disabled)
+            });
+            break
+        }
+        
+      });
+      return suitable;
+    },
+
     /**
      * Render TimeTracker Hot Button
      *
