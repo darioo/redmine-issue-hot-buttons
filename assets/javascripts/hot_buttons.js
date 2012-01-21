@@ -198,6 +198,12 @@ document.observe('dom:loaded', function(){
                 no_additional = no_additional && false;
               }
               break;
+            case 'include_comment':
+              var include_comment = t.config.get('include_comment').evalJSON();
+              if (include_comment) {
+                no_additional = no_additional && false;                
+              }
+              break;
             default:
               no_additional = no_additional && false;
               break;
@@ -206,6 +212,71 @@ document.observe('dom:loaded', function(){
       });
       return ! no_additional;
     },
+    
+    /**
+     * Check is current button suitable for current workflow settings
+     *
+     * @return boolean
+     */
+    is_workflow_suitable: function() {
+      var t = this;
+      var suitable = true;
+      
+      [
+        'assign_to_other',
+        'set_issue_status',
+        'include_custom_fields',
+        'include_standart_fields'
+      ].each(function(option){
+        var setting = t.config.get(option);
+        if (! setting) return false;
+        
+        switch(option) {
+          case 'assign_to_other':
+            // Check can current issue be assigned to configured user roles
+            var assign_to_roles = t.config.get('assign_to_other').evalJSON();
+            var allowed_users = [];
+            assign_to_roles.each(function(role_id){
+              if (! Object.isUndefined(t.users_per_role[role_id])) {
+                allowed_users = allowed_users.concat(t.users_per_role[role_id]);
+              }
+            });
+            allowed_users = allowed_users.uniq();
+            suitable = suitable && 0 < allowed_users.length;
+            break;
+            
+          case 'set_issue_status':
+            var set_issue_status = t.config.get('set_issue_status').evalJSON().first();
+            var available_statuses = [];
+            $$('#issue_status_id option').each(function(option){
+              available_statuses.push(option.value);
+            });
+            suitable = suitable && -1 < available_statuses.indexOf(set_issue_status);
+            break;
+          
+          case 'include_standart_fields':
+            var default_fields = t.config.get('include_standart_fields').evalJSON();
+            default_fields.each(function(field_id){
+              var default_field = $(field_id);
+              suitable = suitable &&
+                (default_field && ! default_field.disabled);
+            });
+            break;
+            
+          case 'include_custom_fields':
+            var custom_fields = t.config.get('include_custom_fields').evalJSON();
+            custom_fields.each(function(field_num){
+              var field_id = ['issue_custom_field_values', field_num].join('_');
+              var custom_field = $(field_id);
+              suitable = suitable &&
+                (custom_field && ! custom_field.disabled);
+            });
+            break;
+        }
+      });
+
+      return suitable;
+   },
 
     /**
      * Render hot button and attach click listener
@@ -214,6 +285,9 @@ document.observe('dom:loaded', function(){
      */
     render_button: function() {
       var t = this;
+      
+      if (! this.is_workflow_suitable()) return false;
+      
       var button = new Element('button', {'class': 'action'})
         .insert(this.config.get('caption'));
       button.config = this.config;
@@ -261,8 +335,10 @@ document.observe('dom:loaded', function(){
       var additional_wrapper = new Element('div', {
         'class': 'optional_wrapper'
       });
-
-      t.get_opt_controls(hot_button.config).each(function(element) {
+    
+      var optional_controls = t.get_opt_controls(hot_button.config);
+    
+      optional_controls.each(function(element) {
         additional_wrapper.insert(element);
       });
 
@@ -307,7 +383,9 @@ document.observe('dom:loaded', function(){
 
             var allowed_users = [];
             assign_to_roles.each(function(role_id){
-              allowed_users = allowed_users.concat(t.users_per_role[role_id]);
+              if (Object.isUndefined(t.users_per_role[role_id])) {
+                allowed_users = allowed_users.concat(t.users_per_role[role_id]);
+              }
             });
             allowed_users = allowed_users.uniq();
             mirrored_element.select('select option').each(function(option){
@@ -337,14 +415,17 @@ document.observe('dom:loaded', function(){
             break;
 
           case 'include_comment':
-            var comment_element = new Element('p');
-            comment_element.insert(new Element('label').update(t._('notes')));
-            comment_element.insert(new Element('textarea', {
-              'class': 'notes',
-              cols: 30,
-              rows: 5
-            }));
-            elements.push(comment_element);
+            var include_comment = button_config.get('include_comment').evalJSON();
+            if (include_comment) {
+              var comment_element = new Element('p');
+              comment_element.insert(new Element('label').update(t._('notes')));
+              comment_element.insert(new Element('textarea', {
+                'class': 'notes',
+                cols: 30,
+                rows: 5
+              }));
+              elements.push(comment_element);
+            }
             break;
 
         }
@@ -452,7 +533,7 @@ document.observe('dom:loaded', function(){
 
       return this.render_button();
     },
-
+    
     /**
      * Render TimeTracker Hot Button
      *
@@ -460,6 +541,7 @@ document.observe('dom:loaded', function(){
      */
     render_button: function() {
       var t = this;
+      
       var start_working = new Element('button', {'class': 'action'})
         .update(this.config.get('start'));
       start_working.config = this.config;
@@ -567,7 +649,7 @@ document.observe('dom:loaded', function(){
 
       $('issue_hot_buttons').insert({after: additional_container});
     },
-
+    
     /**
      * Render optional controls
      *
