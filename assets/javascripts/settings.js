@@ -206,13 +206,19 @@ document.observe('dom:loaded', function() {
         .hide();
 
       Event.observe(save_internal_name, 'click', save_internal_name_callback);
-
+      
+      var clone_hot_button = new Element('a', {
+        'class': 'icon-copy icon clone_hot_button',
+        href: 'javascript:void(0)'
+      }).insert(this._('clone'));
+      
       var elements = [
         new Element('p', {'class': 'title'})
           .insert(config_section_title)
           .insert(internal_name_input)
           .insert(save_internal_name)
           .insert(edit_internal_name)
+          .insert(clone_hot_button)
           .insert(delete_button),
 
         new Element('p', {'class': 'description'})
@@ -536,8 +542,7 @@ document.observe('dom:loaded', function() {
       this.buttons_factory.issue_trackers = this.issue_trackers;
       this.buttons_factory.user_roles = this.user_roles;
       this.buttons_factory.activities = this.activities;
-
-
+      
       this.render_selector();
       this.load_saved_buttons();
 
@@ -552,14 +557,22 @@ document.observe('dom:loaded', function() {
     load_saved_buttons: function() {
       if (Object.isUndefined(this.settings)) return false;
 
+      // Create buttons list, if not exists
+      if ($('buttons_list') == null) {
+        $('hot_buttons_settings').appendChild(new Element('ul', {id: 'buttons_list'}));
+      }
+
       var t = this;
       new Hash(this.settings).values().each(function(button_config){
         var button_config = new Hash(button_config);
         var name = button_config.keys().first();
         var params = button_config.values().first();
 
-        t.render_button(name, params, true);
+        var button = t.render_button(name, params, true);
+        $('buttons_list').insert(button);
+        t.hide_optional_fields(button);
       });
+      this.init_sortable_list();
     },
 
     /**
@@ -581,7 +594,7 @@ document.observe('dom:loaded', function() {
      *
      * @return void
      */
-    attach_input_names: function(e) {
+    attach_input_names: function() {
       var button_number = 0;
       $$('li.hot_button').each(function(li){
         var collapsed = li.hasClassName('collapsed');
@@ -675,18 +688,19 @@ document.observe('dom:loaded', function() {
         .insert(expand_button);
       wrapper.insert(collapse_controls);
 
-      var add_button_event_callback = function(){
+      Event.observe(select, 'change', function(){
         var button_name = $('hot_buttons_selector').value;
         if (button_name.length == 0) return false;
 
         $$('#hot_buttons_selector option').first().selected = true;
 
         var button = t.render_button(button_name, false, false, 'top');
+        $('buttons_list').insert({'top': button});
+        t.hide_optional_fields(button);
         var edit_name = button.select('.edit_internal_name').first();
         edit_name.click(edit_name.fire('click'));
-      }
-
-      Event.observe(select, 'change', add_button_event_callback);
+        t.init_sortable_list();
+      });
 
       $('hot_buttons_settings').appendChild(wrapper);
     },
@@ -696,25 +710,51 @@ document.observe('dom:loaded', function() {
      *
      * @return void
      */
-    render_button: function(button_name, params, collapsed, position) {
-      // Create buttons list, if not exists
-      if ($('buttons_list') == null) {
-        $('hot_buttons_settings').appendChild(new Element('ul', {id: 'buttons_list'}));
-      }
+    render_button: function(button_name, params, collapsed) {
+      var t = this;
 
       var button = this.buttons_factory.get(button_name, params)
       if (button && collapsed) {
         button.addClassName('collapsed');
       }
       if (! button) return;
-      var insert = {};
-      insert[position || 'bottom'] = button;
-
-      $('buttons_list').insert(insert);
-      this.hide_optional_fields(button);
-      this.init_sortable_list();
+      
+      button.select('.clone_hot_button')
+        .first()
+        .observe('click', function(event){
+          t.clone_button(event, t);
+        });
       
       return button;
+    },
+    
+    /**
+     * Clone hot button
+     */
+    clone_button: function(event, t) {
+      t.attach_input_names();
+      var source = event.element().up(1);
+      source.hasClassName('collapsed') || source.addClassName('collapsed');
+      var clone_type = source.classNames().toArray()[1];
+      var clone_config = {};
+      source.select('input').each(function(input){
+        if(input.up().visible()) {
+          clone_config[input.readAttribute('xname')] = input.value;
+        }
+      });
+      var clone = t.render_button(clone_type, clone_config);
+      
+      var name_link = clone.select('a.internal_name').first();
+      name_link.update([name_link.innerHTML, t._('clone')].join(' '));
+      var name_input = clone.select('input.internal_name').first();
+      name_input.value = [name_input.value, t._('clone')].join(' ');
+      
+      var rename_link = clone.select('a.edit_internal_name').first();
+      
+      t.hide_optional_fields(clone);
+      source.insert({after: clone});
+      rename_link.click(rename_link.fire('click'));
+      t.init_sortable_list();
     },
 
     hide_optional_fields: function(button) {

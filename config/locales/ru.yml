@@ -8,6 +8,7 @@ ru:
     submit: "Отправить"
     save: "Сохранить"
     notes: "Комментарий"
+    clone: "Клонировать"
     confirm: "Вы уверены?"
     select_hot_button: "Выберите кнопку для добавления"
     select_hidden_elements: "Добавить дополнительно"

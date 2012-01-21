@@ -8,6 +8,7 @@ zh:
     submit: "提交"
     save: "保存"
     notes: "备注"
+    clone: "Clone"
     confirm: "确定？"
     select_hot_button: "选择 Hot Button"
     select_hidden_elements: "Add optional setting"

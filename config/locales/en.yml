@@ -8,6 +8,7 @@ en:
     submit: "Submit"
     save: "Save"
     notes: "Notes"
+    clone: "Clone"
     confirm: "Are you sure?"
     select_hot_button: "Select Hot Button to add"
     select_hidden_elements: "Add optional setting"
