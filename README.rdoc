@@ -6,3 +6,5 @@ Provide configurable hot button for often used actions
 like "Assign to Me", "Tested", "Resolved", etc.
 Also provide special "Time tracker" hot button to more simple
 tracking working time.
+
+Documentation: http://mikekolganov.github.com/redmine-issue-hot-buttons/
