@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="Docutils 0.7: http://docutils.sourceforge.net/" />
+<title>Issue Hot Buttons plugin for Redmine</title>
+<style type="text/css">
+
+/*
+:Author: David Goodger (goodger@python.org)
+:Id: $Id: html4css1.css 6253 2010-03-02 00:24:53Z milde $
+:Copyright: This stylesheet has been placed in the public domain.
+
+Default cascading style sheet for the HTML output of Docutils.
+
+See http://docutils.sf.net/docs/howto/html-stylesheets.html for how to
+customize this style sheet.
+*/
+
+/* used to remove borders from tables and images */
+.borderless, table.borderless td, table.borderless th {
+  border: 0 }
+
+table.borderless td, table.borderless th {
+  /* Override padding for "table.docutils td" with "! important".
+     The right padding separates the table cells. */
+  padding: 0 0.5em 0 0 ! important }
+
+.first {
+  /* Override more specific margin styles with "! important". */
+  margin-top: 0 ! important }
+
+.last, .with-subtitle {
+  margin-bottom: 0 ! important }
+
+.hidden {
+  display: none }
+
+a.toc-backref {
+  text-decoration: none ;
+  color: black }
+
+blockquote.epigraph {
+  margin: 2em 5em ; }
+
+dl.docutils dd {
+  margin-bottom: 0.5em }
+
+/* Uncomment (and remove this text!) to get bold-faced definition list terms
+dl.docutils dt {
+  font-weight: bold }
+*/
+
+div.abstract {
+  margin: 2em 5em }
+
+div.abstract p.topic-title {
+  font-weight: bold ;
+  text-align: center }
+
+div.admonition, div.attention, div.caution, div.danger, div.error,
+div.hint, div.important, div.note, div.tip, div.warning {
+  margin: 2em ;
+  border: medium outset ;
+  padding: 1em }
+
+div.admonition p.admonition-title, div.hint p.admonition-title,
+div.important p.admonition-title, div.note p.admonition-title,
+div.tip p.admonition-title {
+  font-weight: bold ;
+  font-family: sans-serif }
+
+div.attention p.admonition-title, div.caution p.admonition-title,
+div.danger p.admonition-title, div.error p.admonition-title,
+div.warning p.admonition-title {
+  color: red ;
+  font-weight: bold ;
+  font-family: sans-serif }
+
+/* Uncomment (and remove this text!) to get reduced vertical space in
+   compound paragraphs.
+div.compound .compound-first, div.compound .compound-middle {
+  margin-bottom: 0.5em }
+
+div.compound .compound-last, div.compound .compound-middle {
+  margin-top: 0.5em }
+*/
+
+div.dedication {
+  margin: 2em 5em ;
+  text-align: center ;
+  font-style: italic }
+
+div.dedication p.topic-title {
+  font-weight: bold ;
+  font-style: normal }
+
+div.figure {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+div.footer, div.header {
+  clear: both;
+  font-size: smaller }
+
+div.line-block {
+  display: block ;
+  margin-top: 1em ;
+  margin-bottom: 1em }
+
+div.line-block div.line-block {
+  margin-top: 0 ;
+  margin-bottom: 0 ;
+  margin-left: 1.5em }
+
+div.sidebar {
+  margin: 0 0 0.5em 1em ;
+  border: medium outset ;
+  padding: 1em ;
+  background-color: #ffffee ;
+  width: 40% ;
+  float: right ;
+  clear: right }
+
+div.sidebar p.rubric {
+  font-family: sans-serif ;
+  font-size: medium }
+
+div.system-messages {
+  margin: 5em }
+
+div.system-messages h1 {
+  color: red }
+
+div.system-message {
+  border: medium outset ;
+  padding: 1em }
+
+div.system-message p.system-message-title {
+  color: red ;
+  font-weight: bold }
+
+div.topic {
+  margin: 2em }
+
+h1.section-subtitle, h2.section-subtitle, h3.section-subtitle,
+h4.section-subtitle, h5.section-subtitle, h6.section-subtitle {
+  margin-top: 0.4em }
+
+h1.title {
+  text-align: center }
+
+h2.subtitle {
+  text-align: center }
+
+hr.docutils {
+  width: 75% }
+
+img.align-left, .figure.align-left, object.align-left {
+  clear: left ;
+  float: left ;
+  margin-right: 1em }
+
+img.align-right, .figure.align-right, object.align-right {
+  clear: right ;
+  float: right ;
+  margin-left: 1em }
+
+img.align-center, .figure.align-center, object.align-center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.align-left {
+  text-align: left }
+
+.align-center {
+  clear: both ;
+  text-align: center }
+
+.align-right {
+  text-align: right }
+
+/* reset inner alignment in figures */
+div.align-right {
+  text-align: left }
+
+/* div.align-center * { */
+/*   text-align: left } */
+
+ol.simple, ul.simple {
+  margin-bottom: 1em }
+
+ol.arabic {
+  list-style: decimal }
+
+ol.loweralpha {
+  list-style: lower-alpha }
+
+ol.upperalpha {
+  list-style: upper-alpha }
+
+ol.lowerroman {
+  list-style: lower-roman }
+
+ol.upperroman {
+  list-style: upper-roman }
+
+p.attribution {
+  text-align: right ;
+  margin-left: 50% }
+
+p.caption {
+  font-style: italic }
+
+p.credits {
+  font-style: italic ;
+  font-size: smaller }
+
+p.label {
+  white-space: nowrap }
+
+p.rubric {
+  font-weight: bold ;
+  font-size: larger ;
+  color: maroon ;
+  text-align: center }
+
+p.sidebar-title {
+  font-family: sans-serif ;
+  font-weight: bold ;
+  font-size: larger }
+
+p.sidebar-subtitle {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+p.topic-title {
+  font-weight: bold }
+
+pre.address {
+  margin-bottom: 0 ;
+  margin-top: 0 ;
+  font: inherit }
+
+pre.literal-block, pre.doctest-block {
+  margin-left: 2em ;
+  margin-right: 2em }
+
+span.classifier {
+  font-family: sans-serif ;
+  font-style: oblique }
+
+span.classifier-delimiter {
+  font-family: sans-serif ;
+  font-weight: bold }
+
+span.interpreted {
+  font-family: sans-serif }
+
+span.option {
+  white-space: nowrap }
+
+span.pre {
+  white-space: pre }
+
+span.problematic {
+  color: red }
+
+span.section-subtitle {
+  /* font-size relative to parent (h1..h6 element) */
+  font-size: 80% }
+
+table.citation {
+  border-left: solid 1px gray;
+  margin-left: 1px }
+
+table.docinfo {
+  margin: 2em 4em }
+
+table.docutils {
+  margin-top: 0.5em ;
+  margin-bottom: 0.5em }
+
+table.footnote {
+  border-left: solid 1px black;
+  margin-left: 1px }
+
+table.docutils td, table.docutils th,
+table.docinfo td, table.docinfo th {
+  padding-left: 0.5em ;
+  padding-right: 0.5em ;
+  vertical-align: top }
+
+table.docutils th.field-name, table.docinfo th.docinfo-name {
+  font-weight: bold ;
+  text-align: left ;
+  white-space: nowrap ;
+  padding-left: 0 }
+
+h1 tt.docutils, h2 tt.docutils, h3 tt.docutils,
+h4 tt.docutils, h5 tt.docutils, h6 tt.docutils {
+  font-size: 100% }
+
+ul.auto-toc {
+  list-style-type: none }
+
+</style>
+</head>
+<body>
+<div class="document" id="issue-hot-buttons-plugin-for-redmine">
+<h1 class="title">Issue Hot Buttons plugin for Redmine</h1>
+
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#about-plugin" id="id3">About plugin</a></li>
+<li><a class="reference internal" href="#install" id="id4">Install</a></li>
+<li><a class="reference internal" href="#buttons" id="id5">Buttons</a><ul>
+<li><a class="reference internal" href="#update-issue-button" id="id6">&quot;Update issue&quot; button</a></li>
+<li><a class="reference internal" href="#time-tracker-button" id="id7">&quot;Time tracker&quot; button</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#configuration" id="id8">Configuration</a><ul>
+<li><a class="reference internal" href="#common-configuration" id="id9">Common configuration</a><ul>
+<li><a class="reference internal" href="#issue-status" id="id10">Issue status</a></li>
+<li><a class="reference internal" href="#issue-tracker" id="id11">Issue tracker</a></li>
+<li><a class="reference internal" href="#user-role" id="id12">User role</a></li>
+<li><a class="reference internal" href="#project" id="id13">Project</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#issue-update-button-config" id="id14">&quot;Issue update&quot; button config</a><ul>
+<li><a class="reference internal" href="#caption" id="id15">Caption</a></li>
+<li><a class="reference internal" href="#set-issue-done-to-100" id="id16">Set issue Done to 100%</a></li>
+<li><a class="reference internal" href="#update-custom-fields" id="id17">Update custom fields</a></li>
+<li><a class="reference internal" href="#include-comment" id="id18">Include comment</a></li>
+<li><a class="reference internal" href="#set-issue-status-to" id="id19">Set issue status to</a></li>
+<li><a class="reference internal" href="#update-default-fields" id="id20">Update default fields</a></li>
+<li><a class="reference internal" href="#assingee-to" id="id21">Assingee to</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#time-tracker-button-config" id="id22">&quot;Time tracker&quot; button config</a><ul>
+<li><a class="reference internal" href="#start-caption" id="id23">Start caption</a></li>
+<li><a class="reference internal" href="#pause-caption" id="id24">Pause caption</a></li>
+<li><a class="reference internal" href="#resume-caption" id="id25">Resume caption</a></li>
+<li><a class="reference internal" href="#stop-caption" id="id26">Stop caption</a></li>
+<li><a class="reference internal" href="#page-close-confirm-message" id="id27">Page close confirm message</a></li>
+<li><a class="reference internal" href="#activity" id="id28">Activity</a></li>
+<li><a class="reference internal" href="#allow-user-to-select-activity" id="id29">Allow user to select activity</a></li>
+<li><a class="reference internal" href="#timer-prefix" id="id30">Timer prefix</a></li>
+<li><a class="reference internal" href="#round-time-interval" id="id31">Round time interval</a></li>
+<li><a class="reference internal" href="#timer-with-seconds" id="id32">Timer with seconds</a></li>
+<li><a class="reference internal" href="#show-timer-in-page-title" id="id33">Show timer in page title</a></li>
+<li><a class="reference internal" href="#id1" id="id34">Update custom fields</a></li>
+<li><a class="reference internal" href="#id2" id="id35">Include comment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#see-also" id="id36">See also</a></li>
+<li><a class="reference internal" href="#author" id="id37">Author</a></li>
+</ul>
+</div>
+<div class="section" id="about-plugin">
+<h1><a class="toc-backref" href="#id3">About plugin</a></h1>
+<p>This plug-in allows to add on issue pages buttons for often used actions and
+timers for help tracking working time for issue.</p>
+</div>
+<div class="section" id="install">
+<h1><a class="toc-backref" href="#id4">Install</a></h1>
+<ul class="simple">
+<li>Download plugin from <a class="reference external" href="https://github.com/mikekolganov/redmine-issue-hot-buttons/">GitHub</a></li>
+<li>Extract to vendors/plugins of installed Redmine</li>
+<li>Restart web server</li>
+</ul>
+</div>
+<div class="section" id="buttons">
+<h1><a class="toc-backref" href="#id5">Buttons</a></h1>
+<p>At the moment available two types of buttons.</p>
+<div class="section" id="update-issue-button">
+<h2><a class="toc-backref" href="#id6">&quot;Update issue&quot; button</a></h2>
+<img alt="img/estimate_as.png" src="img/estimate_as.png" />
+<p>The button is intended for simplification of often used chains of actions for
+issue. Allows to configure conditions at which it will be displayed, performed
+actions for issue, including updating standard and custom fields.</p>
+<p>Examples of possible configurations:</p>
+<ul class="simple">
+<li><strong>Assign to me</strong> - Assign issue to current user (for all users)</li>
+<li><strong>Resolved</strong> - Set issue done status to 100% and reassign to tester (for developers)</li>
+<li><strong>Evaluate</strong> - Set issue status to &quot;Evaluated&quot; and update &quot;Estimated time&quot; (for developers and managers)</li>
+<li><strong>Reject</strong> - Set issue status to &quot;Rejected&quot; and reassign to developer (for testers)</li>
+<li><strong>Close</strong> - Set issue status to &quot;Closed&quot; (for testers and managers)</li>
+</ul>
+<p>In case the current information has not enough to execute action
+(for example, it is required to choose the new status of issue or to enter estimated time)
+additional area with demanded fields will be displayed under the button.</p>
+<p>Go to <a class="reference internal" href="#issue-update-button-config">&quot;Issue update&quot; button config</a>.</p>
+</div>
+<div class="section" id="time-tracker-button">
+<h2><a class="toc-backref" href="#id7">&quot;Time tracker&quot; button</a></h2>
+<img alt="img/time_tracker.png" src="img/time_tracker.png" />
+<p>The button is intended for simplification of calculation of time spent for issue.
+Generally represents button &quot;Start working&quot;, by pressing on which
+the additional block with the timer and buttons &quot;Pause working&quot; is displayed and
+&quot;Finish working&quot;. By pressing button &quot;Pause working&quot; the timer stops,
+by pressing the button &quot;to Finish work&quot; spent time saved.</p>
+<p>Go to <a class="reference internal" href="#time-tracker-button-config">&quot;Time tracker&quot; button config</a>.</p>
+</div>
+</div>
+<div class="section" id="configuration">
+<h1><a class="toc-backref" href="#id8">Configuration</a></h1>
+<img alt="img/settings.png" src="img/settings.png" />
+<p>Plug-in options are carried out on page &quot;Administration&quot; -&gt; &quot;Plugns&quot;.
+The sequence of buttons in the list corresponds to sequence of a conclusion
+on issue page. It is possible to reordering buttons by &quot;drag-and-drop&quot;.
+The button name is used only in options and not displayed for users on issue page.</p>
+<img alt="img/expanded_section.png" src="img/expanded_section.png" />
+<p>There are required and additional options for each button.
+Additional options are added from the dropping out list &quot;Add optional settings&quot;.</p>
+<div class="section" id="common-configuration">
+<h2><a class="toc-backref" href="#id9">Common configuration</a></h2>
+<img alt="img/conditions.png" src="img/conditions.png" />
+<p>All buttons contain conditions options at which coincidence the button
+will be displayed to the user. All condition options are optional.</p>
+<div class="section" id="issue-status">
+<h3><a class="toc-backref" href="#id10">Issue status</a></h3>
+<p>Select issue statuses for which the button will be displayed.</p>
+</div>
+<div class="section" id="issue-tracker">
+<h3><a class="toc-backref" href="#id11">Issue tracker</a></h3>
+<p>Select issue trackers for which the button will be displayed.</p>
+</div>
+<div class="section" id="user-role">
+<h3><a class="toc-backref" href="#id12">User role</a></h3>
+<p>Select user roles for which the button will be displayed.</p>
+</div>
+<div class="section" id="project">
+<h3><a class="toc-backref" href="#id13">Project</a></h3>
+<p>Select projects for which the button will be displayed.</p>
+</div>
+</div>
+<div class="section" id="issue-update-button-config">
+<h2><a class="toc-backref" href="#id14">&quot;Issue update&quot; button config</a></h2>
+<img alt="img/issue_update.png" src="img/issue_update.png" />
+<p>All options of actions for this button, except <a class="reference internal" href="#caption">Caption</a> are optional.
+The button which does not have any configured actions isn't meaningful.</p>
+<div class="section" id="caption">
+<h3><a class="toc-backref" href="#id15">Caption</a></h3>
+<img alt="img/assign_to_me.png" src="img/assign_to_me.png" />
+<p>Text displayed on the button.</p>
+</div>
+<div class="section" id="set-issue-done-to-100">
+<h3><a class="toc-backref" href="#id16">Set issue Done to 100%</a></h3>
+<p>Set issue complete status to 100%</p>
+</div>
+<div class="section" id="update-custom-fields">
+<h3><a class="toc-backref" href="#id17">Update custom fields</a></h3>
+<p>Select issue custom fields which will be displayed under the button.</p>
+</div>
+<div class="section" id="include-comment">
+<h3><a class="toc-backref" href="#id18">Include comment</a></h3>
+<p>To add the comment to issue update action.</p>
+</div>
+<div class="section" id="set-issue-status-to">
+<h3><a class="toc-backref" href="#id19">Set issue status to</a></h3>
+<p>Select status which will be assigned to issue after button pressing.</p>
+</div>
+<div class="section" id="update-default-fields">
+<h3><a class="toc-backref" href="#id20">Update default fields</a></h3>
+<p>Select issue standart fields which will be displayed under the button.</p>
+</div>
+<div class="section" id="assingee-to">
+<h3><a class="toc-backref" href="#id21">Assingee to</a></h3>
+<p>Select roles of users which will be displayed in the dropping out list under the button.</p>
+<p><em>Note</em>: If selected only &quot;<strong>&lt;&lt; current user &gt;&gt;</strong>&quot;, list of users
+will not displayed under the button.</p>
+</div>
+</div>
+<div class="section" id="time-tracker-button-config">
+<h2><a class="toc-backref" href="#id22">&quot;Time tracker&quot; button config</a></h2>
+<img alt="img/time_tracker_options.png" src="img/time_tracker_options.png" />
+<p>Required buttons: <a class="reference internal" href="#start-caption">Start caption</a>, <a class="reference internal" href="#pause-caption">Pause caption</a>,
+<a class="reference internal" href="#resume-caption">Resume caption</a>, <a class="reference internal" href="#stop-caption">Stop caption</a>, <a class="reference internal" href="#page-close-confirm-message">Page close confirm message</a> and <a class="reference internal" href="#activity">Activity</a>.
+Other buttons are optional.</p>
+<div class="section" id="start-caption">
+<h3><a class="toc-backref" href="#id23">Start caption</a></h3>
+<p>The text displayed on the button of the beginning of work.</p>
+</div>
+<div class="section" id="pause-caption">
+<h3><a class="toc-backref" href="#id24">Pause caption</a></h3>
+<p>The text displayed on the button of the pause of work.</p>
+</div>
+<div class="section" id="resume-caption">
+<h3><a class="toc-backref" href="#id25">Resume caption</a></h3>
+<p>The text displayed on the button of the continue of work.</p>
+</div>
+<div class="section" id="stop-caption">
+<h3><a class="toc-backref" href="#id26">Stop caption</a></h3>
+<p>The text displayed on the button of the stop of work.</p>
+</div>
+<div class="section" id="page-close-confirm-message">
+<h3><a class="toc-backref" href="#id27">Page close confirm message</a></h3>
+<p>The text of the warning of the user about attempt to leave (close) page with working timer.</p>
+</div>
+<div class="section" id="activity">
+<h3><a class="toc-backref" href="#id28">Activity</a></h3>
+<p>Select time entry activity type.</p>
+</div>
+<div class="section" id="allow-user-to-select-activity">
+<h3><a class="toc-backref" href="#id29">Allow user to select activity</a></h3>
+<p>If it is active, the dropping out list of a choice of activity will be unblocked.</p>
+</div>
+<div class="section" id="timer-prefix">
+<h3><a class="toc-backref" href="#id30">Timer prefix</a></h3>
+<img alt="img/timer_prefix.png" src="img/timer_prefix.png" />
+<p>Text that displayed before timer.</p>
+</div>
+<div class="section" id="round-time-interval">
+<h3><a class="toc-backref" href="#id31">Round time interval</a></h3>
+<p>To approximate spent time to the specified interval (in minutes) on saving.</p>
+</div>
+<div class="section" id="timer-with-seconds">
+<h3><a class="toc-backref" href="#id32">Timer with seconds</a></h3>
+<img alt="img/timer_with_seconds.png" src="img/timer_with_seconds.png" />
+<p>If selected, show timer with seconds.</p>
+</div>
+<div class="section" id="show-timer-in-page-title">
+<h3><a class="toc-backref" href="#id33">Show timer in page title</a></h3>
+<img alt="img/timer_in_title.png" src="img/timer_in_title.png" />
+<p>Display the timer in title of a window(tab).</p>
+</div>
+<div class="section" id="id1">
+<h3><a class="toc-backref" href="#id34">Update custom fields</a></h3>
+<p>Include custom fields, that related to time entry.</p>
+</div>
+<div class="section" id="id2">
+<h3><a class="toc-backref" href="#id35">Include comment</a></h3>
+<p>To add the comment to spend time entry.</p>
+</div>
+</div>
+</div>
+<div class="section" id="see-also">
+<h1><a class="toc-backref" href="#id36">See also</a></h1>
+<p>At initialization of buttons conformity to current options of sequence of
+actions is checked. If the button is not displayed, but you ensure that
+conditions of display are adjusted truly, open the form of editing of a problem and
+check up, whether all demanded fields of a problem are accessible to editing,
+whether contain dropping out lists demanded values etc.</p>
+</div>
+<div class="section" id="author">
+<h1><a class="toc-backref" href="#id37">Author</a></h1>
+<p><a class="reference external" href="mailto:mike.kolganov&#64;gmail.com">Mike Kolganov</a>, 2011-2012</p>
+</div>
+</div>
+</body>
+</html>
