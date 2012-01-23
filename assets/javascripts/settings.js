@@ -36,11 +36,15 @@ document.observe('dom:loaded', function() {
           include_comment: 'flag'
         },
         conditions: {
-          _optional: ['user_role', 'issue_status', 'issue_tracker', 'project'],
+          _optional: ['user_role', 'user_role_is_not', 'issue_status', 'issue_status_is_not', 'issue_tracker', 'issue_tracker_is_not', 'project', 'project_is_not'],
           user_role: ['multiselect', false, this.user_roles],
+          user_role_is_not: ['multiselect', false, this.user_roles],
           issue_status: ['multiselect', false, this.issue_statuses],
+          issue_status_is_not: ['multiselect', false, this.issue_statuses],
           issue_tracker: ['multiselect', false, this.issue_trackers],
-          project: ['multiselect', false, this.projects]
+          issue_tracker_is_not: ['multiselect', false, this.issue_trackers],
+          project: ['multiselect', false, this.projects],
+          project_is_not: ['multiselect', false, this.projects]
         }
       };
     },
@@ -51,8 +55,8 @@ document.observe('dom:loaded', function() {
      * @return "Reassign to" Hot Button settings frame
      */
     button_issue_update: function() {
-      var assign_to_other = Object.clone(this.user_roles);
-      assign_to_other['current_user'] = '&lt;&lt; ' + this._('current_user') + ' &gt;&gt;';
+      var user_roles_with_current_user = Object.clone(this.user_roles);
+      user_roles_with_current_user['current_user'] = '&lt;&lt; ' + this._('current_user') + ' &gt;&gt;';
 
       return {
         enabled: ['hidden', 1],
@@ -65,18 +69,24 @@ document.observe('dom:loaded', function() {
             'include_comment'
           ],
           set_issue_status: ['select', false, this.issue_statuses],
-          assign_to_other: ['multiselect', false, assign_to_other],
+          assign_to_other: ['multiselect', false, user_roles_with_current_user],
           set_done: 'flag',
           include_standart_fields: ['multiselect', false, this.standart_fields],
           include_custom_fields: ['multiselect', false, this.issue_custom_fields],
           include_comment: 'flag'
         },
         conditions: {
-          _optional: ['user_role', 'issue_status', 'issue_tracker', 'project'],
+          _optional: ['issue_assigned_to', 'issue_not_assigned_to', 'user_role', 'user_role_is_not', 'issue_status', 'issue_status_is_not', 'issue_tracker', 'issue_tracker_is_not', 'project', 'project_is_not'],
+          issue_assigned_to: ['multiselect', false, user_roles_with_current_user],
+          issue_not_assigned_to: ['multiselect', false, user_roles_with_current_user],
           user_role: ['multiselect', false, this.user_roles],
+          user_role_is_not: ['multiselect', false, this.user_roles],
           issue_status: ['multiselect', false, this.issue_statuses],
+          issue_status_is_not: ['multiselect', false, this.issue_statuses],
           issue_tracker: ['multiselect', false, this.issue_trackers],
-          project: ['multiselect', false, this.projects]
+          issue_tracker_is_not: ['multiselect', false, this.issue_trackers],
+          project: ['multiselect', false, this.projects],
+          project_is_not: ['multiselect', false, this.projects]
         }
       }
     },
