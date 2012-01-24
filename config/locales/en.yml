@@ -14,6 +14,7 @@ en:
     select_hidden_elements: "Add optional setting"
     caption: "Caption"
     current_user: "current user"
+    nobody_user: "nobody"
     collapse_all: "Collapse all"
     expand_all: "Expand all"
 
@@ -34,6 +35,8 @@ en:
     time_tracker_include_custom_fields_label: "Include custom fields"
     time_tracker_include_comment_label: "Include comment"
     time_tracker_conditions_subset: "Conditions"
+    time_tracker_issue_assigned_to_label: "Issue assigned to"
+    time_tracker_issue_not_assigned_to_label: "Issue NOT assigned to"
     time_tracker_user_role_label: "User role is"
     time_tracker_user_role_is_not_label: "User role is NOT"
     time_tracker_issue_status_label: "Issue status is "
