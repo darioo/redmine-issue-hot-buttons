@@ -300,7 +300,6 @@ document.observe('dom:loaded', function() {
       }).insert(this._('delete'));
 
       Event.observe(delete_button, 'click', function(event){
-        if (! confirm(t._('confirm'))) return false;
         Event.element(event).up(1).remove();
       })
 
@@ -738,6 +737,7 @@ document.observe('dom:loaded', function() {
       this.buttons_factory.projects = this.projects;
       
       this.render_selector();
+      this.modify_form_controls();
       this.load_saved_buttons();
 
       $$('input[name="commit"]').first().observe('click', this.attach_input_names);
@@ -897,6 +897,19 @@ document.observe('dom:loaded', function() {
       });
 
       $('hot_buttons_settings').appendChild(wrapper);
+    },
+    
+    modify_form_controls: function() {
+      var save_button = $$('input[name="commit"]').first();
+      save_button.value = this._('save');
+      var cancel_button = new Element('input', {
+        type: 'button',
+        value: this._('cancel')
+      })
+        .observe('click', function(e){
+          window.location.reload();
+        });
+      save_button.insert({after: cancel_button});
     },
 
     /**
