@@ -250,14 +250,17 @@ document.observe('dom:loaded', function(){
           switch(i) {
             case 'assign_to_other':
               var assign_to = t.config.get('assign_to_other').evalJSON();
-              if (! (assign_to.length == 1 && assign_to.first() == 'current_user')) {
+              if (assign_to.length > 1) {
+                no_additional = no_additional && false;
+              }
+              if (['current_user', 'nobody'].indexOf(assign_to[0]) === -1) {
                 no_additional = no_additional && false;
               }
               break;
             case 'include_comment':
               var include_comment = t.config.get('include_comment').evalJSON();
               if (include_comment) {
-                no_additional = no_additional && false;                
+                no_additional = no_additional && false;
               }
               break;
             default:
@@ -508,9 +511,14 @@ document.observe('dom:loaded', function(){
         switch(option) {
 
           case 'assign_to_other':
-            var assign_to_other = button.config.get('assign_to_other').evalJSON();
-            if (assign_to_other.length == 1 && assign_to_other.first() == 'current_user') {
-              $('issue_assigned_to_id').value = t.users_per_role.current_user;
+            var assign_to = button.config.get('assign_to_other').evalJSON();
+            if (assign_to.length === 1 && ['current_user', 'nobody'].indexOf(assign_to[0]) > -1) {
+              var user_to_reassign = t.users_per_role[assign_to[0]];
+              user_to_reassign = user_to_reassign
+                ? user_to_reassign.toString()
+                : '';
+              
+              $('issue_assigned_to_id').value = user_to_reassign;
             }
             else {
               $('issue_assigned_to_id').value =
