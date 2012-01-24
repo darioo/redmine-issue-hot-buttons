@@ -63,7 +63,39 @@ document.observe('dom:loaded', function() {
             'issue_assigned_to', 'issue_not_assigned_to', 'user_role',
             'user_role_is_not', 'issue_status', 'issue_status_is_not', 
             'issue_tracker', 'issue_tracker_is_not', 'project', 'project_is_not'
-          ]
+          ],
+          _callback: {
+            issue_assigned_to: {
+              change: function(e){ t.callback.inverted_list(e, t, 'issue_not_assigned_to'); }
+            },
+            issue_not_assigned_to: {
+              change: function(e){ t.callback.inverted_list(e, t, 'issue_assigned_to'); }
+            },
+            user_role: {
+              change: function(e) { t.callback.inverted_list(e, t, 'user_role_is_not'); }
+            },
+            user_role_is_not: {
+              change: function(e) { t.callback.inverted_list(e, t, 'user_role'); }
+            },
+            issue_status: {
+              change: function(e) { t.callback.inverted_list(e, t, 'issue_status_is_not'); }
+            },
+            issue_status_is_not: {
+              change: function(e) { t.callback.inverted_list(e, t, 'issue_status'); }
+            },
+            issue_tracker: {
+              change: function(e) { t.callback.inverted_list(e, t, 'issue_tracker_is_not'); }
+            },
+            issue_tracker_is_not: {
+              change: function(e) { t.callback.inverted_list(e, t, 'issue_tracker'); }     
+            },
+            project: {
+              change: function(e) { t.callback.inverted_list(e, t, 'project_is_not'); }              
+            },
+            project_is_not: {
+              change: function(e) { t.callback.inverted_list(e, t, 'project'); }
+            }
+          }
         }
       };
     },
@@ -74,6 +106,7 @@ document.observe('dom:loaded', function() {
      * @return "Reassign to" Hot Button settings frame
      */
     button_issue_update: function() {
+      var t = this;
       var users_roles = Object.clone(this.user_roles);
       users_roles['current_user'] = '&lt;&lt; ' + this._('current_user') + ' &gt;&gt;';
       users_roles['nobody'] = '&lt;&lt; ' + this._('nobody') + ' &gt;&gt;';
@@ -115,7 +148,39 @@ document.observe('dom:loaded', function() {
             'issue_assigned_to', 'issue_not_assigned_to', 'user_role',
             'user_role_is_not', 'issue_status', 'issue_status_is_not', 
             'issue_tracker', 'issue_tracker_is_not', 'project', 'project_is_not'
-          ]
+          ],
+          _callback: {
+            issue_assigned_to: {
+              change: function(e){ t.callback.inverted_list(e, t, 'issue_not_assigned_to'); }
+            },
+            issue_not_assigned_to: {
+              change: function(e){ t.callback.inverted_list(e, t, 'issue_assigned_to'); }
+            },
+            user_role: {
+              change: function(e) { t.callback.inverted_list(e, t, 'user_role_is_not'); }
+            },
+            user_role_is_not: {
+              change: function(e) { t.callback.inverted_list(e, t, 'user_role'); }
+            },
+            issue_status: {
+              change: function(e) { t.callback.inverted_list(e, t, 'issue_status_is_not'); }
+            },
+            issue_status_is_not: {
+              change: function(e) { t.callback.inverted_list(e, t, 'issue_status'); }
+            },
+            issue_tracker: {
+              change: function(e) { t.callback.inverted_list(e, t, 'issue_tracker_is_not'); }
+            },
+            issue_tracker_is_not: {
+              change: function(e) { t.callback.inverted_list(e, t, 'issue_tracker'); }     
+            },
+            project: {
+              change: function(e) { t.callback.inverted_list(e, t, 'project_is_not'); }              
+            },
+            project_is_not: {
+              change: function(e) { t.callback.inverted_list(e, t, 'project'); }
+            }
+          }
         }
       }
     },
@@ -124,6 +189,7 @@ document.observe('dom:loaded', function() {
      * Elements callbacks storage
      */
     callback: {
+
       /**
        * Convert mutliselect to select if "current_user" or "nobody" selected
        */
@@ -142,13 +208,13 @@ document.observe('dom:loaded', function() {
           select.value = select.select('option:selected').last().value;
         }
       },
+
       /**
        * Validate positive number
        */
       integer_validation: function(e, t) {
         var input = e.element();
         var numbers = '';
-        console.log(input.value, input.value.length);
         for (var i = 0; i < input.value.length; i++) {
           if (-1 < t.charcodes.numbers.indexOf(input.value.charCodeAt(i))) {
             numbers = numbers.concat(input.value[i]);
@@ -157,6 +223,20 @@ document.observe('dom:loaded', function() {
         input.value = numbers.length
           ? parseInt(numbers)
           : '';
+      },
+      
+      inverted_list: function(e, t, pair) {
+        var element = e.element();
+        var pair = element.up(1).select('.' + pair).first();
+        if (pair) {
+          element.select('option:selected').each(function(option){
+            var pair_option =
+              pair.select('option:selected[value="' + option.value + '"]').first();
+            if (pair_option) {
+              pair_option.selected = false;
+            }
+          });
+        }
       }
       
     },
@@ -548,7 +628,9 @@ document.observe('dom:loaded', function() {
             var event_name = pair.key;
             var event_callback = pair.value;
             element.observe(event_name, event_callback);
-            element.fire('element:loaded');
+            if ('element:loaded' == event_name) {
+              Event.fire(element, 'element:loaded');
+            }
           });
         }
         result.insert(element);
@@ -894,6 +976,7 @@ document.observe('dom:loaded', function() {
       labels.each(function(label){
         select.insert(options[label]);
       });
+      select.value = 0;
     },
     
     hide_optional_field: function(field){
