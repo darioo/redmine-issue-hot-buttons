@@ -294,14 +294,26 @@ document.observe('dom:loaded', function(){
           case 'assign_to_other':
             // Check can current issue be assigned to configured user roles
             var assign_to_roles = t.config.get('assign_to_other').evalJSON();
-            var allowed_users = [];
+            var configures_users = [];
             assign_to_roles.each(function(role_id){
               if (! Object.isUndefined(t.users_per_role[role_id])) {
-                allowed_users = allowed_users.concat(t.users_per_role[role_id]);
+                configures_users = configures_users.concat(t.users_per_role[role_id]);
               }
             });
-            allowed_users = allowed_users.uniq();
-            suitable = suitable && 0 < allowed_users.length;
+            configures_users = configures_users.uniq();
+            console.log(configures_users);
+            var selectable_options = $$('#issue_assigned_to_id option');
+            if (configures_users.length && selectable_options.length) {
+              selectable_options.each(function(option){
+                if (option.value) {
+                  suitable = suitable
+                    && configures_users.indexOf(option.value) > -1;
+                }
+              });
+            }
+            else {
+              suitable = suitable && false;
+            }
             break;
             
           case 'set_issue_status':
