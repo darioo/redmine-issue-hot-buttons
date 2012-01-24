@@ -16,6 +16,11 @@ document.observe('dom:loaded', function() {
      * @return "Time tracker" Hot Button settings frame
      */
     button_time_tracker: function() {
+      var t = this;
+      var users_roles = Object.clone(this.user_roles);
+      users_roles['current_user'] = '&lt;&lt; ' + this._('current_user') + ' &gt;&gt;';
+      users_roles['nobody'] = '&lt;&lt; ' + this._('nobody') + ' &gt;&gt;';
+      
       return {
         enabled: ['hidden', 1],
         internal_name: ['hidden', ''],
@@ -24,7 +29,6 @@ document.observe('dom:loaded', function() {
         resume: 'text',
         stop: 'text',
         options: {
-          _optional: ['timer_prefix', 'round_interval', 'with_seconds', 'select_activity', 'include_custom_fields', 'include_comment', 'timer_in_title'],
           page_close_confirm: 'text',
           timer_prefix: 'text',
           round_interval: 'text',
@@ -33,10 +37,20 @@ document.observe('dom:loaded', function() {
           activity: ['select', false, this.activities],
           select_activity: 'flag',
           include_custom_fields: ['multiselect', false, this.time_entry_custom_fields],
-          include_comment: 'flag'
+          include_comment: 'flag',
+          _optional: [
+            'timer_prefix', 'round_interval', 'with_seconds', 'select_activity',
+            'include_custom_fields', 'include_comment', 'timer_in_title'
+          ],
+          _callback: {
+            'round_interval': {
+              'blur': function(e) {t.callback.integer_validation(e, t)}
+            }
+          }
         },
         conditions: {
-          _optional: ['user_role', 'user_role_is_not', 'issue_status', 'issue_status_is_not', 'issue_tracker', 'issue_tracker_is_not', 'project', 'project_is_not'],
+          issue_assigned_to: ['multiselect', false, users_roles],
+          issue_not_assigned_to: ['multiselect', false, users_roles],
           user_role: ['multiselect', false, this.user_roles],
           user_role_is_not: ['multiselect', false, this.user_roles],
           issue_status: ['multiselect', false, this.issue_statuses],
@@ -44,7 +58,12 @@ document.observe('dom:loaded', function() {
           issue_tracker: ['multiselect', false, this.issue_trackers],
           issue_tracker_is_not: ['multiselect', false, this.issue_trackers],
           project: ['multiselect', false, this.projects],
-          project_is_not: ['multiselect', false, this.projects]
+          project_is_not: ['multiselect', false, this.projects],
+          _optional: [
+            'issue_assigned_to', 'issue_not_assigned_to', 'user_role',
+            'user_role_is_not', 'issue_status', 'issue_status_is_not', 
+            'issue_tracker', 'issue_tracker_is_not', 'project', 'project_is_not'
+          ]
         }
       };
     },
@@ -55,30 +74,35 @@ document.observe('dom:loaded', function() {
      * @return "Reassign to" Hot Button settings frame
      */
     button_issue_update: function() {
-      var user_roles_with_current_user = Object.clone(this.user_roles);
-      user_roles_with_current_user['current_user'] = '&lt;&lt; ' + this._('current_user') + ' &gt;&gt;';
-
+      var users_roles = Object.clone(this.user_roles);
+      users_roles['current_user'] = '&lt;&lt; ' + this._('current_user') + ' &gt;&gt;';
+      users_roles['nobody'] = '&lt;&lt; ' + this._('nobody') + ' &gt;&gt;';
+      
       return {
         enabled: ['hidden', 1],
         internal_name: ['hidden', ''],
         caption: 'text',
         actions: {
-          _optional: [
-            'set_issue_status','assign_to_other',
-            'set_done', 'include_standart_fields', 'include_custom_fields',
-            'include_comment'
-          ],
           set_issue_status: ['select', false, this.issue_statuses],
-          assign_to_other: ['multiselect', false, user_roles_with_current_user],
+          assign_to_other: ['multiselect', false, users_roles],
           set_done: 'flag',
           include_standart_fields: ['multiselect', false, this.standart_fields],
           include_custom_fields: ['multiselect', false, this.issue_custom_fields],
-          include_comment: 'flag'
+          include_comment: 'flag',
+          _optional: [
+            'set_issue_status','assign_to_other', 'set_done', 
+            'include_standart_fields', 'include_custom_fields', 'include_comment'
+          ],
+          _callback: {
+            assign_to_other: {
+              'change': this.callback.assign_to_other_change,
+              'element:loaded': this.callback.assign_to_other_change
+            }
+          }
         },
         conditions: {
-          _optional: ['issue_assigned_to', 'issue_not_assigned_to', 'user_role', 'user_role_is_not', 'issue_status', 'issue_status_is_not', 'issue_tracker', 'issue_tracker_is_not', 'project', 'project_is_not'],
-          issue_assigned_to: ['multiselect', false, user_roles_with_current_user],
-          issue_not_assigned_to: ['multiselect', false, user_roles_with_current_user],
+          issue_assigned_to: ['multiselect', false, users_roles],
+          issue_not_assigned_to: ['multiselect', false, users_roles],
           user_role: ['multiselect', false, this.user_roles],
           user_role_is_not: ['multiselect', false, this.user_roles],
           issue_status: ['multiselect', false, this.issue_statuses],
@@ -86,11 +110,71 @@ document.observe('dom:loaded', function() {
           issue_tracker: ['multiselect', false, this.issue_trackers],
           issue_tracker_is_not: ['multiselect', false, this.issue_trackers],
           project: ['multiselect', false, this.projects],
-          project_is_not: ['multiselect', false, this.projects]
+          project_is_not: ['multiselect', false, this.projects],
+          _optional: [
+            'issue_assigned_to', 'issue_not_assigned_to', 'user_role',
+            'user_role_is_not', 'issue_status', 'issue_status_is_not', 
+            'issue_tracker', 'issue_tracker_is_not', 'project', 'project_is_not'
+          ]
         }
       }
     },
-
+    
+    /**
+     * Elements callbacks storage
+     */
+    callback: {
+      /**
+       * Convert mutliselect to select if "current_user" or "nobody" selected
+       */
+      assign_to_other_change: function(e) {
+        var select = e.element();
+        var multiple = true;
+        select.select('option:selected').each(function(option){
+          multiple = multiple && -1 === ['current_user', 'nobody'].indexOf(option.value)
+        });
+        
+        if (multiple) {
+          select.writeAttribute('multiple', 'multiple');
+        }
+        else {
+          select.removeAttribute('multiple');
+          select.value = select.select('option:selected').last().value;
+        }
+      },
+      /**
+       * Validate positive number
+       */
+      integer_validation: function(e, t) {
+        var input = e.element();
+        var numbers = '';
+        console.log(input.value, input.value.length);
+        for (var i = 0; i < input.value.length; i++) {
+          if (-1 < t.charcodes.numbers.indexOf(input.value.charCodeAt(i))) {
+            numbers = numbers.concat(input.value[i]);
+          }
+        };
+        input.value = numbers.length
+          ? parseInt(numbers)
+          : '';
+      }
+      
+    },
+    
+    /**
+     * Charcodes storage. Filled up in initialize()
+     */
+    charcodes: {
+      numbers: []
+    },
+    
+    /**
+     * ButtonSettingsFactory Constructor
+     */
+    initialize: function() {
+      for (var i = 48; i <= 57; i++) this.charcodes.numbers.push(i);
+    },
+    
     /**
      * Get hot button config by name
      *
@@ -283,6 +367,7 @@ document.observe('dom:loaded', function() {
       inputs_group = new Hash(inputs_group);
 
       var optional_fields = inputs_group.get('_optional') || [];
+      var callback = inputs_group.get('_callback') || {};
 
       inputs_group.each(function(pair){
         // ignore service keys that starts with underscore, like "_optional"
@@ -316,6 +401,9 @@ document.observe('dom:loaded', function() {
           var service_params = new Hash();
           if (optional_fields.indexOf(input_name) != -1) {
             service_params.set('_optional', true);
+          }
+          if (callback[input_name]) {
+            service_params.set('_callback', callback[input_name]);
           }
 
           wrap_element.insert(
@@ -357,7 +445,8 @@ document.observe('dom:loaded', function() {
       var no_label = false;
 
       var isOptional = service_params.get('_optional');
-
+      var callback  = service_params.get('_callback');
+      
       switch (input_type) {
         case 'hidden':
           input_element = new Element('input', {
@@ -453,6 +542,15 @@ document.observe('dom:loaded', function() {
 
       input_element = Object.isArray(input_element) ? input_element : [input_element];
       input_element.each(function(element){
+        if (callback && 'hidden' !== element.type) {
+          callback = new Hash(callback);
+          callback.each(function(pair){
+            var event_name = pair.key;
+            var event_callback = pair.value;
+            element.observe(event_name, event_callback);
+            element.fire('element:loaded');
+          });
+        }
         result.insert(element);
       });
 
@@ -467,6 +565,7 @@ document.observe('dom:loaded', function() {
         Event.observe(delete_button, 'click', function(event){
           var optional_field = Event.element(event).up().select('.optional').first();
           t.hide_optional_field(optional_field);
+          t.sort_select(optional_field.up(1).select('select.optional_fields').first());
         });
 
 
@@ -773,14 +872,30 @@ document.observe('dom:loaded', function() {
     hide_optional_fields: function(button) {
       if (! button) return;
       t = this;
-      var hidden_fields_selector = new Element('select', {
-        'class': 'optional_fields'
-      });
       button.select('.optional.no_value').each(function(field){
         t.hide_optional_field(field)
       });
+      button.select('select.optional_fields').each(function(select){
+        t.sort_select(select);
+      });
     },
-
+    
+    sort_select: function(select) {
+      var labels = [];
+      var options = {};
+      select.select('option').each(function(option){
+        labels.push(option.value);
+        options[option.value] = option;
+      });
+      labels = labels.sort();
+      select.select('option').each(function(option){
+        option.remove();
+      });
+      labels.each(function(label){
+        select.insert(options[label]);
+      });
+    },
+    
     hide_optional_field: function(field){
       t = this;
 
