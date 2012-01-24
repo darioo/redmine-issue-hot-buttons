@@ -1,6 +1,7 @@
 <%
   users_per_role = {
-    :current_user => User.current.id
+    :current_user => User.current.id,
+    :nobody => nil
   };
   @project.users_by_role.each { |role, users|
     users_per_role[role.id] = users.map { |user| user.id }

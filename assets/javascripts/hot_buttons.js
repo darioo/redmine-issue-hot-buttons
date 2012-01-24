@@ -37,44 +37,91 @@ document.observe('dom:loaded', function(){
      */
     check_conditions: function() {
       var t = this;
+      var allow = true;
+      [
+        'issue_assigned_to',
+        'issue_not_assigned_to',
+        'issue_status',
+        'issue_status_is_not',
+        'issue_tracker',
+        'issue_tracker_is_not',
+        'project',
+        'project_is_not',
+        'user_role',
+        'user_role_is_not'
+      ].each(function(condition_name) {
+        if (! allow) return false;
+        var condition = t.config.get(condition_name);
+        if (! condition) return false;
+        condition = condition.evalJSON();
+        
+        var result;
+        
+        switch(condition_name) {
+          
+          case 'issue_assigned_to':
+          case 'issue_not_assigned_to':
+            var allowed_users = [];
+            var assigned_to = t.issue.assigned_to_id;
+            condition.each(function(role) {
+              if (! Object.isUndefined(t.users_per_role[role])) {
+                allowed_users = allowed_users.concat(t.users_per_role[role]);
+              }
+            });
+            result = allowed_users.uniq().indexOf(assigned_to) > -1;
+            result = 'issue_assigned_to' == condition_name
+              ? result
+              : ! result;
+            break;
+          
+          case 'user_role':
+          case 'user_role_is_not':
+            var allowed_users = [];
+            var current_user = t.users_per_role.current_user;
+            condition.each(function(role) {
+              if (! Object.isUndefined(t.users_per_role[role])) {
+                allowed_users = allowed_users.concat(t.users_per_role[role]);
+              }
+            });
+            result = allowed_users.uniq().indexOf(current_user) > -1;
+            result = 'user_role' == condition_name
+              ? result
+              : ! result;
+            break;
+          
+          case 'issue_status':
+          case 'issue_status_is_not':
+            var issue_status = t.issue.status_id.toString();
+            result = condition.indexOf(issue_status) > -1;
+            result = 'issue_status' == condition_name
+              ? result
+              : ! result;
+            break;
+            
+          case 'issue_tracker':
+          case 'issue_tracker_is_not':
+            var issue_tracker = t.issue.tracker_id.toString();
+            result = condition.indexOf(issue_tracker) > -1;
+            result = 'issue_tracker' == condition_name
+              ? result
+              : ! result;
+            break;
+            
+          case 'project':
+          case 'project_is_not':
+            var issue_project = t.issue.project_id.toString();
+            result = condition.indexOf(issue_project) > -1;
+            result = 'project' == condition_name
+              ? result
+              : ! result;
+            break;
 
-      // User role condition
-      var user_roles = this.config.get('user_role');
-      if (user_roles) {
-        user_roles = user_roles.evalJSON();
-
-        var available_users = [];
-        user_roles.each(function(role){
-          if (! Object.isUndefined(t.users_per_role[role])) {
-            available_users = available_users.concat(t.users_per_role[role]);
-          }
-        });
-        var current_user = this.users_per_role.current_user;
-        if(0 > available_users.uniq().indexOf(current_user)) return false;
-      }
-
-      // Issue status condition
-      var issue_statuses = this.config.get('issue_status');
-      if (issue_statuses) {
-        issue_statuses = issue_statuses.evalJSON();
-        if(0 > issue_statuses.indexOf(this.issue.status_id.toString())) return false;
-      }
-
-      // Issue tracker condition
-      var issue_tracker = this.config.get('issue_tracker');
-      if (issue_tracker) {
-        issue_tracker = issue_tracker.evalJSON();
-        if (0 > issue_tracker.indexOf(this.issue.tracker_id.toString())) return false;
-      }
+        }
+        
+        allow = result;
+      });
       
-      // Project condition
-      var project = this.config.get('project');
-      if (project) {
-        project = project.evalJSON();
-        if (0 > project.indexOf(this.issue.project_id.toString())) return false;
-      }
-      
-      return true;
+      return allow;
     },
 
     /**
