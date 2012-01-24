@@ -301,7 +301,6 @@ document.observe('dom:loaded', function(){
               }
             });
             configures_users = configures_users.uniq();
-            console.log(configures_users);
             var selectable_options = $$('#issue_assigned_to_id option');
             if (configures_users.length && selectable_options.length) {
               selectable_options.each(function(option){
