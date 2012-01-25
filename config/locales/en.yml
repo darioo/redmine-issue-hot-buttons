@@ -14,12 +14,12 @@ en:
     select_hidden_elements: "Add optional setting"
     caption: "Caption"
     current_user: "current user"
-    nobody_user: "nobody"
+    nobody: "nobody"
     collapse_all: "Collapse all"
     expand_all: "Expand all"
 
     time_tracker: "Time tracker"
-    time_tracker_description: "Add start/pause/stop time button to help tracking working time"
+    time_tracker_description: "<strong>Time tracker</strong>: Add start/pause/stop time button to help tracking working time"
     time_tracker_options_subset: "Options"
     time_tracker_caption_label: "Button title"
     time_tracker_controls_subset: "Controls"
@@ -57,7 +57,7 @@ en:
     time_tracker_timer_in_title_label: "Show timer in page title"
 
     issue_update: "Update issue"
-    issue_update_description: "Flexible Hot Button for update issue"
+    issue_update_description: "<strong>Update issue</strong>: Flexible Hot Button for update issue"
     issue_update_caption_label: " Button title"
     issue_update_conditions_subset: "Conditions"
     issue_update_issue_assigned_to_label: "Issue assigned to"
@@ -77,4 +77,3 @@ en:
     issue_update_include_standart_fields_label: "Update default fields"
     issue_update_include_custom_fields_label: "Update custom fields"
     issue_update_include_comment_label: "Include comment"
-
