@@ -13,6 +13,9 @@ GNU Lesser General Public License, version 2.1
 == Author
 Mike Kolganov <mike.kolganov@gmail.com>
 
+== Special Thanks
+  https://github.com/archonwang (Steven.W) <archonwang1981@gmail.com> - translate to Simplified Chinese
+
 == New version 0.3.0 available!
 Updated documentation for new version coming soon!
 
