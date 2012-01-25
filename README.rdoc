@@ -16,4 +16,4 @@ Mike Kolganov <mike.kolganov@gmail.com>
 == New version 0.3.0 available!
 Updated documentation for new version coming soon!
 
-Documentation: http://mikekolganov.github.com/redmine-issue-hot-buttons/
+Documentation: http://mikekolganov.github.com/redmine-issue-hot-buttons
