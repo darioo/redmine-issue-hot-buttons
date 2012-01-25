@@ -7,8 +7,13 @@ like "Assign to Me", "Tested", "Resolved", etc.
 Also provide special "Time tracker" hot button to more simple
 tracking working time.
 
-== New version 0.3.0 available!
+== License
+GNU Lesser General Public License, version 2.1
 
+== Author
+Mike Kolganov <mike.kolganov@gmail.com>
+
+== New version 0.3.0 available!
 Updated documentation for new version coming soon!
 
 Documentation: http://mikekolganov.github.com/redmine-issue-hot-buttons/
