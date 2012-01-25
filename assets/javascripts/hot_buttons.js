@@ -301,13 +301,11 @@ document.observe('dom:loaded', function(){
               }
             });
             configures_users = configures_users.uniq();
-            var selectable_options = $$('#issue_assigned_to_id option');
-            if (configures_users.length && selectable_options.length) {
-              selectable_options.each(function(option){
-                if (option.value) {
-                  suitable = suitable
-                    && configures_users.indexOf(option.value) > -1;
-                }
+            if (configures_users.length && $('issue_assigned_to_id')) {
+              configures_users.each(function(user_id){
+                user_id = user_id ? user_id : '';
+                suitable = suitable
+                  && $$('#issue_assigned_to_id option[value="' + user_id + '"]').length > 0;
               });
             }
             else {
