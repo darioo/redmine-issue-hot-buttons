@@ -431,8 +431,11 @@ document.observe('dom:loaded', function(){
       })
         .insert(new Element('div', {'class': 'controls'}).insert(close_button))
         .insert(additional_wrapper);
-
       $('issue_hot_buttons').insert({after: additional_container});
+      
+      additional_container
+        .select('textarea, input, select')
+        .first().focus();
     },
 
     /**
