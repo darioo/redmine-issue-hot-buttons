@@ -77,3 +77,4 @@ en:
     issue_update_include_standart_fields_label: "Update default fields"
     issue_update_include_custom_fields_label: "Update custom fields"
     issue_update_include_comment_label: "Include comment"
+    issue_update_include_file_attachment_label: "Include file attachments"

@@ -69,6 +69,15 @@
 #issue_hot_buttons_additional.update_issue .optional_wrapper {
   padding: 7px 0;
 }
+div#issue_hot_buttons_additional span#attachments_fields label {
+  width: inherit;
+}
+div#issue_hot_buttons_additional span#attachments_fields input[type="text"] {
+  margin-left: 10px;
+}
+div#issue_hot_buttons_additional .attachments_wrapper {
+  margin-left: 155px;
+}
 
 /**
  * Time tracker specific styles

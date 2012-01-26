@@ -122,9 +122,11 @@ document.observe('dom:loaded', function() {
           include_standart_fields: ['multiselect', false, this.standart_fields],
           include_custom_fields: ['multiselect', false, this.issue_custom_fields],
           include_comment: 'flag',
+          include_file_attachment: 'flag',
           _optional: [
             'set_issue_status','assign_to_other', 'set_done', 
-            'include_standart_fields', 'include_custom_fields', 'include_comment'
+            'include_standart_fields', 'include_custom_fields', 'include_comment',
+            'include_file_attachment'
           ],
           _callback: {
             assign_to_other: {

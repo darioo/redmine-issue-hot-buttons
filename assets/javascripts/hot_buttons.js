@@ -212,6 +212,7 @@ document.observe('dom:loaded', function(){
       'include_standart_fields',
       'include_custom_fields',
       'include_comment',
+      'include_file_attachment'
     ],
 
     /**
@@ -245,6 +246,7 @@ document.observe('dom:loaded', function(){
         'include_standart_fields',
         'include_custom_fields',
         'include_comment',
+        'include_file_attachment'
       ].each(function(i){
         if (! Object.isUndefined(t.config.get(i))) {
           switch(i) {
@@ -414,7 +416,14 @@ document.observe('dom:loaded', function(){
         'class': 'icon_close',
         href: 'javascript:void(0)'
       });
-      Event.observe(close_button, 'click', this.hide_optional)
+      Event.observe(close_button, 'click', function(e) {
+        if ($$('#issue_hot_buttons_additional #attachments_fields').length > 0) {
+          $$('#issue-form .box fieldset').last().insert(
+            $('attachments_fields').up()
+          );
+        }
+        t.hide_optional(e);
+      })
 
       var additional_container = new Element('div', {
         id: 'issue_hot_buttons_additional',
@@ -493,6 +502,12 @@ document.observe('dom:loaded', function(){
               elements.push(comment_element);
             }
             break;
+            
+          case 'include_file_attachment':
+            var file_attachment_block = $('attachments_fields').up();
+            file_attachment_block.addClassName('attachments_wrapper');
+            elements.push(file_attachment_block);
+            break;
 
         }
       });
@@ -514,7 +529,8 @@ document.observe('dom:loaded', function(){
         'include_custom_fields',
         'include_standart_fields',
         'set_done',
-        'set_issue_status'
+        'set_issue_status',
+        'include_file_attachment'
       ].each(function(option){
         if (! button.config.get(option)) return false;
         switch(option) {
@@ -575,6 +591,12 @@ document.observe('dom:loaded', function(){
                 original_field.value = mirrored_field.value;
               }
             });
+            break;
+            
+          case 'include_file_attachment':
+            $$('#issue-form .box fieldset').last().insert(
+              $('attachments_fields').up()
+            );
             break;
         }
       });
