@@ -77,5 +77,6 @@ zh:
     issue_update_include_standart_fields_label: "更新默认字段"
     issue_update_include_custom_fields_label: "更新自定义字段"
     issue_update_include_comment_label: "包含评论"
+    issue_update_set_comment_value_label: "Set comment default value"
     issue_update_include_file_attachment_label: "Include file attachments"
 

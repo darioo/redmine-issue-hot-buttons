@@ -77,4 +77,5 @@ ru:
     issue_update_include_standart_fields_label: "Добавить стандартные поля"
     issue_update_include_custom_fields_label: "Добавить дополнительные поля"
     issue_update_include_comment_label: "Добавить комментарий"
+    issue_update_set_comment_value_label: "Комментарий по-умолчанию"
     issue_update_include_file_attachment_label: "Добавить прикрепление файлов"

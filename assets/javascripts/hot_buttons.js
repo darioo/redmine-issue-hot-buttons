@@ -502,6 +502,10 @@ document.observe('dom:loaded', function(){
                 cols: 30,
                 rows: 5
               }));
+              var comment_default_value = button_config.get('set_comment_value');
+              if (comment_default_value) {
+                comment_element.select('textarea').first().value = comment_default_value;
+              }
               elements.push(comment_element);
             }
             break;
