@@ -982,6 +982,76 @@ document.observe('dom:loaded', function(){
     }
 
   });
+  
+  var NextPrevIssueButton = Class.create(AbstractHotButton, {
+    
+    initialize: function(kind) {
+      if (['prev', 'next'].indexOf(kind) < 0)
+        throw 'Invalid king of NextPrevIssueButton (' + kind + ')';
+      this.kind = kind;
+    },
+    
+    is_workflow_suitable: function() {
+      if (Object.isUndefined(this.nearby_issues)) return false;
+      if (this.nearby_issues.indexOf(this.issue.id) < 0) return false;
+      switch (this.kind) {
+        case 'next':
+          return this.nearby_issues.indexOf(this.issue.id) < this.nearby_issues.length - 1;
+        case 'prev':
+          return this.nearby_issues.indexOf(this.issue.id) > 0;
+        default:
+          return false;
+      }
+    },
+    
+    /**
+     * Hot button rendering entry point
+     *
+     * @param config
+     * @return <button /> element
+     */
+    render: function(config) {
+      this.config = new Hash(config);
+
+      if (this.is_workflow_suitable()) {
+        return this.render_button();
+      }
+
+      return false;
+    },
+    
+    render_button: function() {
+      var t = this;
+      var button = new Element('button', {'class': 'action'})
+        .insert(this.config.get('caption'));
+      button.config = this.config;
+      button.kind = this.kind;
+      
+      button.observe('click', function(e){
+        t.submit_action(e, t);
+      });
+      
+      return button;
+    },
+    
+    submit_action: function(e, t) {
+      var button = e.element();
+      var position = t.nearby_issues.indexOf(t.issue.id);
+      
+      switch (button.kind) {
+        case 'next':
+          position++
+          break;
+        case 'prev':
+          position--
+          break;
+      }
+      
+      window.location.href = '/issues/' + t.nearby_issues[position];
+    }
+    
+  });
+  
 
   /**
    * Hot buttons initializer
@@ -997,7 +1067,9 @@ document.observe('dom:loaded', function(){
     initialize: function() {
       this.buttons = {
         issue_update: new IssueUpdateButton,
-        time_tracker: new TimeTrackerButton
+        time_tracker: new TimeTrackerButton,
+        next_issue: new NextPrevIssueButton('next'),
+        prev_issue: new NextPrevIssueButton('prev')
       };
       this.render_hot_buttons();
     },
