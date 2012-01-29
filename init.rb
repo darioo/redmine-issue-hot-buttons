@@ -1,4 +1,16 @@
 require 'redmine'
+require 'dispatcher'
+require 'issues_controller_patch'
+
+Dispatcher.to_prepare :issue_hot_buttons do
+  IssuesController.send(:include, IssuesControllerPatch)
+end
+
+class Hooks < Redmine::Hook::ViewListener
+  render_on :view_issues_show_details_bottom,
+             :partial => 'assets',
+             :layout => false
+end
 
 Redmine::Plugin.register :redmine_issue_hot_buttons do
   name 'Issue Hot Buttons Plugin'
@@ -7,12 +19,5 @@ Redmine::Plugin.register :redmine_issue_hot_buttons do
   version '0.3.0'
   url 'https://github.com/mikekolganov/redmine-issue-hot-buttons'
   author_url 'mailto:mike.kolganov@gmail.com'
-	
 	settings :partial => 'settings/settings'
-end
-
-class Hooks < Redmine::Hook::ViewListener
-  render_on :view_issues_show_details_bottom,
-            :partial => 'assets',
-            :layout => false
 end

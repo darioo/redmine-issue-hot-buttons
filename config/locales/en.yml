@@ -79,3 +79,13 @@ en:
     issue_update_include_comment_label: "Include comment"
     issue_update_set_comment_value_label: "Set comment default value"
     issue_update_include_file_attachment_label: "Include file attachments"
+    
+    next_issue: "Next issue"
+    next_issue_description: "Go to the next task, according to the current filter"
+    next_issue_caption_label: "Button title"
+    next_issue_caption_value: "Next"
+    
+    prev_issue: "Previous issue"
+    prev_issue_description: "Go to the previous task, according to the current filter"
+    prev_issue_caption_label: "Button title"
+    prev_issue_caption_value: "Previous"

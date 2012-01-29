@@ -9,7 +9,24 @@ document.observe('dom:loaded', function() {
    * Produce Hot Button settings sections
    */
   var ButtonSettingsFactory = Class.create({
-
+    
+    button_next_issue: function() {
+      return {
+        enabled: ['hidden', 1],
+        internal_name: ['hidden', ''],
+        caption: 'text'
+      };
+    },
+    
+    
+    button_prev_issue: function() {
+      return {
+        enabled: ['hidden', 1],
+        internal_name: ['hidden', ''],
+        caption: 'text'
+      };
+    },
+    
     /**
      * "Time tracker" Hot Button fields frame
      *
@@ -715,7 +732,9 @@ document.observe('dom:loaded', function() {
      */
     available_buttons: [
       'time_tracker',
-      'issue_update'
+      'issue_update',
+      'next_issue',
+      'prev_issue'
     ],
 
     /**
