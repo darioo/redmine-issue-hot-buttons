@@ -40,8 +40,8 @@
   Project.find(:all).each { |project| projects[project.id] = project.name};
 %>
 <% content_for :header_tags do %>
-  <%= javascript_include_tag 'settings.js', :plugin => 'redmine_issue_hot_buttons' %>
-  <%= stylesheet_link_tag 'settings.css', :plugin => 'redmine_issue_hot_buttons' %>
+  <%= javascript_include_tag 'settings.js', :plugin => 'issue_hot_buttons_plugin' %>
+  <%= stylesheet_link_tag 'settings.css', :plugin => 'issue_hot_buttons_plugin' %>
   <script type="text/javascript">
     var IssueHotButtonsSettings = {
       issue_statuses:           <%= issue_statuses.to_json %>,

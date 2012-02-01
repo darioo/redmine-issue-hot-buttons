@@ -7,6 +7,12 @@ like "Assign to Me", "Tested", "Resolved", etc.
 Also provide special "Time tracker" hot button to more simple
 tracking working time.
 
+== Install
+
+1. Download plugin
+2. Extract to your Redmine into vendor/plugins/issue_hot_buttons_plugin
+3. Restart web server
+
 == License
 GNU Lesser General Public License, version 2.1
 
