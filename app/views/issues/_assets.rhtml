@@ -11,13 +11,13 @@
   locale = I18n.locale
 %>
 <% content_for :header_tags do %>
-  <%= javascript_include_tag 'hot_buttons.js', :plugin => 'redmine_issue_hot_buttons' %>
-  <%= stylesheet_link_tag 'hot_buttons.css', :plugin => 'redmine_issue_hot_buttons' %>
+  <%= javascript_include_tag 'hot_buttons.js', :plugin => 'issue_hot_buttons_plugin' %>
+  <%= stylesheet_link_tag 'hot_buttons.css', :plugin => 'issue_hot_buttons_plugin' %>
   <script type="text/javascript">
     var IssueHotButtons = {
       issue:           <%= @issue.to_json %>,
       users_per_role:  <%= users_per_role.to_json %>,
-      settings:        <%= Setting['plugin_redmine_issue_hot_buttons'].to_json %>,
+      settings:        <%= Setting['plugin_issue_hot_buttons'].to_json %>,
       i18n_strings:    <%= i18n_strings[locale][:issue_hot_buttons].to_json %>
     };
   </script>
