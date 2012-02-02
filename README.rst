@@ -18,10 +18,7 @@ Install
 
 Author
 ------
-`Mike Kolganov`_, `Thumbtack Inc.`_
-
-.. _Mike Kolganov: mike.kolganov\@gmail.com
-.. _Thumbtack Inc.: http://thumbtack.net
+`Mike Kolganov <mike.kolganov@gmail.com>`_, `Thumbtack Inc. <http://thumbtack.net>`_
 
 New version 0.4.0 available!
 ````````````````````````````
@@ -32,7 +29,7 @@ GNU Lesser General Public License, version 2.1
 
 Special Thanks
 --------------
-https://github.com/archonwang (Steven.W) archonwang1981\@gmail.com - translate to Simplified Chinese
+https://github.com/archonwang (Steven.W) `archonwang1981@gmail.com <archonwang1981@gmail.com>`_ - translate to Simplified Chinese
 
 Welcome to new contributors, especially translators
 ```````````````````````````````````````````````````
