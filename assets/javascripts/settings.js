@@ -19,8 +19,7 @@ document.observe('dom:loaded', function() {
       return {
         enabled: ['hidden', 1],
         internal_name: ['hidden', ''],
-        caption: 'text',
-        conditions: this.get_conditions()
+        caption: 'text'
       };
     },
     
@@ -33,8 +32,7 @@ document.observe('dom:loaded', function() {
       return {
         enabled: ['hidden', 1],
         internal_name: ['hidden', ''],
-        caption: 'text',
-        conditions: this.get_conditions()
+        caption: 'text'
       };
     },
     
