@@ -1,4 +1,4 @@
-Issue Hot Button plugin for Redmine
+Issue Hot Buttons plugin for Redmine
 ===================================
 
 About
