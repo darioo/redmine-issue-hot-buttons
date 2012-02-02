@@ -64,13 +64,11 @@ en:
     next_issue_description: "Go to the next task, according to the current filter"
     next_issue_caption_label: "Button title"
     next_issue_caption_value: "Next"
-    next_issue_conditions_subset: "Conditions"
     
     prev_issue: "Previous issue"
     prev_issue_description: "Go to the previous task, according to the current filter"
     prev_issue_caption_label: "Button title"
     prev_issue_caption_value: "Previous"
-    prev_issue_conditions_subset: "Conditions"
     
     _issue_assigned_to_label: "Issue assigned to"
     _issue_not_assigned_to_label: "Issue NOT assigned to"
@@ -82,3 +80,4 @@ en:
     _issue_tracker_is_not_label: "Issue tracker is NOT"
     _project_label: "Project is"
     _project_is_not_label: "Project is NOT"
+
