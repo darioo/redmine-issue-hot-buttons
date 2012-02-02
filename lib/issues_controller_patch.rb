@@ -9,6 +9,7 @@ module IssuesControllerPatch
   
   module InstanceMethods
     def nearby_issues
+      session['issues_show_sort'] = session['issues_index_sort'] unless session['issues_index_sort'].nil?
       retrieve_query
       sort_init(@query.sort_criteria.empty? ? [['id', 'desc']] : @query.sort_criteria)
       sort_update(@query.sortable_columns)
