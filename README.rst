@@ -29,7 +29,7 @@ GNU Lesser General Public License, version 2.1
 
 Special Thanks
 --------------
-https://github.com/archonwang (Steven.W) `archonwang1981@gmail.com <archonwang1981@gmail.com>`_ - translate to Simplified Chinese
+https://github.com/archonwang (Steven.W) archonwang1981@gmail.com - translate to Simplified Chinese
 
 Welcome to new contributors, especially translators
 ```````````````````````````````````````````````````
