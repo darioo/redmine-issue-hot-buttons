@@ -9,21 +9,32 @@ document.observe('dom:loaded', function() {
    * Produce Hot Button settings sections
    */
   var ButtonSettingsFactory = Class.create({
-    
+
+    /**
+     * "Next Issue" Hot Button fields frame
+     *
+     * @return "Next Issue" Hot Button settings frame
+     */
     button_next_issue: function() {
       return {
         enabled: ['hidden', 1],
         internal_name: ['hidden', ''],
-        caption: 'text'
+        caption: 'text',
+        conditions: this.get_conditions()
       };
     },
     
-    
+    /**
+     * "Previous Issue" Hot Button fields frame
+     *
+     * @return "Previous Issue" Hot Button settings frame
+     */
     button_prev_issue: function() {
       return {
         enabled: ['hidden', 1],
         internal_name: ['hidden', ''],
-        caption: 'text'
+        caption: 'text',
+        conditions: this.get_conditions()
       };
     },
     
@@ -65,55 +76,7 @@ document.observe('dom:loaded', function() {
             }
           }
         },
-        conditions: {
-          issue_assigned_to: ['multiselect', false, users_roles],
-          issue_not_assigned_to: ['multiselect', false, users_roles],
-          user_role: ['multiselect', false, this.user_roles],
-          user_role_is_not: ['multiselect', false, this.user_roles],
-          issue_status: ['multiselect', false, this.issue_statuses],
-          issue_status_is_not: ['multiselect', false, this.issue_statuses],
-          issue_tracker: ['multiselect', false, this.issue_trackers],
-          issue_tracker_is_not: ['multiselect', false, this.issue_trackers],
-          project: ['multiselect', false, this.projects],
-          project_is_not: ['multiselect', false, this.projects],
-          _optional: [
-            'issue_assigned_to', 'issue_not_assigned_to', 'user_role',
-            'user_role_is_not', 'issue_status', 'issue_status_is_not', 
-            'issue_tracker', 'issue_tracker_is_not', 'project', 'project_is_not'
-          ],
-          _callback: {
-            issue_assigned_to: {
-              change: function(e){ t.callback.inverted_list(e, t, 'issue_not_assigned_to'); }
-            },
-            issue_not_assigned_to: {
-              change: function(e){ t.callback.inverted_list(e, t, 'issue_assigned_to'); }
-            },
-            user_role: {
-              change: function(e) { t.callback.inverted_list(e, t, 'user_role_is_not'); }
-            },
-            user_role_is_not: {
-              change: function(e) { t.callback.inverted_list(e, t, 'user_role'); }
-            },
-            issue_status: {
-              change: function(e) { t.callback.inverted_list(e, t, 'issue_status_is_not'); }
-            },
-            issue_status_is_not: {
-              change: function(e) { t.callback.inverted_list(e, t, 'issue_status'); }
-            },
-            issue_tracker: {
-              change: function(e) { t.callback.inverted_list(e, t, 'issue_tracker_is_not'); }
-            },
-            issue_tracker_is_not: {
-              change: function(e) { t.callback.inverted_list(e, t, 'issue_tracker'); }     
-            },
-            project: {
-              change: function(e) { t.callback.inverted_list(e, t, 'project_is_not'); }              
-            },
-            project_is_not: {
-              change: function(e) { t.callback.inverted_list(e, t, 'project'); }
-            }
-          }
-        }
+        conditions: this.get_conditions()
       };
     },
 
@@ -123,7 +86,6 @@ document.observe('dom:loaded', function() {
      * @return "Reassign to" Hot Button settings frame
      */
     button_issue_update: function() {
-      var t = this;
       var users_roles = Object.clone(this.user_roles);
       users_roles['current_user'] = '&lt;&lt; ' + this._('current_user') + ' &gt;&gt;';
       users_roles['nobody'] = '&lt;&lt; ' + this._('nobody') + ' &gt;&gt;';
@@ -153,56 +115,70 @@ document.observe('dom:loaded', function() {
             }
           }
         },
-        conditions: {
-          issue_assigned_to: ['multiselect', false, users_roles],
-          issue_not_assigned_to: ['multiselect', false, users_roles],
-          user_role: ['multiselect', false, this.user_roles],
-          user_role_is_not: ['multiselect', false, this.user_roles],
-          issue_status: ['multiselect', false, this.issue_statuses],
-          issue_status_is_not: ['multiselect', false, this.issue_statuses],
-          issue_tracker: ['multiselect', false, this.issue_trackers],
-          issue_tracker_is_not: ['multiselect', false, this.issue_trackers],
-          project: ['multiselect', false, this.projects],
-          project_is_not: ['multiselect', false, this.projects],
-          _optional: [
-            'issue_assigned_to', 'issue_not_assigned_to', 'user_role',
-            'user_role_is_not', 'issue_status', 'issue_status_is_not', 
-            'issue_tracker', 'issue_tracker_is_not', 'project', 'project_is_not'
-          ],
-          _callback: {
-            issue_assigned_to: {
-              change: function(e){ t.callback.inverted_list(e, t, 'issue_not_assigned_to'); }
-            },
-            issue_not_assigned_to: {
-              change: function(e){ t.callback.inverted_list(e, t, 'issue_assigned_to'); }
-            },
-            user_role: {
-              change: function(e) { t.callback.inverted_list(e, t, 'user_role_is_not'); }
-            },
-            user_role_is_not: {
-              change: function(e) { t.callback.inverted_list(e, t, 'user_role'); }
-            },
-            issue_status: {
-              change: function(e) { t.callback.inverted_list(e, t, 'issue_status_is_not'); }
-            },
-            issue_status_is_not: {
-              change: function(e) { t.callback.inverted_list(e, t, 'issue_status'); }
-            },
-            issue_tracker: {
-              change: function(e) { t.callback.inverted_list(e, t, 'issue_tracker_is_not'); }
-            },
-            issue_tracker_is_not: {
-              change: function(e) { t.callback.inverted_list(e, t, 'issue_tracker'); }     
-            },
-            project: {
-              change: function(e) { t.callback.inverted_list(e, t, 'project_is_not'); }              
-            },
-            project_is_not: {
-              change: function(e) { t.callback.inverted_list(e, t, 'project'); }
-            }
+        conditions: this.get_conditions()
+      }
+    },
+    
+    /**
+     * Get common for all buttons conditions subset frame
+     *
+     * @return Conditions subset
+     */
+    get_conditions: function() {
+      var users_roles = Object.clone(this.user_roles);
+      users_roles['current_user'] = '&lt;&lt; ' + this._('current_user') + ' &gt;&gt;';
+      users_roles['nobody'] = '&lt;&lt; ' + this._('nobody') + ' &gt;&gt;';
+      var t = this;
+      return {
+        issue_assigned_to: ['multiselect', false, users_roles],
+        issue_not_assigned_to: ['multiselect', false, users_roles],
+        user_role: ['multiselect', false, this.user_roles],
+        user_role_is_not: ['multiselect', false, this.user_roles],
+        issue_status: ['multiselect', false, this.issue_statuses],
+        issue_status_is_not: ['multiselect', false, this.issue_statuses],
+        issue_tracker: ['multiselect', false, this.issue_trackers],
+        issue_tracker_is_not: ['multiselect', false, this.issue_trackers],
+        project: ['multiselect', false, this.projects],
+        project_is_not: ['multiselect', false, this.projects],
+        _optional: [
+          'issue_assigned_to', 'issue_not_assigned_to', 'user_role',
+          'user_role_is_not', 'issue_status', 'issue_status_is_not', 
+          'issue_tracker', 'issue_tracker_is_not', 'project', 'project_is_not'
+        ],
+        _shared_names: true,
+        _callback: {
+          issue_assigned_to: {
+            change: function(e){ t.callback.inverted_list(e, t, 'issue_not_assigned_to'); }
+          },
+          issue_not_assigned_to: {
+            change: function(e){ t.callback.inverted_list(e, t, 'issue_assigned_to'); }
+          },
+          user_role: {
+            change: function(e) { t.callback.inverted_list(e, t, 'user_role_is_not'); }
+          },
+          user_role_is_not: {
+            change: function(e) { t.callback.inverted_list(e, t, 'user_role'); }
+          },
+          issue_status: {
+            change: function(e) { t.callback.inverted_list(e, t, 'issue_status_is_not'); }
+          },
+          issue_status_is_not: {
+            change: function(e) { t.callback.inverted_list(e, t, 'issue_status'); }
+          },
+          issue_tracker: {
+            change: function(e) { t.callback.inverted_list(e, t, 'issue_tracker_is_not'); }
+          },
+          issue_tracker_is_not: {
+            change: function(e) { t.callback.inverted_list(e, t, 'issue_tracker'); }     
+          },
+          project: {
+            change: function(e) { t.callback.inverted_list(e, t, 'project_is_not'); }              
+          },
+          project_is_not: {
+            change: function(e) { t.callback.inverted_list(e, t, 'project'); }
           }
         }
-      }
+      };
     },
     
     /**
@@ -467,6 +443,7 @@ document.observe('dom:loaded', function() {
 
       var optional_fields = inputs_group.get('_optional') || [];
       var callback = inputs_group.get('_callback') || {};
+      var shared_names = inputs_group.get('_shared_names') || false;
 
       inputs_group.each(function(pair){
         // ignore service keys that starts with underscore, like "_optional"
@@ -507,7 +484,7 @@ document.observe('dom:loaded', function() {
 
           wrap_element.insert(
             t.render_input(
-              button_name,
+              shared_names ? '' : button_name,
               input_type,
               input_name,
               input_value,
