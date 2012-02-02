@@ -20,8 +20,11 @@ Author
 ------
 `Mike Kolganov`_, `Thumbtack Inc.`_
 
-.. _mike kolganov: mailto:mike.kolganov@gmail.com
-.. _thumbtack inc.: http://thumbtack.net
+.. _Mike Kolganov: mike.kolganov@gmail.com
+.. _Thumbtack Inc.: http://thumbtack.net
+
+New version 0.4.0 available!
+````````````````````````````
 
 License
 -------
@@ -29,13 +32,10 @@ GNU Lesser General Public License, version 2.1
 
 Special Thanks
 --------------
-https://github.com/archonwang (Steven.W) <archonwang1981@gmail.com> - translate to Simplified Chinese
+https://github.com/archonwang (Steven.W) archonwang1981@gmail.com - translate to Simplified Chinese
 
 Welcome to new contributors, especially translators
 ```````````````````````````````````````````````````
-
-New version 0.4.0 available!
-````````````````````````````
 
 Updated documentation for new version coming soon!
 
