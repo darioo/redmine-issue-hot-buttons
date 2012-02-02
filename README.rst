@@ -18,7 +18,7 @@ Install
 
 Author
 ------
-`Mike Kolganov <mike.kolganov@gmail.com>`_, `Thumbtack Inc. <http://thumbtack.net>`_
+`Thumbtack Inc. <http://thumbtack.net>`_, Mike Kolganov (mike.kolganov@gmail.com)
 
 New version 0.4.0 available!
 ````````````````````````````
