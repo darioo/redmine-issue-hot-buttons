@@ -60,15 +60,15 @@ zh:
     issue_update_set_comment_value_label: "设置评论默认值"
     issue_update_include_file_attachment_label: "包含文件附件"
     
-    next_issue: "Next issue"
-    next_issue_description: "Go to the next task, according to the current filter"
-    next_issue_caption_label: "Button title"
-    next_issue_caption_value: "Next"
+    next_issue: "下一问题"
+    next_issue_description: "根据当前过滤条件，跳转到下一个任务"
+    next_issue_caption_label: "按钮标题"
+    next_issue_caption_value: "下一个"
     
-    prev_issue: "Previous issue"
-    prev_issue_description: "Go to the previous task, according to the current filter"
-    prev_issue_caption_label: "Button title"
-    prev_issue_caption_value: "Previous"
+    prev_issue: "前一问题"
+    prev_issue_description: "根据当前过滤条件，跳转到前一个任务"
+    prev_issue_caption_label: "按钮标题"
+    prev_issue_caption_value: "前一个"
     
     _issue_assigned_to_label: "问题分配给"
     _issue_not_assigned_to_label: "问题不分配给"
