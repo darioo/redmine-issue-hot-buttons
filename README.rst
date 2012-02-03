@@ -20,7 +20,7 @@ Author
 ------
 .. image:: http://mikekolganov.github.com/redmine-issue-hot-buttons/thumbtack_logo.png
 
-`Thumbtack Inc. <http://thumbtack.net>`_, Mike Kolganov (mike.kolganov@gmail.com)
+`Thumbtack Technology, Inc. <http://thumbtack.net>`_, Mike Kolganov (mike.kolganov@gmail.com)
 
 New version 0.4.0 available!
 ````````````````````````````
