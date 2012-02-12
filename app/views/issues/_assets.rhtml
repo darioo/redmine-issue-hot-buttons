@@ -16,10 +16,12 @@
   <script type="text/javascript">
     var IssueHotButtons = {
       issue:           <%= @issue.to_json %>,
+      project:         <%= @project.to_json %>,
       nearby_issues:   <%= @nearby_issues.to_json %>,
       users_per_role:  <%= users_per_role.to_json %>,
       settings:        <%= Setting['plugin_issue_hot_buttons'].to_json %>,
-      i18n_strings:    <%= i18n_strings[locale][:issue_hot_buttons].to_json %>
+      i18n_strings:    <%= i18n_strings[locale][:issue_hot_buttons].to_json %>,
+      today: '<%= User.current.today %>'
     };
   </script>
 <% end %>

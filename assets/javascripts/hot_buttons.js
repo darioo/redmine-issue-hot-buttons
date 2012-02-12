@@ -879,8 +879,8 @@ document.observe('dom:loaded', function(){
         var s_hours = hours < 10 ? '0'.concat(hours): hours;
         var s_minutes = minutes < 10? '0'.concat(minutes): minutes;
         
-        if (timer_in_title && minutes > title_changed) {
-          title_changed = minutes;
+        if (timer_in_title && (hours * 60 + minutes) > title_changed) {
+          title_changed = hours * 60 + minutes;
           document.title = 
             [[s_hours, s_minutes].join(':'), label.canonical_page_title].join(' ');
         }
@@ -937,7 +937,16 @@ document.observe('dom:loaded', function(){
         ? round_interval
         : 0;
       
-      $('time_entry_hours').value = (working_time / 60 / 60);
+      var working_hours = (working_time / 60 / 60);
+      
+      var post_data = {
+        'time_entry[issue_id]': t.issue.id,
+        'time_entry[spent_on]': t.today,
+        'time_entry[hours]': working_hours,
+        'authenticity_token': $$('input[name="authenticity_token"]').first().value
+      };
+      
+      var request_url = ['/projects', t.project.identifier, 'timelog/create'].join('/');
       
       [
         'activity',
@@ -946,17 +955,17 @@ document.observe('dom:loaded', function(){
       ].each(function(option){
         if (! t.config.get(option)) return false;
         switch(option) {
-
+          
           case 'activity':
             var activity = t.config.get('activity').evalJSON();
-            $('time_entry_activity_id').value = 
+            post_data['time_entry[activity_id]'] = 
               button.up(1).select('select.time_entry_activity_id').first().value;
             break;
 
           case 'include_comment':
             var include_comment = t.config.get('include_comment').evalJSON();
             if (include_comment) {
-              $('time_entry_comments').value = 
+              post_data['time_entry[comments]'] = 
                 button.up(1).select('input.time_entry_comments').first().value;
             }
             break;
@@ -964,11 +973,13 @@ document.observe('dom:loaded', function(){
           case 'include_custom_fields':
             var custom_fields = t.config.get('include_custom_fields').evalJSON();
             custom_fields.each(function(id){
-              var custom_field_id = ['time_entry_custom_field_values', id].join('_');
-              var original_field = $(custom_field_id);
-              var mirrored_field = button.up(1).select('.' + custom_field_id).first();
-              if (mirrored_field && original_field) {
-                original_field.value = mirrored_field.value;
+              var original_input = $$('#time_entry_custom_field_values_' + id).last();
+              post_data['time_entry[custom_field_values][' + id + ']'] =
+                original_input.value;
+              var mirrored_input = button.up(1).select('.time_entry_custom_field_values_' + id).last();
+              if (mirrored_input.value) {
+                post_data['time_entry[custom_field_values][' + id + ']'] =
+                  mirrored_input.value;
               }
             });
             break;
@@ -976,11 +987,15 @@ document.observe('dom:loaded', function(){
       });
      
       // Submit issue form!
-      window.onbeforeunload = null;
-      $('issue-form').submit();
-     
+      new Ajax.Request(request_url, {
+        method: 'post',
+        parameters: new Hash(post_data),
+        onComplete: function(response) {
+          window.onbeforeunload = null;
+          window.location.href = window.location.href;
+        }
+      });
     }
-
   });
   
   var NextPrevIssueButton = Class.create(AbstractHotButton, {
