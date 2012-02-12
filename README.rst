@@ -22,7 +22,7 @@ Author
 
 `Thumbtack Technology, Inc. <http://thumbtack.net>`_, Mike Kolganov (mike.kolganov@gmail.com)
 
-New version 0.4.0 available!
+New version 0.4.1 available!
 ````````````````````````````
 
 License
