@@ -34,10 +34,15 @@
   Tracker.find(:all).each { |tracker| trackers[tracker.id] = tracker.name }
 
   activities = {}
-  TimeEntryActivity.find(:all).each { |activity| activities[activity.id] = activity.name}
+  TimeEntryActivity.find(:all, :conditions => ['project_id IS NULL AND active = 1']).each { |activity| activities[activity.id] = activity.name}
   
   projects = {}
-  Project.find(:all).each { |project| projects[project.id] = project.name};
+  Project.find(:all).each { |project|
+    projects[project.id] = project.name
+    project.activities.each { |activity|
+      activities[activity.id] || activities[activity.id] = "#{activity.name} (#{project.name})"
+    }
+  };
 %>
 <% content_for :header_tags do %>
   <%= javascript_include_tag 'settings.js', :plugin => 'issue_hot_buttons_plugin' %>
