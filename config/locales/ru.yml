@@ -61,12 +61,12 @@ ru:
     issue_update_include_file_attachment_label: "Добавить прикрепление файлов"
     
     next_issue: "Следующая задача"
-    next_issue_description: "Перейти к следующей задачи, согласно текущему фильтру"
+    next_issue_description: "Следующая задача: Перейти к следующей задачи, согласно текущему фильтру"
     next_issue_caption_label: "Название кнопки"
     next_issue_caption_value: "Вперед"
     
     prev_issue: "Предыдущая задача"
-    prev_issue_description: "Перейти к следующей задачи, согласно текущему фильтру"
+    prev_issue_description: "Предыдущая задача: Перейти к следующей задачи, согласно текущему фильтру"
     prev_issue_caption_label: "Название кнопки"
     prev_issue_caption_value: "Назад"
     

@@ -19,7 +19,13 @@ document.observe('dom:loaded', function() {
       return {
         enabled: ['hidden', 1],
         internal_name: ['hidden', ''],
-        caption: 'text'
+        caption: 'text',
+        _callback: {
+          caption: {
+            focus: this.callback.save_value,
+            blur:  this.callback.restore_previous_if_empty
+          }
+        }
       };
     },
     
@@ -32,7 +38,13 @@ document.observe('dom:loaded', function() {
       return {
         enabled: ['hidden', 1],
         internal_name: ['hidden', ''],
-        caption: 'text'
+        caption: 'text',
+        _callback: {
+          caption: {
+            focus: this.callback.save_value,
+            blur:  this.callback.restore_previous_if_empty
+          }
+        }
       };
     },
     
@@ -46,6 +58,10 @@ document.observe('dom:loaded', function() {
       var users_roles = Object.clone(this.user_roles);
       users_roles['current_user'] = '&lt;&lt; ' + this._('current_user') + ' &gt;&gt;';
       users_roles['nobody'] = '&lt;&lt; ' + this._('nobody') + ' &gt;&gt;';
+      var check_not_empty = {
+        focus: this.callback.save_value,
+        blur:  this.callback.restore_previous_if_empty
+      }
       
       return {
         enabled: ['hidden', 1],
@@ -69,12 +85,18 @@ document.observe('dom:loaded', function() {
             'include_custom_fields', 'include_comment', 'timer_in_title'
           ],
           _callback: {
-            'round_interval': {
+            round_interval: {
               'blur': function(e) {t.callback.integer_validation(e, t)}
             }
           }
         },
-        conditions: this.get_conditions()
+        conditions: this.get_conditions(),
+        _callback: {
+          start: check_not_empty,
+          pause: check_not_empty,
+          resume: check_not_empty,
+          stop: check_not_empty
+        }
       };
     },
 
@@ -108,12 +130,18 @@ document.observe('dom:loaded', function() {
           ],
           _callback: {
             assign_to_other: {
-              'change': this.callback.assign_to_other_change,
+              change: this.callback.assign_to_other_change,
               'element:loaded': this.callback.assign_to_other_change
             }
           }
         },
-        conditions: this.get_conditions()
+        conditions: this.get_conditions(),
+        _callback: {
+          caption: {
+            focus: this.callback.save_value,
+            blur:  this.callback.restore_previous_if_empty
+          }
+        }
       }
     },
     
@@ -230,6 +258,18 @@ document.observe('dom:loaded', function() {
               pair_option.selected = false;
             }
           });
+        }
+      },
+      
+      save_value: function(e) {
+        var element = e.element();
+        element.prev_value = element.value;
+      },
+      
+      restore_previous_if_empty: function(e) {
+        var element = e.element();
+        if (! element.value.strip().length) {
+          element.value = element.prev_value;
         }
       }
       
