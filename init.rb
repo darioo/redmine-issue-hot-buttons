@@ -17,7 +17,7 @@ unless Redmine::Plugin.registered_plugins.keys.include?(:issue_hot_buttons)
     name 'Issue Hot Buttons Plugin'
     author 'Mike Kolganov, Thumbtack Inc.'
     description 'Plugin for Redmine that add buttons for often used actions to issue page'
-    version '0.4.1'
+    version '0.4.2'
     url 'https://github.com/mikekolganov/redmine-issue-hot-buttons'
     #author_url 'mailto:mike.kolganov@gmail.com'
     settings :partial => 'settings/hot_buttons_settings'
